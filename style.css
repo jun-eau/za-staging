@@ -473,7 +473,8 @@ main {
     width: 100%; /* Ensures the wrapper itself doesn't overflow the page layout if content is narrower */
 }
 
-.timeline-section h2 { /* Style for "Lore Timeline" title */
+.timeline-section h2,
+.full-width-section h2 { /* Style for section titles like "Lore Timeline" */
     text-align: center;
     font-family: 'Playfair Display', serif;
     font-size: var(--font-size-xxxl);
