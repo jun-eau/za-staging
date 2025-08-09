@@ -1084,7 +1084,15 @@ main {
     color: var(--text-primary);
 }
 
-#map-infobox h2 {
+#map-infobox {
+    /* ... existing styles ... */
+    padding: 1rem 1.5rem; /* Adjusted padding */
+    width: 550px; /* Give it a more consistent width */
+    max-width: 90vw;
+    /* ... existing styles ... */
+}
+
+#map-infobox #infobox-name {
     font-family: 'Playfair Display', serif;
     color: var(--accent-gold);
     margin: 0;
@@ -1092,10 +1100,10 @@ main {
     text-align: left;
 }
 
-#map-infobox p {
+#map-infobox #infobox-description {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
-    margin: 0;
+    margin-top: 0.75rem; /* Add space above description */
     text-align: justify;
 }
 
@@ -1116,43 +1124,60 @@ main {
     flex-shrink: 0;
 }
 
-.infobox-content {
+.infobox-body {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1rem; /* Increased bottom margin */
+    gap: 1.5rem; /* Space between the two columns */
 }
 
-#infobox-details {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+.infobox-details {
+    flex: 6; /* Takes up 60% of the space */
+}
+
+.infobox-details dl {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 0.75rem;
+}
+
+.infobox-details dt {
+    font-weight: 700;
+    color: var(--accent-gold);
+    grid-column: 1;
+}
+
+.infobox-details dd {
+    margin: 0;
+    grid-column: 2;
     font-size: var(--font-size-sm);
 }
 
-#infobox-details p {
-    margin: 0;
-    line-height: var(--line-height-normal);
-    text-align: left;
+.infobox-games {
+    flex: 4; /* Takes up 40% of the space */
+    border-left: 1px solid rgba(233, 213, 161, 0.2);
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
-#infobox-details strong {
+.infobox-games h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: var(--font-size-md);
     color: var(--accent-gold);
-    font-weight: 700;
+    text-align: center;
 }
 
-#infobox-art {
+#infobox-art-container {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    justify-content: center;
-    margin-bottom: 0; /* Removed margin */
-    flex-grow: 1; /* Allow this container to grow */
-    align-content: flex-start; /* Align content to the top */
+    justify-content: center; /* Center the items */
+    align-content: flex-start;
 }
 
-#infobox-art img {
-    height: 160px; /* Set a fixed height */
+#infobox-art-container img {
+    height: 100px; /* Smaller images for a more compact look */
     width: auto;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
