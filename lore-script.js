@@ -610,6 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (region.baseColor) {
                     const highlightColor = hexToRgba(region.baseColor, 0.5); // 50% transparency
                     path.style.setProperty('--region-highlight-color', highlightColor);
+                    path.style.stroke = region.baseColor;
                 }
 
                 mapOverlay.appendChild(path);
