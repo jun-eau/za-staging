@@ -986,6 +986,22 @@ main {
 
 }
 
+/* --- Full-Width Section for Map --- */
+.full-width-section {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+/* Adjust map container when it's inside the full-width section */
+.full-width-section .map-container {
+    max-width: 1800px;
+    margin: 2rem auto; /* This keeps the vertical margin and centers the container */
+}
+
 /* --- Lore Map Styles --- */
 .map-container {
     position: relative;
