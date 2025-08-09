@@ -1016,6 +1016,7 @@ main {
     stroke-width: 0.5;
     transition: fill 0.2s ease-in-out, stroke 0.2s ease-in-out;
     cursor: pointer;
+    filter: url(#feather);
 }
 
 .region-path:hover {
