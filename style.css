@@ -1038,3 +1038,77 @@ main {
     fill: rgba(255, 255, 255, 0.3);
     stroke: var(--accent-gold); /* Add a border on hover */
 }
+
+/* --- Map Infobox Styles --- */
+#map-infobox {
+    position: fixed;
+    z-index: 2000;
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--accent-gold);
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    color: var(--text-primary);
+    padding: 1.5rem;
+    width: 320px;
+    max-width: 90vw;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none; /* Hidden by default, cannot be interacted with */
+}
+
+#map-infobox.active {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto; /* Becomes interactive when active */
+}
+
+#map-infobox .close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.2s ease;
+}
+
+#map-infobox .close-btn:hover {
+    color: var(--text-primary);
+}
+
+#map-infobox h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--accent-gold);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: var(--font-size-xl);
+    text-align: center;
+}
+
+#map-infobox p {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+#infobox-art {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+#infobox-art img {
+    height: 60px;
+    width: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}

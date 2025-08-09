@@ -541,32 +541,137 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
+        const infobox = document.getElementById('map-infobox');
+        const infoboxTitle = document.getElementById('infobox-title');
+        const infoboxDescription = document.getElementById('infobox-description');
+        const infoboxArt = document.getElementById('infobox-art');
+        const closeButton = infobox.querySelector('.close-btn');
 
-        if (!mapOverlay) {
-            console.error("Map overlay SVG not found!");
+        if (!mapOverlay || !infobox) {
+            console.error("Map overlay SVG or infobox element not found!");
             return;
         }
 
-        fetch('regions.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
+        let regionsData = [];
+        let gamesData = [];
+
+        // Fetch both JSON files
+        Promise.all([
+            fetch('regions.json').then(res => {
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                return res.json();
+            }),
+            fetch('games.json').then(res => {
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                return res.json();
             })
-            .then(regions => {
-                regions.forEach(region => {
-                    const path = document.createElementNS(svgNS, 'path');
-                    path.setAttribute('d', region.svgPathData);
-                    path.setAttribute('class', 'region-path');
-                    path.setAttribute('id', `region-${region.id}`);
-                    path.setAttribute('title', region.name); // Basic tooltip
-                    mapOverlay.appendChild(path);
-                });
-                isMapInitialized = true;
-            })
-            .catch(error => {
-                console.error("Error loading or processing region data:", error);
+        ])
+        .then(([regions, games]) => {
+            regionsData = regions;
+            gamesData = games;
+
+            const gamesById = gamesData.reduce((acc, game) => {
+                acc[game.id] = game;
+                return acc;
+            }, {});
+
+            regionsData.forEach(region => {
+                const path = document.createElementNS(svgNS, 'path');
+                path.setAttribute('d', region.svgPathData);
+                path.setAttribute('class', 'region-path');
+                path.setAttribute('id', `region-${region.id}`);
+                path.dataset.regionId = region.id; // Store region id
+                mapOverlay.appendChild(path);
             });
+
+            mapOverlay.addEventListener('click', (e) => {
+                const path = e.target.closest('.region-path');
+                if (path && path.dataset.regionId) {
+                    const regionId = path.dataset.regionId;
+                    const region = regionsData.find(r => r.id === regionId);
+                    if (region) {
+                        // Populate infobox
+                        infoboxTitle.textContent = region.name;
+                        infoboxDescription.textContent = region.description;
+
+                        // Populate game art
+                        infoboxArt.innerHTML = ''; // Clear previous art
+                        region.games.forEach(gameId => {
+                            const game = gamesById[gameId];
+                            if (game && game.art) {
+                                const img = document.createElement('img');
+                                img.src = game.art.grid;
+                                img.alt = game.englishTitle;
+                                img.title = game.englishTitle;
+                                infoboxArt.appendChild(img);
+                            }
+                        });
+
+                        // Position and show infobox
+                        positionInfobox(e.clientX, e.clientY);
+                        infobox.classList.add('active');
+                        infobox.style.display = 'block';
+                    }
+                } else if (!infobox.contains(e.target)) {
+                    // Hide infobox if clicking outside a region path and not inside the infobox
+                    hideInfobox();
+                }
+            });
+
+            closeButton.addEventListener('click', () => {
+                hideInfobox();
+            });
+
+            document.addEventListener('click', (e) => {
+                // If the click is outside the map container and the infobox, hide it.
+                const mapContainer = document.querySelector('.map-container');
+                if (!mapContainer.contains(e.target) && !infobox.contains(e.target) && infobox.classList.contains('active')) {
+                    hideInfobox();
+                }
+            });
+
+            isMapInitialized = true;
+        })
+        .catch(error => {
+            console.error("Error loading or processing map/game data:", error);
+        });
+
+        function positionInfobox(x, y) {
+            const infoboxWidth = infobox.offsetWidth;
+            const infoboxHeight = infobox.offsetHeight;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const margin = 15; // Margin from the viewport edges
+
+            let top = y + 20;
+            let left = x + 20;
+
+            // Adjust if it goes off-screen
+            if (left + infoboxWidth + margin > viewportWidth) {
+                left = x - infoboxWidth - 20;
+            }
+            if (top + infoboxHeight + margin > viewportHeight) {
+                top = y - infoboxHeight - 20;
+            }
+
+            // Final check to ensure it's not off the top/left after adjustments
+            if (top < margin) top = margin;
+            if (left < margin) left = margin;
+
+
+            infobox.style.top = `${top}px`;
+            infobox.style.left = `${left}px`;
+        }
+
+        function hideInfobox() {
+            infobox.classList.remove('active');
+            // Listen for transition to end before setting display to none
+            infobox.addEventListener('transitionend', function handler() {
+                if (!infobox.classList.contains('active')) {
+                    infobox.style.display = 'none';
+                }
+                infobox.removeEventListener('transitionend', handler);
+            });
+        }
     }
 });
