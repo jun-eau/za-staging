@@ -542,15 +542,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
         const infobox = document.getElementById('map-infobox');
-        const infoboxTitle = document.getElementById('infobox-title');
-        const infoboxDescription = document.getElementById('infobox-description');
-        const infoboxArt = document.getElementById('infobox-art');
-        const infoboxEmblem = document.getElementById('infobox-emblem');
-        const infoboxDetails = document.getElementById('infobox-details');
+        const infoboxHeader = infobox.querySelector('.infobox-header');
+        const infoboxGames = infobox.querySelector('.infobox-games');
         const closeButton = infobox.querySelector('.close-btn');
 
-        if (!mapOverlay || !infobox || !infoboxEmblem || !infoboxDetails) {
-            console.error("Map overlay SVG or infobox element not found!");
+        if (!mapOverlay || !infobox || !infoboxHeader || !infoboxGames) {
+            console.error("Map overlay SVG or crucial infobox element not found!");
             return;
         }
 
@@ -592,33 +589,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     const regionId = path.dataset.regionId;
                     const region = regionsData.find(r => r.id === regionId);
                     if (region) {
-                        // Populate infobox
-                        infoboxTitle.textContent = region.name;
-                        infoboxDescription.textContent = region.description;
+                        // --- Populate Header ---
+                        infoboxHeader.innerHTML = ''; // Clear previous content
 
-                        // Set emblem
-                        if (region.emblemAsset) {
-                            infoboxEmblem.src = `assets/logo/${region.emblemAsset}`;
-                            infoboxEmblem.style.display = 'inline';
-                        } else {
-                            infoboxEmblem.style.display = 'none';
-                        }
+                        // 1. Emblem
+                        const emblem = document.createElement('img');
+                        emblem.src = `assets/logo/${region.emblemAsset}`;
+                        emblem.alt = `${region.name} Emblem`;
+                        emblem.className = 'infobox-emblem-img';
+                        infoboxHeader.appendChild(emblem);
 
-                        // Populate details
-                        infoboxDetails.innerHTML = ''; // Clear previous details
+                        // 2. Nation Name
+                        const name = document.createElement('h2');
+                        name.textContent = region.name;
+                        infoboxHeader.appendChild(name);
+
+                        // 3. Stat Block
+                        const statBlock = document.createElement('div');
+                        statBlock.className = 'infobox-stat-block';
                         if (region.government) {
                             const p = document.createElement('p');
-                            p.innerHTML = `<strong>Government:</strong> ${region.government}`;
-                            infoboxDetails.appendChild(p);
+                            p.innerHTML = `<strong>Government</strong><span>${region.government}</span>`;
+                            statBlock.appendChild(p);
                         }
                         if (region.capital) {
                             const p = document.createElement('p');
-                            p.innerHTML = `<strong>Capital:</strong> ${region.capital}`;
-                            infoboxDetails.appendChild(p);
+                            p.innerHTML = `<strong>Capital</strong><span>${region.capital}</span>`;
+                            statBlock.appendChild(p);
                         }
+                        infoboxHeader.appendChild(statBlock);
 
-                        // Populate game art
-                        infoboxArt.innerHTML = ''; // Clear previous art
+
+                        // --- Populate Game Art Grid ---
+                        infoboxGames.innerHTML = ''; // Clear previous art
                         region.games.forEach(gameId => {
                             const game = gamesById[gameId];
                             if (game && game.art) {
@@ -626,14 +629,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 img.src = game.art.grid;
                                 img.alt = game.englishTitle;
                                 img.title = game.englishTitle;
-                                infoboxArt.appendChild(img);
+                                infoboxGames.appendChild(img);
                             }
                         });
 
                         // Position and show infobox
+                        infobox.style.display = 'block'; // Make it visible to calculate size
                         positionInfobox(e.clientX, e.clientY);
                         infobox.classList.add('active');
-                        infobox.style.display = 'block';
                     }
                 } else if (!infobox.contains(e.target)) {
                     // Hide infobox if clicking outside a region path and not inside the infobox
