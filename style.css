@@ -1019,23 +1019,13 @@ main {
     box-shadow: 0 0 15px rgba(233, 213, 161, 0.3);
 }
 
-.map-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+.dimming-rect {
     opacity: 0;
-    pointer-events: none;
-    mask: url(#regions-mask);
-    -webkit-mask: url(#regions-mask);
     transition: opacity 0.3s ease-in-out;
-    z-index: 1;
+    pointer-events: none; /* Crucial: allows clicks to pass through to the paths below */
 }
 
-.map-container:hover::before {
+.map-container:hover .dimming-rect {
     opacity: 1;
 }
 
