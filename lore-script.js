@@ -588,6 +588,12 @@ document.addEventListener('DOMContentLoaded', () => {
             regionsData = regions;
             gamesData = games;
 
+            const maskGroup = mapOverlay.querySelector('#regions-mask g');
+            if (!maskGroup) {
+                console.error("SVG mask group for regions not found!");
+                return;
+            }
+
             const gamesById = gamesData.reduce((acc, game) => {
                 acc[game.id] = game;
                 return acc;
@@ -607,6 +613,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 mapOverlay.appendChild(path);
+
+                // Create the second, identical path for the mask cutout
+                const maskPath = document.createElementNS(svgNS, 'path');
+                maskPath.setAttribute('d', region.svgPathData);
+                maskPath.setAttribute('fill', 'black');
+                maskGroup.appendChild(maskPath);
             });
 
             mapOverlay.addEventListener('click', (e) => {
