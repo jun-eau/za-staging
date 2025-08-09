@@ -990,7 +990,7 @@ main {
 .map-container {
     position: relative;
     width: 100%;
-    max-width: 1000px; /* Adjust as needed */
+    max-width: 100%; /* Adjust as needed */
     margin: 2rem auto;
     border: 2px solid var(--accent-gold);
     box-shadow: 0 0 15px rgba(233, 213, 161, 0.3);
