@@ -542,16 +542,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
         const infobox = document.getElementById('map-infobox');
-        const infoboxName = document.getElementById('infobox-name');
-        const infoboxEmblem = document.getElementById('infobox-emblem');
-        const infoboxGovernment = document.getElementById('infobox-government');
-        const infoboxCapital = document.getElementById('infobox-capital');
+        const infoboxTitle = document.getElementById('infobox-title');
         const infoboxDescription = document.getElementById('infobox-description');
-        const infoboxArtContainer = document.getElementById('infobox-art-container');
+        const infoboxArt = document.getElementById('infobox-art');
+        const infoboxEmblem = document.getElementById('infobox-emblem');
+        const infoboxDetails = document.getElementById('infobox-details');
         const closeButton = infobox.querySelector('.close-btn');
 
-        if (!mapOverlay || !infobox || !infoboxName || !infoboxArtContainer) {
-            console.error("One or more map infobox elements could not be found!");
+        if (!mapOverlay || !infobox || !infoboxEmblem || !infoboxDetails) {
+            console.error("Map overlay SVG or infobox element not found!");
             return;
         }
 
@@ -594,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const region = regionsData.find(r => r.id === regionId);
                     if (region) {
                         // Populate infobox
-                        infoboxName.textContent = region.name;
+                        infoboxTitle.textContent = region.name;
                         infoboxDescription.textContent = region.description;
 
                         // Set emblem
@@ -606,11 +605,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         // Populate details
-                        infoboxGovernment.textContent = region.government || 'N/A';
-                        infoboxCapital.textContent = region.capital || 'N/A';
+                        infoboxDetails.innerHTML = ''; // Clear previous details
+                        if (region.government) {
+                            const p = document.createElement('p');
+                            p.innerHTML = `<strong>Government:</strong> ${region.government}`;
+                            infoboxDetails.appendChild(p);
+                        }
+                        if (region.capital) {
+                            const p = document.createElement('p');
+                            p.innerHTML = `<strong>Capital:</strong> ${region.capital}`;
+                            infoboxDetails.appendChild(p);
+                        }
 
                         // Populate game art
-                        infoboxArtContainer.innerHTML = ''; // Clear previous art
+                        infoboxArt.innerHTML = ''; // Clear previous art
                         region.games.forEach(gameId => {
                             const game = gamesById[gameId];
                             if (game && game.art) {
@@ -618,14 +626,14 @@ document.addEventListener('DOMContentLoaded', () => {
                                 img.src = game.art.grid;
                                 img.alt = game.englishTitle;
                                 img.title = game.englishTitle;
-                                infoboxArtContainer.appendChild(img);
+                                infoboxArt.appendChild(img);
                             }
                         });
 
                         // Position and show infobox
                         positionInfobox(e.clientX, e.clientY);
                         infobox.classList.add('active');
-                        infobox.style.display = 'block'; // Set to block to measure dimensions
+                        infobox.style.display = 'block';
                     }
                 } else if (!infobox.contains(e.target)) {
                     // Hide infobox if clicking outside a region path and not inside the infobox
