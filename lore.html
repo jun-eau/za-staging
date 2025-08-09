@@ -70,7 +70,13 @@
         <div id="map-view" class="tab-content">
             <div class="map-container">
                 <img src="assets/zemuria-map.webp" alt="Map of Zemuria" class="map-image">
-                <svg id="map-overlay" class="map-overlay-svg" viewBox="0 0 117.2 73"></svg>
+                <svg id="map-overlay" class="map-overlay-svg" viewBox="0 0 117.2 73">
+                    <defs>
+                        <filter id="feather">
+                            <feGaussianBlur stdDeviation="0.5" />
+                        </filter>
+                    </defs>
+                </svg>
             </div>
         </div>
     </main>
