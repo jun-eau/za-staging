@@ -216,9 +216,9 @@ footer a:hover {
     /* The .arc-navigation class provides the base style. */
     /* These rules adjust it for the Lore page context. */
     border-top: none; /* The header's bottom border serves as the top line */
-    border-bottom: 1px solid rgba(233, 213, 161, 0.15); /* Add a bottom border to separate from main content */
     padding-top: 0.4rem;
     padding-bottom: 0.4rem;
+    border-bottom: none;
 }
 
 /* Tab Content Styling */
@@ -255,7 +255,7 @@ footer a:hover {
 
 /* --- Main Timeline Layout --- */
 main {
-    padding: 2rem 1rem;
+    padding: 1rem;
     max-width: 1300px;
     margin: 0 auto;
     min-width: 600px; /* Ensure enough space for slider arrows + content */
