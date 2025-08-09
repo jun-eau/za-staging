@@ -1031,10 +1031,6 @@ main {
     pointer-events: none;
     mask: url(#regions-mask);
     -webkit-mask: url(#regions-mask);
-    /* --- ADD THESE TWO LINES --- */
-    mask-size: cover;
-    -webkit-mask-size: cover;
-    /* --------------------------- */
     transition: opacity 0.3s ease-in-out;
     z-index: 1;
 }
