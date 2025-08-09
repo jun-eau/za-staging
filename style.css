@@ -1086,9 +1086,9 @@ main {
 /* --- New Infobox Header Styling --- */
 .infobox-header {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
     margin-bottom: 0.75rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid rgba(233, 213, 161, 0.2);
