@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let isMapInitialized = false;
+
     // --- Tabbed Interface Logic ---
     const tabsContainer = document.querySelector('.lore-tabs');
     if (tabsContainer) {
@@ -27,6 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const targetTabContentId = clickedTab.dataset.tab;
+
+            // --- New Map Initialization Logic ---
+            if (targetTabContentId === 'map-view' && !isMapInitialized) {
+                initializeMap();
+            }
             const targetTabContent = document.getElementById(targetTabContentId);
 
             const currentActiveTab = tabsContainer.querySelector('.active');
@@ -528,4 +535,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initializeTimeline();
+
+    function initializeMap() {
+        if (isMapInitialized) return;
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const mapOverlay = document.getElementById('map-overlay');
+
+        if (!mapOverlay) {
+            console.error("Map overlay SVG not found!");
+            return;
+        }
+
+        fetch('regions.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(regions => {
+                regions.forEach(region => {
+                    const path = document.createElementNS(svgNS, 'path');
+                    path.setAttribute('d', region.svgPathData);
+                    path.setAttribute('class', 'region-path');
+                    path.setAttribute('id', `region-${region.id}`);
+                    path.setAttribute('title', region.name); // Basic tooltip
+                    mapOverlay.appendChild(path);
+                });
+                isMapInitialized = true;
+            })
+            .catch(error => {
+                console.error("Error loading or processing region data:", error);
+            });
+    }
 });
