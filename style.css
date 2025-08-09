@@ -1119,6 +1119,7 @@ main {
     text-align: right;
     font-size: var(--font-size-sm);
     white-space: nowrap;
+    margin-right: 24px;
 }
 
 .infobox-stat-block p {
@@ -1148,13 +1149,13 @@ main {
     gap: 0.5rem;
     justify-content: center;
     margin: 0;
+    height: 220px;
 }
 
 .infobox-games img {
     width: 100%;
-    height: auto; /* Maintain aspect ratio */
+    height: 100%; /* Fill the container height */
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    aspect-ratio: 3 / 4; /* Maintain a consistent aspect ratio */
-    object-fit: cover; /* Cover the area, cropping if necessary */
+    object-fit: contain; /* Display the entire image, do not crop */
 }
