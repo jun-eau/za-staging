@@ -1035,8 +1035,8 @@ main {
 }
 
 .region-path:hover {
-    fill: rgba(255, 255, 255, 0.3);
-    stroke: var(--accent-gold); /* Add a border on hover */
+    fill: rgba(233, 213, 161, 0.5); /* --accent-gold with transparency */
+    filter: url(#feather-effect);
 }
 
 /* --- Map Infobox Styles --- */
