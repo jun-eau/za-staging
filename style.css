@@ -1047,6 +1047,8 @@ main {
 
 .region-path:hover {
     fill: var(--region-highlight-color); /* Use the CSS variable for highlighting */
+    stroke: var(--accent-gold);
+    stroke-width: 4;
 }
 
 /* --- Map Infobox Styles --- */

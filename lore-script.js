@@ -608,9 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Set the highlight color as a CSS variable from the region's base color
                 if (region.baseColor) {
-                    const highlightColor = hexToRgba(region.baseColor, 0.5); // 50% transparency
+                    const highlightColor = hexToRgba(region.baseColor, 0.7); // 70% transparency
                     path.style.setProperty('--region-highlight-color', highlightColor);
-                    path.style.stroke = region.baseColor;
                 }
 
                 mapOverlay.appendChild(path);
