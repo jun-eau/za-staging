@@ -5,6 +5,7 @@
     "government": "Constitutional Monarchy",
     "capital": "Heimdallr",
     "emblemAsset": "erebonia-emblem.webp",
+    "baseColor": "#b09798",
     "games": [
       "trails-of-cold-steel",
       "trails-of-cold-steel-ii",
@@ -20,6 +21,7 @@
     "government": "Constitutional Monarchy",
     "capital": "Grancel",
     "emblemAsset": "liberl-emblem.webp",
+    "baseColor": "#e8eced",
     "games": [
       "trails-in-the-sky",
       "trails-in-the-sky-sc",
@@ -33,6 +35,7 @@
     "government": "Autonomous State",
     "capital": "Crossbell City",
     "emblemAsset": "crossbell-emblem.webp",
+    "baseColor": "#65809e",
     "games": [
       "trails-from-zero",
       "trails-to-azure",
@@ -46,6 +49,7 @@
     "government": "Democratic Republic",
     "capital": "Edith",
     "emblemAsset": "calvard-emblem.webp",
+    "baseColor": "#b5c994",
     "games": [
       "trails-through-daybreak",
       "trails-through-daybreak-ii",
