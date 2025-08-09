@@ -1144,18 +1144,16 @@ main {
 
 /* --- New Infobox Games Grid Styling --- */
 .infobox-games {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    display: flex;
     gap: 0.5rem;
     justify-content: center;
-    margin: 0;
     height: 220px;
+    margin: 0;
 }
 
 .infobox-games img {
-    width: 100%;
-    height: 100%; /* Fill the container height */
+    height: 100%;
+    width: auto;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    object-fit: contain; /* Display the entire image, do not crop */
 }
