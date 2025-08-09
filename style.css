@@ -1087,18 +1087,58 @@ main {
 #map-infobox h2 {
     font-family: 'Playfair Display', serif;
     color: var(--accent-gold);
-    margin-top: 0;
-    margin-bottom: 0.75rem;
+    margin: 0;
     font-size: var(--font-size-xl);
-    text-align: center;
-    flex-shrink: 0; /* Prevent title from shrinking */
+    text-align: left;
 }
 
 #map-infobox p {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
-    margin-bottom: 0; /* Removed margin */
+    margin: 0;
     text-align: justify;
+}
+
+.infobox-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(233, 213, 161, 0.2);
+}
+
+#infobox-emblem {
+    height: 50px;
+    width: 50px;
+    min-width: 50px; /* Prevent shrinking */
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.infobox-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem; /* Increased bottom margin */
+}
+
+#infobox-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: var(--font-size-sm);
+}
+
+#infobox-details p {
+    margin: 0;
+    line-height: var(--line-height-normal);
+    text-align: left;
+}
+
+#infobox-details strong {
+    color: var(--accent-gold);
+    font-weight: 700;
 }
 
 #infobox-art {

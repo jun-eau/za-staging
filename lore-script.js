@@ -545,9 +545,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const infoboxTitle = document.getElementById('infobox-title');
         const infoboxDescription = document.getElementById('infobox-description');
         const infoboxArt = document.getElementById('infobox-art');
+        const infoboxEmblem = document.getElementById('infobox-emblem');
+        const infoboxDetails = document.getElementById('infobox-details');
         const closeButton = infobox.querySelector('.close-btn');
 
-        if (!mapOverlay || !infobox) {
+        if (!mapOverlay || !infobox || !infoboxEmblem || !infoboxDetails) {
             console.error("Map overlay SVG or infobox element not found!");
             return;
         }
@@ -592,7 +594,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (region) {
                         // Populate infobox
                         infoboxTitle.textContent = region.name;
-                        // infoboxDescription.textContent = region.description;
+                        infoboxDescription.textContent = region.description;
+
+                        // Set emblem
+                        if (region.emblemAsset) {
+                            infoboxEmblem.src = `assets/logo/${region.emblemAsset}`;
+                            infoboxEmblem.style.display = 'inline';
+                        } else {
+                            infoboxEmblem.style.display = 'none';
+                        }
+
+                        // Populate details
+                        infoboxDetails.innerHTML = ''; // Clear previous details
+                        if (region.government) {
+                            const p = document.createElement('p');
+                            p.innerHTML = `<strong>Government:</strong> ${region.government}`;
+                            infoboxDetails.appendChild(p);
+                        }
+                        if (region.capital) {
+                            const p = document.createElement('p');
+                            p.innerHTML = `<strong>Capital:</strong> ${region.capital}`;
+                            infoboxDetails.appendChild(p);
+                        }
 
                         // Populate game art
                         infoboxArt.innerHTML = ''; // Clear previous art
