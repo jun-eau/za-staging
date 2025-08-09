@@ -554,6 +554,25 @@ document.addEventListener('DOMContentLoaded', () => {
         let regionsData = [];
         let gamesData = [];
 
+        /**
+         * Converts a hex color string to an rgba string.
+         * @param {string} hex The hex color code (e.g., "#RRGGBB").
+         * @param {number} alpha The alpha transparency value (0 to 1).
+         * @returns {string} The rgba color string.
+         */
+        function hexToRgba(hex, alpha = 1) {
+            // Remove the hash at the start if it's there
+            hex = hex.replace(/^#/, '');
+
+            // Parse the r, g, b values
+            let bigint = parseInt(hex, 16);
+            let r = (bigint >> 16) & 255;
+            let g = (bigint >> 8) & 255;
+            let b = bigint & 255;
+
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
         // Fetch both JSON files
         Promise.all([
             fetch('regions.json').then(res => {
@@ -580,6 +599,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 path.setAttribute('class', 'region-path');
                 path.setAttribute('id', `region-${region.id}`);
                 path.dataset.regionId = region.id; // Store region id
+
+                // Set the highlight color as a CSS variable from the region's base color
+                if (region.baseColor) {
+                    const highlightColor = hexToRgba(region.baseColor, 0.5); // 50% transparency
+                    path.style.setProperty('--region-highlight-color', highlightColor);
+                }
+
                 mapOverlay.appendChild(path);
             });
 

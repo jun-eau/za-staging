@@ -1035,8 +1035,7 @@ main {
 }
 
 .region-path:hover {
-    fill: rgba(233, 213, 161, 0.5); /* --accent-gold with transparency */
-    filter: url(#feather-effect);
+    fill: var(--region-highlight-color); /* Use the CSS variable for highlighting */
 }
 
 /* --- Map Infobox Styles --- */
