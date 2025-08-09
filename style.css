@@ -1027,15 +1027,19 @@ main {
 }
 
 .region-path {
-    fill: transparent;
-    stroke: transparent; /* No border by default */
-    stroke-width: 0.5;
-    transition: fill 0.2s ease-in-out, stroke 0.2s ease-in-out;
+    fill: rgba(255, 255, 255, 0.1);
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+    transition: fill 0.2s ease-in-out, stroke 0.2s ease-in-out, stroke-width 0.2s ease-in-out, filter 0.2s ease-in-out;
     cursor: pointer;
 }
 
 .region-path:hover {
-    fill: var(--region-highlight-color); /* Use the CSS variable for highlighting */
+    fill: var(--region-highlight-color);
+    stroke: white;
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 8px var(--region-highlight-color));
 }
 
 /* --- Map Infobox Styles --- */
