@@ -4,7 +4,7 @@
     "name": "Erebonian Empire",
     "government": "Constitutional Monarchy",
     "capital": "Heimdallr",
-    "emblemAsset": "erebonia-emblem.png",
+    "emblemAsset": "erebonia-emblem.webp",
     "description": "The largest nation in western Zemuria, a militaristic and aristocratic country known for its rapid modernization and expansionist policies.",
     "games": [
       "trails-of-cold-steel",
@@ -20,7 +20,7 @@
     "name": "Liberl Kingdom",
     "government": "Constitutional Monarchy",
     "capital": "Grancel",
-    "emblemAsset": "liberl-emblem.png",
+    "emblemAsset": "liberl-emblem.webp",
     "description": "A small but prosperous kingdom in southwest Zemuria, renowned for its technological innovation and strong Bracer Guild presence.",
     "games": [
       "trails-in-the-sky",
@@ -34,7 +34,7 @@
     "name": "Crossbell",
     "government": "Autonomous State",
     "capital": "Crossbell City",
-    "emblemAsset": "crossbell-emblem.png",
+    "emblemAsset": "crossbell-emblem.webp",
     "description": "A historical buffer state between Erebonia and Calvard, serving as a major center for trade, finance, and international conflict.",
     "games": [
       "trails-from-zero",
@@ -48,7 +48,7 @@
     "name": "Calvard Republic",
     "government": "Democratic Republic",
     "capital": "Edith",
-    "emblemAsset": "calvard-emblem.png",
+    "emblemAsset": "calvard-emblem.webp",
     "description": "A large, diverse republic in central Zemuria, experiencing rapid economic growth and grappling with immigration and internal political strife.",
     "games": [
       "trails-through-daybreak",
