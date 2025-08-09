@@ -32,6 +32,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scrollbars from slider overflow */
 }
 
 /* Apply background only to the home page's body */
@@ -385,7 +386,7 @@ main {
 }
 
 .game-entry-slider {
-    overflow-x: hidden; /* Hides horizontal overflow of slider items, may clip side shadows */
+    overflow-x: visible; /* This allows box-shadows to appear */
     overflow-y: visible; /* This allows the vertical box-shadow to be displayed */
     position: relative; /* Optional: if it needs to be a positioning context for something else inside, though not strictly necessary for current setup */
     /* width: 100%; Ensure it takes the space of a normal game-entry.
