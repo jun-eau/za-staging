@@ -255,7 +255,7 @@ footer a:hover {
 
 /* --- Main Timeline Layout --- */
 main {
-    padding: 1rem;
+    padding: 0rem;
     max-width: 1300px;
     margin: 0 auto;
     min-width: 600px; /* Ensure enough space for slider arrows + content */
