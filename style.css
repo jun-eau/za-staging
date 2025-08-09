@@ -1006,17 +1006,16 @@ main {
 .map-container {
     position: relative;
     width: 100%;
-    max-width: 100%; /* Adjust as needed */
+    max-width: 100%;
     margin: 2rem auto;
-    /* border and box-shadow moved to .map-image to fix overlay alignment */
+    border: 2px solid var(--accent-gold);
+    box-shadow: 0 0 15px rgba(233, 213, 161, 0.3);
 }
 
 .map-image {
     display: block;
     width: 100%;
     height: auto;
-    border: 2px solid var(--accent-gold);
-    box-shadow: 0 0 15px rgba(233, 213, 161, 0.3);
 }
 
 .dimming-rect {
