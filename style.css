@@ -1049,7 +1049,7 @@ main {
     border-radius: 8px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
     color: var(--text-primary);
-    padding: 1.5rem;
+    padding: 0.75rem 1.5rem; /* Reduced top/bottom padding */
     /* width: 320px; */ /* Removed for dynamic width */
     max-width: 90vw;
     opacity: 0;
@@ -1112,7 +1112,7 @@ main {
 }
 
 #infobox-art img {
-    height: 80px; /* Set a fixed height */
+    height: 160px; /* Set a fixed height */
     width: auto;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
