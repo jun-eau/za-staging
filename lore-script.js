@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (region) {
                         // Populate infobox
                         infoboxTitle.textContent = region.name;
-                        infoboxDescription.textContent = region.description;
+                        // infoboxDescription.textContent = region.description;
 
                         // Populate game art
                         infoboxArt.innerHTML = ''; // Clear previous art

@@ -1050,12 +1050,14 @@ main {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
     color: var(--text-primary);
     padding: 1.5rem;
-    width: 320px;
+    /* width: 320px; */ /* Removed for dynamic width */
     max-width: 90vw;
     opacity: 0;
     transform: scale(0.95);
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none; /* Hidden by default, cannot be interacted with */
+    display: flex; /* Make it a flex container */
+    flex-direction: column; /* Stack children vertically */
 }
 
 #map-infobox.active {
@@ -1089,12 +1091,13 @@ main {
     margin-bottom: 0.75rem;
     font-size: var(--font-size-xl);
     text-align: center;
+    flex-shrink: 0; /* Prevent title from shrinking */
 }
 
 #map-infobox p {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
-    margin-bottom: 1rem;
+    margin-bottom: 0; /* Removed margin */
     text-align: justify;
 }
 
@@ -1103,11 +1106,13 @@ main {
     flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0; /* Removed margin */
+    flex-grow: 1; /* Allow this container to grow */
+    align-content: flex-start; /* Align content to the top */
 }
 
 #infobox-art img {
-    height: 60px;
+    height: 80px; /* Set a fixed height */
     width: auto;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
