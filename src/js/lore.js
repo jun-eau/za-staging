@@ -698,11 +698,6 @@ export function initLorePage() {
         });
 
         positionInfobox(clickX, clickY);
-
-        // Use a short delay to ensure the position is set before the transition starts
-        setTimeout(() => {
-            infoboxEl.classList.add('visible');
-        }, 10);
     }
 
     /**
@@ -716,17 +711,17 @@ export function initLorePage() {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // Set initial position and make it temporarily visible to measure
+        // Set initial position and display to measure
         infoboxEl.style.left = `${clickX}px`;
         infoboxEl.style.top = `${clickY}px`;
-        infoboxEl.style.visibility = 'hidden'; // Keep it hidden from view
-        infoboxEl.classList.add('visible'); // Add class to get dimensions
+        infoboxEl.style.visibility = 'hidden';
+        infoboxEl.style.display = 'block';
 
         const rect = infoboxEl.getBoundingClientRect();
 
-        // Hide it again immediately after measuring
-        infoboxEl.classList.remove('visible');
-        infoboxEl.style.visibility = 'visible'; // Reset visibility for the animation
+        // Hide it again before final positioning
+        infoboxEl.style.display = 'none';
+        infoboxEl.style.visibility = 'visible';
 
         // Determine final position
         let top = clickY + offsetY;
@@ -742,6 +737,9 @@ export function initLorePage() {
         // Final position assignment
         infoboxEl.style.left = `${Math.max(5, left)}px`;
         infoboxEl.style.top = `${Math.max(5, top)}px`;
+
+        // Make it visible
+        infoboxEl.style.display = 'block';
     }
 
     function initializeMap() {
@@ -815,36 +813,23 @@ export function initLorePage() {
             // Use event delegation for a single click handler on the overlay
             mapOverlay.addEventListener('click', (e) => {
                 const clickedPath = e.target.closest('.region-path');
-                const closeInfobox = () => {
-                    infoboxEl.classList.remove('visible');
-                    currentOpenRegionId = null;
-                };
 
                 if (clickedPath) {
                     const regionId = clickedPath.dataset.regionId;
 
-                    if (regionId === currentOpenRegionId) {
-                        // Clicked the same region, so just close the infobox.
-                        closeInfobox();
+                    // If the clicked region is the one that's already open and the infobox is visible, close it.
+                    if (regionId === currentOpenRegionId && infoboxEl.style.display === 'block') {
+                        infoboxEl.style.display = 'none';
+                        currentOpenRegionId = null;
                     } else {
-                        // Clicked a new region.
-                        if (currentOpenRegionId !== null) {
-                            // If an infobox is already open, close it first.
-                            // The transition is 200ms. We open the new one after a slight delay.
-                            closeInfobox();
-                            setTimeout(() => {
-                                createInfobox(regionId, e.clientX, e.clientY);
-                                currentOpenRegionId = regionId;
-                            }, 210);
-                        } else {
-                            // No infobox is open, just create the new one.
-                            createInfobox(regionId, e.clientX, e.clientY);
-                            currentOpenRegionId = regionId;
-                        }
+                        // Otherwise, create the infobox for the new region.
+                        createInfobox(regionId, e.clientX, e.clientY);
+                        currentOpenRegionId = regionId;
                     }
                 } else {
-                    // Clicked the map background, close any open infobox.
-                    closeInfobox();
+                    // The map background was clicked, hide the infobox and reset state.
+                    infoboxEl.style.display = 'none';
+                    currentOpenRegionId = null;
                 }
             });
 
