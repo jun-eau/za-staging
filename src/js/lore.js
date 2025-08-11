@@ -1,74 +1,60 @@
-document.addEventListener('DOMContentLoaded', () => {
+export function initLorePage() {
     let isMapInitialized = false;
 
     // --- Tabbed Interface Logic ---
     const tabsContainer = document.querySelector('.lore-tabs');
     if (tabsContainer) {
-        const tabLinks = tabsContainer.querySelectorAll('.tab-link');
-        const tabContents = document.querySelectorAll('.tab-content');
+        // Determine the tab to show: saved tab or default to 'map-view'.
+        const tabIdToShow = localStorage.getItem('loreLastTab') || 'map-view';
 
-        // Immediately show the default active tab content on page load
+        // Apply 'active' to the determined tab and its content.
+        const tabLinkToShow = document.querySelector(`.tab-link[data-tab="${tabIdToShow}"]`);
+        const contentToShow = document.getElementById(tabIdToShow);
+        if (tabLinkToShow) tabLinkToShow.classList.add('active');
+        if (contentToShow) contentToShow.classList.add('active');
+
+        // Check if the map is the active tab on load (either default or from storage) and initialize it
         const initialActiveContent = document.querySelector('.tab-content.active');
         if (initialActiveContent) {
+            if (initialActiveContent.id === 'map-view' && !isMapInitialized) {
+                initializeMap();
+            }
             // Add 'show' class to make it visible with fade-in effect
-            // Use a timeout to ensure the transition is applied after initial render
-            setTimeout(() => {
-                initialActiveContent.classList.add('show');
-            }, 10);
+            setTimeout(() => initialActiveContent.classList.add('show'), 10);
         }
 
         tabsContainer.addEventListener('click', (e) => {
             const clickedTab = e.target.closest('.tab-link');
-            if (!clickedTab) return;
-
+            if (!clickedTab || clickedTab.classList.contains('active')) {
+                return; // Do nothing if not a tab link or if already active
+            }
             e.preventDefault();
 
-            // Do nothing if the clicked tab is already active
-            if (clickedTab.classList.contains('active')) {
-                return;
-            }
-
             const targetTabContentId = clickedTab.dataset.tab;
+            localStorage.setItem('loreLastTab', targetTabContentId); // Save selection
 
-            // --- New Map Initialization Logic ---
+            // Initialize map if it's being shown for the first time
             if (targetTabContentId === 'map-view' && !isMapInitialized) {
                 initializeMap();
             }
-            const targetTabContent = document.getElementById(targetTabContentId);
 
+            const targetTabContent = document.getElementById(targetTabContentId);
             const currentActiveTab = tabsContainer.querySelector('.active');
             const currentActiveContent = document.querySelector('.tab-content.active');
 
             // Switch active state on tabs
-            if (currentActiveTab) {
-                currentActiveTab.classList.remove('active');
-            }
+            if (currentActiveTab) currentActiveTab.classList.remove('active');
             clickedTab.classList.add('active');
 
             // Animate content transition
             if (currentActiveContent && targetTabContent) {
-                currentActiveContent.classList.remove('show'); // Start fade-out
-
-                // Listen for the fade-out to finish
+                currentActiveContent.classList.remove('show');
                 currentActiveContent.addEventListener('transitionend', function handler(event) {
-                    // Ensure we're listening for the opacity transition specifically
                     if (event.propertyName !== 'opacity') return;
-
-                    // Clean up the old content
                     currentActiveContent.classList.remove('active');
-
-                    // Show the new content
-                    targetTabContent.classList.add('active'); // Makes it display: block
-
-                    // Use a timeout to ensure the 'active' class is applied and rendered
-                    // before the 'show' class is added, triggering the fade-in transition.
-                    setTimeout(() => {
-                        targetTabContent.classList.add('show');
-                    }, 10); // A small delay is enough
-
-                    // Remove the event listener to prevent it from firing multiple times
-                    currentActiveContent.removeEventListener('transitionend', handler);
-                });
+                    targetTabContent.classList.add('active');
+                    setTimeout(() => targetTabContent.classList.add('show'), 10);
+                }, { once: true }); // Use { once: true } for cleaner event handling
             }
         });
     }
@@ -84,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const liberlColumn = document.getElementById('liberl-arc-column').querySelector('.game-entries-area');
     const crossbellColumn = document.getElementById('crossbell-arc-column').querySelector('.game-entries-area');
     const ereboniaColumn = document.getElementById('erebonia-arc-column').querySelector('.game-entries-area');
+    const calvardColumn = document.getElementById('calvard-arc-column').querySelector('.game-entries-area');
     
     let monthLinesOverlay; // Will be created and appended to gameColumnsContainer
 
@@ -113,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initializeTimeline() {
         try {
-            const response = await fetch('games.json');
+            const response = await fetch('src/data/games.json');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const rawGames = await response.json();
             
@@ -290,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const totalTimelineHeight = yOffset;
-        [timeAxisContainer, liberlColumn, crossbellColumn, ereboniaColumn, monthLinesOverlay].forEach(el => {
+        [timeAxisContainer, liberlColumn, crossbellColumn, ereboniaColumn, calvardColumn, monthLinesOverlay].forEach(el => {
             if (el) el.style.height = `${totalTimelineHeight}px`;
         });
     }
@@ -300,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("Cannot render game entries: missing data.");
             return;
         }
-        [liberlColumn, crossbellColumn, ereboniaColumn].forEach(col => { if (col) col.innerHTML = ''; });
+        [liberlColumn, crossbellColumn, ereboniaColumn, calvardColumn].forEach(col => { if (col) col.innerHTML = ''; });
 
         const minTotalMonths = dateToTotalMonths(minDate);
 
@@ -315,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (game.arc === "Liberl Arc") targetColumn = liberlColumn;
             else if (game.arc === "Crossbell Arc") targetColumn = crossbellColumn;
             else if (game.arc === "Erebonia Arc" || game.englishTitle === "Trails into Reverie") targetColumn = ereboniaColumn;
+            else if (game.arc === "Calvard Arc") targetColumn = calvardColumn;
             else {
                 console.warn(`Game "${game.englishTitle}" arc "${game.arc}" unassigned. Skipping rendering.`);
                 return;
@@ -383,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const gameEntryDiv = document.createElement('div');
                 gameEntryDiv.className = 'game-entry-box';
                 gameEntryDiv.style.backgroundColor = game.timelineColor;
-                gameEntryDiv.style.color = game.englishTitle === "Trails in the Sky SC" ? '#000000' : '#FFFFFF';
+                gameEntryDiv.style.color = game.englishTitle === "Trails in the Sky SC" || game.englishTitle === "Trails through Daybreak" ? '#000000' : '#FFFFFF';
                 gameEntryDiv.style.top = `${topPosition + 2}px`; // -1 for border adjustment, +3 for shift
                 gameEntryDiv.style.height = `${entryHeight}px`;
                 gameEntryDiv.style.width = '90%';
@@ -553,6 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let regionsData = [];
         let gamesData = [];
+        let currentRegionId = null; // Track the currently displayed region
 
         /**
          * Converts a hex color string to an rgba string.
@@ -575,11 +564,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Fetch both JSON files
         Promise.all([
-            fetch('regions.json').then(res => {
+            fetch('src/data/regions.json').then(res => {
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 return res.json();
             }),
-            fetch('games.json').then(res => {
+            fetch('src/data/games.json').then(res => {
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 return res.json();
             })
@@ -625,7 +614,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const path = e.target.closest('.region-path');
                 if (path && path.dataset.regionId) {
                     const regionId = path.dataset.regionId;
+
+                    // If clicking the same region that's already active, hide it.
+                    if (regionId === currentRegionId && infobox.classList.contains('active')) {
+                        hideInfobox();
+                        return; // Stop further execution
+                    }
+
+                    // A new region is clicked, so proceed with showing the infobox.
+                    currentRegionId = regionId;
                     const region = regionsData.find(r => r.id === regionId);
+
                     if (region) {
                         // --- Populate Header ---
                         infoboxHeader.innerHTML = ''; // Clear previous content
@@ -662,18 +661,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         infoboxGames.innerHTML = ''; // Clear previous art
                         region.games.forEach(gameId => {
                             const game = gamesById[gameId];
-                            if (game && game.art) {
+                            if (game) {
                                 const img = document.createElement('img');
-                                img.src = game.art.grid;
+                                img.src = `assets/grid/${game.assetName}.jpg`;
                                 img.alt = game.englishTitle;
                                 img.title = game.englishTitle;
                                 infoboxGames.appendChild(img);
                             }
                         });
 
+                        // Store click coordinates for repositioning on resize
+                        infobox.dataset.lastClickX = e.clientX;
+                        infobox.dataset.lastClickY = e.clientY;
+
                         // Position and show infobox
                         infobox.style.display = 'block'; // Make it visible to calculate size
-                        positionInfobox(e.clientX, e.clientY);
+                        updateInfobox(); // This now handles both scaling and positioning
                         infobox.classList.add('active');
                     }
                 } else if (!infobox.contains(e.target)) {
@@ -694,41 +697,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            window.addEventListener('resize', () => {
+                if (infobox.classList.contains('active')) {
+                    updateInfobox();
+                }
+            });
+
             isMapInitialized = true;
         })
         .catch(error => {
             console.error("Error loading or processing map/game data:", error);
         });
 
-        function positionInfobox(x, y) {
-            const infoboxWidth = infobox.offsetWidth;
-            const infoboxHeight = infobox.offsetHeight;
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            const margin = 15; // Margin from the viewport edges
+        function updateInfobox() {
+            const referenceWidth = 1440;
+            const scale = Math.min(window.innerWidth / referenceWidth, 1);
+            infobox.style.transform = `scale(${scale})`;
 
-            let top = y + 20;
-            let left = x + 20;
+            // Position the infobox, taking the new scale into account.
+            if (infobox.dataset.lastClickX && infobox.dataset.lastClickY) {
+                const x = parseInt(infobox.dataset.lastClickX);
+                const y = parseInt(infobox.dataset.lastClickY);
 
-            // Adjust if it goes off-screen
-            if (left + infoboxWidth + margin > viewportWidth) {
-                left = x - infoboxWidth - 20;
+                const infoboxWidth = infobox.offsetWidth;
+                const infoboxHeight = infobox.offsetHeight;
+                const scaledWidth = infoboxWidth * scale;
+                const scaledHeight = infoboxHeight * scale;
+
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const margin = 15; // Margin from the viewport edges
+
+                let top = y + 20;
+                let left = x + 20;
+
+                // Adjust if it goes off-screen
+                if (left + scaledWidth + margin > viewportWidth) {
+                    left = x - scaledWidth - 20;
+                }
+                if (top + scaledHeight + margin > viewportHeight) {
+                    top = y - scaledHeight - 20;
+                }
+
+                // Final check to ensure it's not off the top/left after adjustments
+                if (top < margin) top = margin;
+                if (left < margin) left = margin;
+
+                infobox.style.top = `${top}px`;
+                infobox.style.left = `${left}px`;
             }
-            if (top + infoboxHeight + margin > viewportHeight) {
-                top = y - infoboxHeight - 20;
-            }
-
-            // Final check to ensure it's not off the top/left after adjustments
-            if (top < margin) top = margin;
-            if (left < margin) left = margin;
-
-
-            infobox.style.top = `${top}px`;
-            infobox.style.left = `${left}px`;
         }
 
         function hideInfobox() {
             infobox.classList.remove('active');
+            currentRegionId = null; // Reset the currently selected region ID
             // Listen for transition to end before setting display to none
             infobox.addEventListener('transitionend', function handler() {
                 if (!infobox.classList.contains('active')) {
@@ -738,4 +760,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-});
+}
