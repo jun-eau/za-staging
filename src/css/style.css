@@ -631,28 +631,23 @@ body #map-view .map-infobox.active {
     color: #b0b0b0;
 }
 
-.map-infobox-content-wrapper {
-    display: grid;
-    transition: height 0.25s ease-in-out;
-}
-
 .map-infobox-content {
     padding: 12px;
 }
 
-/* View-specific containers are stacked in a grid */
+/* View-specific containers */
 .map-infobox-games-view, .map-infobox-lore-view {
-    grid-area: 1 / 1; /* Both occupy the same grid cell */
-    transition: opacity 0.2s ease-in-out;
-    visibility: visible;
+    /* Base styles for views */
 }
 
-/* Class to hide a view */
-.map-infobox-games-view.view-hidden,
-.map-infobox-lore-view.view-hidden {
+/* Animation classes */
+.view-fade-out {
     opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    transition: opacity 0.15s ease-in-out;
+}
+.view-fade-in {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .map-infobox-games-grid {

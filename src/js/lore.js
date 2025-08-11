@@ -604,24 +604,32 @@ export function initLorePage() {
     }
 
     /**
-     * Handles the smooth height and fade animation when switching between infobox views.
+     * Handles the fade animation when switching between infobox views.
      * @param {HTMLElement} contentWrapper The element containing the two views.
      */
     function switchView(contentWrapper) {
         const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
         const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
 
-        // Determine which view is currently visible
-        const isGamesViewVisible = !gamesView.classList.contains('view-hidden');
+        const isGamesViewVisible = gamesView.style.display !== 'none';
+
         const viewToHide = isGamesViewVisible ? gamesView : loreView;
         const viewToShow = isGamesViewVisible ? loreView : gamesView;
 
-        // 1. Set the wrapper's height to the height of the new view
-        contentWrapper.style.height = `${viewToShow.scrollHeight}px`;
+        viewToHide.classList.add('view-fade-out');
+        viewToHide.classList.remove('view-fade-in');
 
-        // 2. Toggle visibility classes to trigger the fade animation
-        viewToHide.classList.add('view-hidden');
-        viewToShow.classList.remove('view-hidden');
+        viewToHide.addEventListener('transitionend', function handler() {
+            viewToHide.style.display = 'none';
+            viewToHide.classList.remove('view-fade-out');
+
+            viewToShow.style.display = 'block';
+            // Delay ensures the 'display' property is set before the opacity transition starts
+            setTimeout(() => {
+                viewToShow.classList.add('view-fade-in');
+                viewToShow.classList.remove('view-fade-out');
+            }, 10);
+        }, { once: true });
     }
 
     /**
@@ -674,19 +682,16 @@ export function initLorePage() {
         const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
         const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
 
-        // Set initial visibility and height
-        const isMajorRegion = region.regionType === 'major';
-        const initialView = isMajorRegion ? gamesView : loreView;
-        const hiddenView = isMajorRegion ? loreView : gamesView;
-
-        hiddenView.classList.add('view-hidden');
-
-        // Set initial height of the wrapper to the height of the visible content
-        // Use requestAnimationFrame to ensure the element is rendered and heights are calculable
-        requestAnimationFrame(() => {
-            const initialHeight = initialView.scrollHeight;
-            contentWrapper.style.height = `${initialHeight}px`;
-        });
+        // Set default visibility based on regionType
+        if (region.regionType === 'major') {
+            loreView.style.display = 'none';
+            gamesView.style.display = 'block';
+            gamesView.classList.add('view-fade-in');
+        } else { // 'minor'
+            gamesView.style.display = 'none';
+            loreView.style.display = 'block';
+            loreView.classList.add('view-fade-in');
+        }
 
         // Add event listeners for view switching
         infoboxEl.querySelectorAll('.map-infobox-toggle-btn').forEach(btn => {
