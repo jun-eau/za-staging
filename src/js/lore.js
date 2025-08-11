@@ -544,14 +544,6 @@ export function initLorePage() {
             return;
         }
 
-        // Listen for the end of the fade-out transition to hide the box completely
-        infoboxEl.addEventListener('transitionend', () => {
-            // If the active class is not present, the box has just finished fading out
-            if (!infoboxEl.classList.contains('active')) {
-                infoboxEl.style.display = 'none';
-            }
-        });
-
         mapContainer.classList.add('is-loading');
 
         function hexToRgba(hex, alpha = 1) {
@@ -624,7 +616,13 @@ export function initLorePage() {
         if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
             infoboxEl.classList.remove('active');
             infoboxEl.dataset.regionId = '';
-            // The 'transitionend' event listener will now handle setting display to 'none'.
+            // The fade-out transition is 0.2s (200ms). We'll wait a bit longer.
+            setTimeout(() => {
+                // Check if it's still inactive before hiding, in case the user clicked again quickly
+                if (!infoboxEl.classList.contains('active')) {
+                    infoboxEl.style.display = 'none';
+                }
+            }, 250);
             return;
         }
         
