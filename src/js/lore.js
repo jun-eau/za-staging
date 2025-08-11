@@ -537,9 +537,11 @@ export function initLorePage() {
         const svgNS = "http://www.w3.org/2000/svg";
         const mapContainer = document.querySelector('.map-container');
         const mapOverlay = document.getElementById('map-overlay');
-        const infoboxEl = document.getElementById('map-infobox');
+        const infobox1 = document.getElementById('map-infobox-1');
+        const infobox2 = document.getElementById('map-infobox-2');
+        let currentInfobox = infobox1;
 
-        if (!mapContainer || !mapOverlay || !infoboxEl) {
+        if (!mapContainer || !mapOverlay || !infobox1 || !infobox2) {
             console.error("Required map elements not found!");
             return;
         }
@@ -609,49 +611,40 @@ export function initLorePage() {
      * @param {number} clickY The clientY of the click event.
      */
     function handleMapClick(clickedRegionId, clickX, clickY) {
-        const infoboxEl = document.getElementById('map-infobox');
-        const currentRegionId = infoboxEl.dataset.regionId;
-        const isInfoboxActive = infoboxEl.classList.contains('active');
+        const outgoingBox = currentInfobox;
+        const isInfoboxActive = outgoingBox.classList.contains('active');
+        const currentRegionId = outgoingBox.dataset.regionId;
 
-        // Case 1: Clicked outside a region, or on the currently active region.
-        // This closes the infobox.
+        // Case 1: Close the active infobox if clicking outside or on the same region
         if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
-            infoboxEl.classList.remove('active');
-            infoboxEl.dataset.regionId = '';
-            // The fade-out transition is 0.2s (200ms). We'll wait a bit longer to set display:none.
-            setTimeout(() => {
-                if (!infoboxEl.classList.contains('active')) {
-                    infoboxEl.style.display = 'none';
-                }
-            }, 250);
+            if (isInfoboxActive) {
+                outgoingBox.classList.remove('active');
+                outgoingBox.dataset.regionId = '';
+            }
             return;
         }
 
-        // Find the data for the newly clicked region.
         const region = mapRegionsData.find(r => r.id === clickedRegionId);
         if (!region) return;
 
-        // This function contains the logic to update and show the infobox.
-        const showNewInfobox = () => {
-            // First, ensure the infobox is part of the layout so we can calculate its size.
-            // It will be invisible due to opacity: 0 if it was previously hidden.
-            infoboxEl.style.display = 'block';
-            updateInfoboxContents(region, infoboxEl);
-            positionAndShowInfobox(region, infoboxEl, clickX, clickY);
-        };
+        // Determine which box will be the new one
+        const incomingBox = (outgoingBox.id === 'map-infobox-1') ? infobox2 : infobox1;
 
-        // Case 2: Clicked a new region while another infobox is already active.
-        // We need to fade out the old one first.
-        if (isInfoboxActive) {
-            infoboxEl.classList.remove('active');
-            // Wait for the fade-out transition (200ms) to complete before showing the new one.
-            // A timeout slightly longer than the CSS transition is a reliable way to do this.
-            setTimeout(showNewInfobox, 250);
-        } else {
-            // Case 3: Clicked a new region and no infobox is active.
-            // Just show the new one directly.
-            showNewInfobox();
-        }
+        // Make sure the incoming box is ready to be displayed (it might be display:none from a previous close)
+        incomingBox.style.display = 'block';
+
+        // Populate the incoming box with new content
+        updateInfoboxContents(region, incomingBox);
+
+        // Prepare the incoming box (size and position it), and once it's ready, trigger the animation
+        prepareAndPositionInfobox(region, incomingBox, clickX, clickY).then(() => {
+            // Now, trigger the cross-fade
+            outgoingBox.classList.remove('active');
+            incomingBox.classList.add('active');
+
+            // Update the state to track the new active box
+            currentInfobox = incomingBox;
+        });
     }
 
     /**
@@ -728,13 +721,14 @@ export function initLorePage() {
     }
 
     /**
-     * Sizes, positions, and displays the infobox.
+     * Sizes, positions, and prepares the infobox, returning a promise that resolves when ready.
      * @param {object} region The region data object.
      * @param {HTMLElement} infoboxEl The main infobox element.
      * @param {number} clickX The clientX of the click event.
      * @param {number} clickY The clientY of the click event.
+     * @returns {Promise} A promise that resolves when the infobox is sized and positioned.
      */
-    function positionAndShowInfobox(region, infoboxEl, clickX, clickY) {
+    function prepareAndPositionInfobox(region, infoboxEl, clickX, clickY) {
         const bodyEl = infoboxEl.querySelector('.infobox-body');
         const gamesViewEl = infoboxEl.querySelector('.infobox-games-view');
         const loreViewEl = infoboxEl.querySelector('.infobox-lore-view');
@@ -753,8 +747,6 @@ export function initLorePage() {
         infoboxEl.classList.toggle('show-lore-view', showLoreInitially);
 
         // --- Image and Font Loading Fix ---
-        // Wait until fonts AND images are loaded before calculating height and positioning.
-        // This prevents the box from having the wrong initial size.
         const images = gamesViewEl.querySelectorAll('img');
         const imageLoadPromises = [...images].map(img => {
             if (img.complete) return Promise.resolve();
@@ -764,7 +756,7 @@ export function initLorePage() {
             });
         });
 
-        Promise.all([document.fonts.ready, ...imageLoadPromises]).then(() => {
+        return Promise.all([document.fonts.ready, ...imageLoadPromises]).then(() => {
             const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
             bodyEl.style.height = `${initialView.scrollHeight}px`;
 
@@ -778,9 +770,8 @@ export function initLorePage() {
             infoboxEl.style.left = `${Math.max(5, left)}px`;
             infoboxEl.style.top = `${Math.max(5, top)}px`;
 
-            // Set dataset and show
+            // Set dataset for identification
             infoboxEl.dataset.regionId = region.id;
-            infoboxEl.classList.add('active');
         });
     }
 }
