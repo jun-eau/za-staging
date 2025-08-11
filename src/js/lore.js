@@ -550,7 +550,7 @@ export function initLorePage() {
                     <div class="map-infobox-games-grid">${gamesGridHtml}</div>
                 </div>
                 <div class="map-infobox-footer">
-                    <button class="map-infobox-toggle-btn" data-target-view="lore">[+] View Lore Details</button>
+                    <button class="map-infobox-toggle-btn" data-target-view="lore">View Lore Details</button>
                 </div>
             </div>
         `;
@@ -563,16 +563,25 @@ export function initLorePage() {
      */
     function renderLoreView(region) {
         const featuredInGames = mapGamesData.filter(game => (region.featuredIn || []).includes(game.id));
-        const featuredInHtml = featuredInGames.length > 0
-            ? `<ul>${featuredInGames.map(game => `<li>${game.englishTitle}</li>`).join('')}</ul>`
-            : '<p>Not prominently featured in other games.</p>';
+        let featuredInHtml = '';
+
+        if (featuredInGames.length > 0) {
+            const featuredInTitle = region.regionType === 'major' ? "Also Featured In" : "Featured In";
+            const featuredInList = `<ul>${featuredInGames.map(game => `<li>${game.englishTitle}</li>`).join('')}</ul>`;
+            featuredInHtml = `
+                <div class="map-infobox-lore-section">
+                    <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">${featuredInTitle}</h4>
+                    ${featuredInList}
+                </div>
+            `;
+        }
 
         let footerHtml = '';
         // Only show the "back to game art" button for major regions, as they have a game view.
         if (region.regionType === 'major') {
             footerHtml = `
                 <div class="map-infobox-footer">
-                    <button class="map-infobox-toggle-btn" data-target-view="games">[←] Show Game Art</button>
+                    <button class="map-infobox-toggle-btn" data-target-view="games">Show Game Art</button>
                 </div>
             `;
         }
@@ -581,17 +590,14 @@ export function initLorePage() {
             <div class="map-infobox-lore-view">
                 <div class="map-infobox-content">
                     <div class="map-infobox-lore-section">
-                        <h4>Description</h4>
+                        <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Description</h4>
                         <p>${region.description}</p>
                     </div>
                     <div class="map-infobox-lore-section">
-                        <h4>History</h4>
+                        <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">History</h4>
                         <p>${region.history}</p>
                     </div>
-                    <div class="map-infobox-lore-section">
-                        <h4>Featured In</h4>
-                        ${featuredInHtml}
-                    </div>
+                    ${featuredInHtml}
                 </div>
                 ${footerHtml}
             </div>
@@ -636,6 +642,22 @@ export function initLorePage() {
     function createInfobox(regionId, clickX, clickY) {
         const region = mapRegionsData.find(r => r.id === regionId);
         if (!region) return;
+
+        // Reset width from any previous infobox
+        infoboxEl.style.width = '';
+
+        // Dynamically set width for the games view if applicable
+        if (region.regionType === 'major' && region.games && region.games.length > 0) {
+            const gameArtWidth = 80; // as per .map-infobox-games-grid styles
+            const gap = 8;
+            const contentPadding = 2 * 12; // .map-infobox-content has 12px padding
+
+            const gamesCount = region.games.length;
+            const gridWidth = (gamesCount * gameArtWidth) + ((gamesCount - 1) * gap);
+            const totalWidth = gridWidth + contentPadding;
+
+            infoboxEl.style.width = `${totalWidth}px`;
+        }
 
         infoboxEl.innerHTML = `
             <div class="map-infobox-header">

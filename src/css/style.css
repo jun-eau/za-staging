@@ -570,7 +570,8 @@ body.home-page::before {
 /* --- Map Infobox --- */
 .map-infobox {
     position: absolute;
-    width: 320px;
+    min-width: 320px;
+    max-width: 90vw;
     background-color: #1c1c1c;
     border: 1px solid #555;
     border-radius: 6px;
@@ -637,7 +638,8 @@ body.home-page::before {
 
 .map-infobox-games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(80px, 1fr);
     gap: 8px;
     margin-top: 10px;
 }
@@ -654,7 +656,7 @@ body.home-page::before {
 .map-infobox-lore-section h4 {
     margin: 0 0 5px 0;
     font-size: 0.9em;
-    color: #b5c994; /* Calvardian Green, for a touch of style */
+    /* color is now set dynamically via inline style */
     border-bottom: 1px solid #444;
     padding-bottom: 3px;
 }
