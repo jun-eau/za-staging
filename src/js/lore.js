@@ -1,5 +1,6 @@
 export function initLorePage() {
     let isMapInitialized = false;
+    let infobox1, infobox2, currentInfobox; // Variables for the two infobox elements and state tracking
 
     // --- Tabbed Interface Logic ---
     const tabsContainer = document.querySelector('.lore-tabs');
@@ -527,7 +528,6 @@ export function initLorePage() {
     // --- Map Logic & Data ---
     let mapRegionsData = [];
     let mapGamesData = [];
-    let infobox1, infobox2, currentInfobox; // Variables for the two infobox elements and state tracking
 
     let dataReadyPromise = null;
 
