@@ -611,25 +611,50 @@ export function initLorePage() {
         const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
         const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
 
-        const isGamesViewVisible = gamesView.style.display !== 'none';
+        // Check which view is currently visible by checking for the 'view-fade-in' class.
+        const isGamesViewVisible = gamesView.classList.contains('view-fade-in');
 
         const viewToHide = isGamesViewVisible ? gamesView : loreView;
         const viewToShow = isGamesViewVisible ? loreView : gamesView;
+        
+        // --- Height Transition ---
+        // 1. Set a fixed height on the wrapper to prevent collapse during absolute positioning.
+        contentWrapper.style.height = `${contentWrapper.clientHeight}px`;
 
-        viewToHide.classList.add('view-fade-out');
+        // 2. Make the view-to-show visible but static so we can measure its natural height.
+        viewToShow.style.position = 'static';
+        viewToShow.style.display = 'block';
+        const targetHeight = contentWrapper.scrollHeight; // Get height of wrapper with new content
+        
+        // 3. Set the wrapper to transition to the new height.
+        requestAnimationFrame(() => {
+            contentWrapper.style.transition = 'height 0.25s ease-in-out';
+            contentWrapper.style.height = `${targetHeight}px`;
+        });
+
+        // --- View Animation ---
+        // Position both views absolutely to stack them for the cross-fade.
+        viewToHide.style.position = 'absolute';
+        viewToShow.style.position = 'absolute';
+        
+        // Start the animations
         viewToHide.classList.remove('view-fade-in');
+        viewToHide.classList.add('view-fade-out');
+        
+        viewToShow.classList.remove('view-fade-out');
+        viewToShow.classList.add('view-fade-in');
 
-        viewToHide.addEventListener('transitionend', function handler() {
-            viewToHide.style.display = 'none';
+        // --- Cleanup ---
+        // After the transition, reset the styles.
+        setTimeout(() => {
+            viewToHide.style.display = 'none'; // Hide the old view
             viewToHide.classList.remove('view-fade-out');
 
-            viewToShow.style.display = 'block';
-            // Delay ensures the 'display' property is set before the opacity transition starts
-            setTimeout(() => {
-                viewToShow.classList.add('view-fade-in');
-                viewToShow.classList.remove('view-fade-out');
-            }, 10);
-        }, { once: true });
+            // Reset styles to allow content to flow naturally
+            contentWrapper.style.transition = '';
+            contentWrapper.style.height = 'auto';
+            viewToShow.style.position = 'static';
+        }, 250); // Must match the CSS transition duration
     }
 
     /**
@@ -686,11 +711,12 @@ export function initLorePage() {
         if (region.regionType === 'major') {
             loreView.style.display = 'none';
             gamesView.style.display = 'block';
-            gamesView.classList.add('view-fade-in');
+            // Use a timeout to ensure the element is in the DOM before animation starts
+            setTimeout(() => gamesView.classList.add('view-fade-in'), 10);
         } else { // 'minor'
             gamesView.style.display = 'none';
             loreView.style.display = 'block';
-            loreView.classList.add('view-fade-in');
+            setTimeout(() => loreView.classList.add('view-fade-in'), 10);
         }
 
         // Add event listeners for view switching
