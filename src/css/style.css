@@ -572,10 +572,12 @@ body.home-page::before {
     position: absolute;
     min-width: 320px;
     max-width: 90vw;
-    background-color: #1c1c1c;
-    border: 1px solid #555;
-    border-radius: 6px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    background-color: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     color: #f0f0f0;
     font-family: 'Inter', sans-serif;
     z-index: 1000;
