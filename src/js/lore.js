@@ -782,6 +782,7 @@ export function initLorePage() {
         .then(([regions, games]) => {
             mapRegionsData = regions;
             mapGamesData = games;
+            let currentOpenRegionId = null; // Track the currently open region
 
             const maskGroup = mapOverlay.querySelector('#regions-mask g');
             if (!maskGroup) {
@@ -814,12 +815,21 @@ export function initLorePage() {
                 const clickedPath = e.target.closest('.region-path');
 
                 if (clickedPath) {
-                    // A region was clicked, show its infobox
                     const regionId = clickedPath.dataset.regionId;
-                    createInfobox(regionId, e.clientX, e.clientY);
+
+                    // If the clicked region is the one that's already open and the infobox is visible, close it.
+                    if (regionId === currentOpenRegionId && infoboxEl.style.display === 'block') {
+                        infoboxEl.style.display = 'none';
+                        currentOpenRegionId = null;
+                    } else {
+                        // Otherwise, create the infobox for the new region.
+                        createInfobox(regionId, e.clientX, e.clientY);
+                        currentOpenRegionId = regionId;
+                    }
                 } else {
-                    // The map background was clicked, hide the infobox
+                    // The map background was clicked, hide the infobox and reset state.
                     infoboxEl.style.display = 'none';
+                    currentOpenRegionId = null;
                 }
             });
 
