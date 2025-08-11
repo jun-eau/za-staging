@@ -568,7 +568,7 @@ body.home-page::before {
 }
 
 /* --- Map Infobox --- */
-.map-infobox {
+#map-infobox {
     position: absolute;
     min-width: 320px;
     max-width: 90vw;
@@ -579,22 +579,20 @@ body.home-page::before {
     color: #f0f0f0;
     font-family: 'Inter', sans-serif;
     z-index: 1000;
-    overflow: hidden; /* Ensures content respects border-radius */
+    overflow: hidden;
 
     /* Animation Properties */
-    visibility: hidden;
     opacity: 0;
     transform: scale(0.95);
     transform-origin: top left;
     transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, visibility 0s 0.2s;
 }
 
-/* Use a more specific selector to ensure the transition override works */
-body #map-view .map-infobox.active {
-    visibility: visible;
+#map-infobox.active {
+    visibility: visible !important; /* Use important to override inline style */
     opacity: 1;
     transform: scale(1);
-    transition-delay: 0s; /* Override the closing delay for a snappy opening */
+    transition-delay: 0s;
 }
 
 .map-infobox-header {
@@ -631,33 +629,38 @@ body #map-view .map-infobox.active {
     color: #b0b0b0;
 }
 
-.map-infobox-content-wrapper {
+.infobox-body {
     position: relative;
     transition: height 0.25s ease-in-out;
 }
 
-.map-infobox-content {
-    padding: 12px;
-}
-
-/* View-specific containers */
-.map-infobox-games-view, .map-infobox-lore-view {
-    width: 100%;
-    position: relative;
+.infobox-games-view, .infobox-lore-view {
+    position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
     box-sizing: border-box;
-    opacity: 0; /* Start transparent */
+    padding: 12px;
+    transition: opacity 0.2s ease-in-out;
 }
 
-/* Animation classes */
-.view-fade-out {
-    opacity: 0;
-    transition: opacity 0.15s ease-in-out;
-}
-.view-fade-in {
+/* Default State: Show Games View */
+.infobox-games-view {
     opacity: 1;
-    transition: opacity 0.15s ease-in-out;
+}
+.infobox-lore-view {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* State Modifier: Show Lore View */
+#map-infobox.show-lore-view .infobox-games-view {
+    opacity: 0;
+    visibility: hidden;
+}
+#map-infobox.show-lore-view .infobox-lore-view {
+    opacity: 1;
+    visibility: visible;
 }
 
 .map-infobox-games-grid {
