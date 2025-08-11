@@ -711,14 +711,22 @@ export function initLorePage() {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // The element is in the DOM, styled with opacity:0. Its dimensions can be measured.
+        // Set initial position and display to measure
+        infoboxEl.style.left = `${clickX}px`;
+        infoboxEl.style.top = `${clickY}px`;
+        infoboxEl.style.visibility = 'hidden';
+        infoboxEl.style.display = 'block';
+
         const rect = infoboxEl.getBoundingClientRect();
+
+        // Hide it again before final positioning
+        infoboxEl.style.display = 'none';
+        infoboxEl.style.visibility = 'visible';
 
         // Determine final position
         let top = clickY + offsetY;
         let left = clickX + offsetX;
 
-        // Adjust if the infobox would go off-screen
         if (left + rect.width > viewportWidth) {
             left = clickX - rect.width - offsetX;
         }
@@ -726,16 +734,12 @@ export function initLorePage() {
             top = clickY - rect.height - offsetY;
         }
 
-        // Apply final position
+        // Final position assignment
         infoboxEl.style.left = `${Math.max(5, left)}px`;
         infoboxEl.style.top = `${Math.max(5, top)}px`;
 
-        // Add 'visible' class to trigger the fade-in and scale-up animation.
-        // Using requestAnimationFrame ensures the style updates (left, top) are painted
-        // before the transition-triggering class is added, preventing animation glitches.
-        requestAnimationFrame(() => {
-            infoboxEl.classList.add('visible');
-        });
+        // Make it visible
+        infoboxEl.style.display = 'block';
     }
 
     function initializeMap() {
@@ -810,25 +814,21 @@ export function initLorePage() {
             mapOverlay.addEventListener('click', (e) => {
                 const clickedPath = e.target.closest('.region-path');
 
-                // Always close any currently visible infobox when a click occurs.
-                if (infoboxEl.classList.contains('visible')) {
-                    infoboxEl.classList.remove('visible');
-                }
-
                 if (clickedPath) {
                     const regionId = clickedPath.dataset.regionId;
 
-                    // If the click is on a new region, open its infobox.
-                    // The closing of the old one is handled above.
-                    if (regionId !== currentOpenRegionId) {
+                    // If the clicked region is the one that's already open and the infobox is visible, close it.
+                    if (regionId === currentOpenRegionId && infoboxEl.style.display === 'block') {
+                        infoboxEl.style.display = 'none';
+                        currentOpenRegionId = null;
+                    } else {
+                        // Otherwise, create the infobox for the new region.
                         createInfobox(regionId, e.clientX, e.clientY);
                         currentOpenRegionId = regionId;
-                    } else {
-                        // If the same region is clicked, the box is now closed (from above), so just reset the state.
-                        currentOpenRegionId = null;
                     }
                 } else {
-                    // If the background is clicked, the box is already closing (from above), so just reset state.
+                    // The map background was clicked, hide the infobox and reset state.
+                    infoboxEl.style.display = 'none';
                     currentOpenRegionId = null;
                 }
             });

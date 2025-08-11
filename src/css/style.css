@@ -578,18 +578,9 @@ body.home-page::before {
     box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     color: #f0f0f0;
     font-family: 'Inter', sans-serif;
-    z-index: 1001; /* Higher than header z-index */
+    display: none; /* Initially hidden */
+    z-index: 1000;
     overflow: hidden; /* Ensures content respects border-radius */
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-    pointer-events: none;
-}
-
-.map-infobox.visible {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: auto;
 }
 
 .map-infobox-header {
