@@ -719,13 +719,12 @@ export function initLorePage() {
         // To measure the box, we make it visible but transparent and disable transitions
         infoboxEl.style.transition = 'none';
         infoboxEl.classList.add('visible');
-        infoboxEl.offsetHeight; // Force a reflow so the browser calculates the layout with the new content
 
         const rect = infoboxEl.getBoundingClientRect();
 
         // Immediately hide it again and restore transitions before setting position
         infoboxEl.classList.remove('visible');
-        infoboxEl.offsetHeight; // Force another reflow to process the class removal
+        infoboxEl.offsetHeight; // Force a reflow to ensure the class removal is processed
         infoboxEl.style.transition = '';
 
         // Determine final position
