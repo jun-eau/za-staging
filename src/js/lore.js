@@ -613,29 +613,45 @@ export function initLorePage() {
         const currentRegionId = infoboxEl.dataset.regionId;
         const isInfoboxActive = infoboxEl.classList.contains('active');
 
+        // Case 1: Clicked outside a region, or on the currently active region.
+        // This closes the infobox.
         if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
             infoboxEl.classList.remove('active');
             infoboxEl.dataset.regionId = '';
-            // The fade-out transition is 0.2s (200ms). We'll wait a bit longer.
+            // The fade-out transition is 0.2s (200ms). We'll wait a bit longer to set display:none.
             setTimeout(() => {
-                // Check if it's still inactive before hiding, in case the user clicked again quickly
                 if (!infoboxEl.classList.contains('active')) {
                     infoboxEl.style.display = 'none';
                 }
             }, 250);
             return;
         }
-        
+
+        // Find the data for the newly clicked region.
         const region = mapRegionsData.find(r => r.id === clickedRegionId);
         if (!region) return;
 
-        // First, ensure the infobox is part of the layout so we can calculate its size.
-        // It will be invisible due to opacity: 0.
-        infoboxEl.style.display = 'block';
+        // This function contains the logic to update and show the infobox.
+        const showNewInfobox = () => {
+            // First, ensure the infobox is part of the layout so we can calculate its size.
+            // It will be invisible due to opacity: 0 if it was previously hidden.
+            infoboxEl.style.display = 'block';
+            updateInfoboxContents(region, infoboxEl);
+            positionAndShowInfobox(region, infoboxEl, clickX, clickY);
+        };
 
-        updateInfoboxContents(region, infoboxEl);
-
-        positionAndShowInfobox(region, infoboxEl, clickX, clickY);
+        // Case 2: Clicked a new region while another infobox is already active.
+        // We need to fade out the old one first.
+        if (isInfoboxActive) {
+            infoboxEl.classList.remove('active');
+            // Wait for the fade-out transition (200ms) to complete before showing the new one.
+            // A timeout slightly longer than the CSS transition is a reliable way to do this.
+            setTimeout(showNewInfobox, 250);
+        } else {
+            // Case 3: Clicked a new region and no infobox is active.
+            // Just show the new one directly.
+            showNewInfobox();
+        }
     }
 
     /**
