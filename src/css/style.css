@@ -566,6 +566,145 @@ body.home-page::before {
     width: 100%;
     height: auto;
 }
+
+/* --- Map Infobox --- */
+.map-infobox {
+    position: absolute;
+    width: 320px;
+    background-color: #1c1c1c;
+    border: 1px solid #555;
+    border-radius: 6px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    color: #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    display: none; /* Initially hidden */
+    z-index: 1000;
+    overflow: hidden; /* Ensures content respects border-radius */
+}
+
+.map-infobox-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 80px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #252525;
+    border-bottom: 1px solid #444;
+}
+
+.map-infobox-emblem {
+    width: 40px;
+    height: 40px;
+}
+
+.map-infobox-title-section h3 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #e8eced;
+}
+
+.map-infobox-title-section p {
+    margin: 0;
+    font-size: 0.8em;
+    color: #a0a0a0;
+}
+
+.map-infobox-stats {
+    font-size: 0.8em;
+    text-align: right;
+    color: #b0b0b0;
+}
+
+.map-infobox-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 24px;
+    line-height: 24px;
+    cursor: pointer;
+    text-align: center;
+}
+.map-infobox-close:hover {
+    color: #fff;
+}
+
+.map-infobox-content {
+    padding: 12px;
+}
+
+/* View-specific containers */
+.map-infobox-games-view, .map-infobox-lore-view {
+    /* Base styles for views */
+}
+
+/* Animation classes */
+.view-fade-out {
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+}
+.view-fade-in {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.map-infobox-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.map-infobox-game-art {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+
+.map-infobox-lore-section {
+    margin-bottom: 12px;
+}
+.map-infobox-lore-section h4 {
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+    color: #b5c994; /* Calvardian Green, for a touch of style */
+    border-bottom: 1px solid #444;
+    padding-bottom: 3px;
+}
+.map-infobox-lore-section p, .map-infobox-lore-section ul {
+    margin: 0;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #ccc;
+}
+.map-infobox-lore-section ul {
+    padding-left: 20px;
+    list-style-type: square;
+}
+
+.map-infobox-footer {
+    padding: 8px 12px;
+    background-color: #252525;
+    border-top: 1px solid #444;
+    text-align: center;
+}
+
+.map-infobox-toggle-btn {
+    background: none;
+    border: none;
+    color: #8db5e5; /* A nice blue for links */
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+.map-infobox-toggle-btn:hover {
+    text-decoration: underline;
+}
 .game-entry-box {
     position: absolute;
     box-sizing: border-box;
