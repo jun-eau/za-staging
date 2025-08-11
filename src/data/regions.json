@@ -6,6 +6,13 @@
     "capital": "Heimdallr",
     "emblemAsset": "erebonia-emblem.webp",
     "baseColor": "#b09798",
+    "regionType": "major",
+    "description": "The largest nation in western Zemuria, a militaristic and aristocratic country known for its rapid modernization and expansionist policies.",
+    "history": "Established in S.747 under Emperor Dreichels Reise Arnor, unifying the land after the War of the Lions. Its history is marked by class conflict and industrial ambition.",
+    "featuredIn": [
+      "trails-in-the-sky-sc"
+    ],
+    "wikiLink": "https://kiseki.fandom.com/wiki/Erebonia",
     "games": [
       "trails-of-cold-steel",
       "trails-of-cold-steel-ii",
@@ -22,6 +29,11 @@
     "capital": "Grancel",
     "emblemAsset": "liberl-emblem.webp",
     "baseColor": "#e8eced",
+    "regionType": "major",
+    "description": "A small but prosperous kingdom in southwest Zemuria, renowned for its technological innovation via the Zeiss Central Factory and a strong Bracer Guild presence.",
+    "history": "Established in S.1107. Its defining modern event was the Hundred Days War in S. 1192, where it successfully repelled an invasion from the Erebonian Empire.",
+    "featuredIn": [],
+    "wikiLink": "https://kiseki.fandom.com/wiki/Liberl",
     "games": [
       "trails-in-the-sky",
       "trails-in-the-sky-sc",
@@ -36,6 +48,15 @@
     "capital": "Crossbell City",
     "emblemAsset": "crossbell-emblem.webp",
     "baseColor": "#65809e",
+    "regionType": "major",
+    "description": "A crucial buffer state between Erebonia and Calvard, serving as a major international center for trade and finance, leading to constant political conflict.",
+    "history": "Established in S.1134 as an autonomous state under joint suzerainty. Its history is defined by the centuries-long struggle for independence from its powerful neighbors.",
+    "featuredIn": [
+      "trails-of-cold-steel-ii",
+      "trails-of-cold-steel-iii",
+      "trails-of-cold-steel-iv"
+    ],
+    "wikiLink": "https://kiseki.fandom.com/wiki/Crossbell",
     "games": [
       "trails-from-zero",
       "trails-to-azure",
@@ -50,6 +71,13 @@
     "capital": "Edith",
     "emblemAsset": "calvard-emblem.webp",
     "baseColor": "#b5c994",
+    "regionType": "major",
+    "description": "A large, diverse republic in central Zemuria, experiencing rapid economic growth and grappling with the social and political consequences of mass immigration.",
+    "history": "Established in S.1100 following a democratic revolution that overthrew the monarchy. It is now one of the continent's leading economic and political powers.",
+    "featuredIn": [
+      "trails-to-azure"
+    ],
+    "wikiLink": "https://kiseki.fandom.com/wiki/Calvard",
     "games": [
       "trails-through-daybreak",
       "trails-through-daybreak-ii",
