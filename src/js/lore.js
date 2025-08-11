@@ -638,7 +638,6 @@ export function initLorePage() {
         if (!region) return;
 
         infoboxEl.innerHTML = `
-            <button class="map-infobox-close">&times;</button>
             <div class="map-infobox-header">
                 <img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="map-infobox-emblem">
                 <div class="map-infobox-title-section">
@@ -674,11 +673,6 @@ export function initLorePage() {
         // Add event listeners for view switching
         infoboxEl.querySelectorAll('.map-infobox-toggle-btn').forEach(btn => {
             btn.addEventListener('click', () => switchView(contentWrapper));
-        });
-
-        // Add close button functionality
-        infoboxEl.querySelector('.map-infobox-close').addEventListener('click', () => {
-            infoboxEl.style.display = 'none';
         });
 
         positionInfobox(clickX, clickY);
@@ -773,6 +767,7 @@ export function initLorePage() {
                 return;
             }
 
+            // Create region paths and append them
             mapRegionsData.forEach(region => {
                 const path = document.createElementNS(svgNS, 'path');
                 path.setAttribute('d', region.svgPathData);
@@ -784,17 +779,26 @@ export function initLorePage() {
                     const highlightColor = hexToRgba(region.baseColor, 0.7);
                     path.style.setProperty('--region-highlight-color', highlightColor);
                 }
-
-                path.addEventListener('click', (e) => {
-                    createInfobox(region.id, e.clientX, e.clientY);
-                });
-
                 mapOverlay.appendChild(path);
 
                 const maskPath = document.createElementNS(svgNS, 'path');
                 maskPath.setAttribute('d', region.svgPathData);
                 maskPath.setAttribute('fill', 'black');
                 maskGroup.appendChild(maskPath);
+            });
+
+            // Use event delegation for a single click handler on the overlay
+            mapOverlay.addEventListener('click', (e) => {
+                const clickedPath = e.target.closest('.region-path');
+
+                if (clickedPath) {
+                    // A region was clicked, show its infobox
+                    const regionId = clickedPath.dataset.regionId;
+                    createInfobox(regionId, e.clientX, e.clientY);
+                } else {
+                    // The map background was clicked, hide the infobox
+                    infoboxEl.style.display = 'none';
+                }
             });
 
             isMapInitialized = true;
