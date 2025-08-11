@@ -604,32 +604,50 @@ export function initLorePage() {
     }
 
     /**
-     * Handles the fade animation when switching between infobox views.
+     * Handles the fade and height animation when switching between infobox views.
      * @param {HTMLElement} contentWrapper The element containing the two views.
      */
     function switchView(contentWrapper) {
         const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
         const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
-
         const isGamesViewVisible = gamesView.style.display !== 'none';
 
         const viewToHide = isGamesViewVisible ? gamesView : loreView;
         const viewToShow = isGamesViewVisible ? loreView : gamesView;
 
-        viewToHide.classList.add('view-fade-out');
-        viewToHide.classList.remove('view-fade-in');
+        const OPACITY_TRANSITION_DURATION = 150; // ms, from CSS
+        const HEIGHT_TRANSITION_DURATION = 250; // ms, from CSS
 
-        viewToHide.addEventListener('transitionend', function handler() {
-            viewToHide.style.display = 'none';
-            viewToHide.classList.remove('view-fade-out');
+        // --- Prevent user interaction during animation ---
+        const infoboxEl = contentWrapper.closest('.map-infobox');
+        if (infoboxEl) infoboxEl.style.pointerEvents = 'none';
 
-            viewToShow.style.display = 'block';
-            // Delay ensures the 'display' property is set before the opacity transition starts
+        // 1. Fade out the current view
+        viewToHide.style.opacity = '0';
+
+        // 2. After fade-out, collapse the wrapper
+        setTimeout(() => {
+            contentWrapper.style.maxHeight = '0px';
+
+            // 3. After collapse, switch content and expand
             setTimeout(() => {
-                viewToShow.classList.add('view-fade-in');
-                viewToShow.classList.remove('view-fade-out');
-            }, 10);
-        }, { once: true });
+                viewToHide.style.display = 'none';
+                viewToShow.style.display = 'block';
+                viewToShow.style.opacity = '0'; // Ensure it starts transparent
+
+                const newHeight = viewToShow.scrollHeight;
+                contentWrapper.style.maxHeight = `${newHeight}px`;
+
+                // 4. Fade in the new view
+                viewToShow.style.opacity = '1';
+                
+                // 5. Re-enable pointer events after all animations are done
+                setTimeout(() => {
+                    if (infoboxEl) infoboxEl.style.pointerEvents = 'auto';
+                }, HEIGHT_TRANSITION_DURATION);
+
+            }, HEIGHT_TRANSITION_DURATION);
+        }, OPACITY_TRANSITION_DURATION);
     }
 
     /**
@@ -682,16 +700,19 @@ export function initLorePage() {
         const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
         const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
 
-        // Set default visibility based on regionType
-        if (region.regionType === 'major') {
-            loreView.style.display = 'none';
-            gamesView.style.display = 'block';
-            gamesView.classList.add('view-fade-in');
-        } else { // 'minor'
-            gamesView.style.display = 'none';
-            loreView.style.display = 'block';
-            loreView.classList.add('view-fade-in');
-        }
+        // Set default visibility and prepare for animation
+        const initialView = region.regionType === 'major' ? gamesView : loreView;
+        const otherView = region.regionType === 'major' ? loreView : gamesView;
+
+        otherView.style.display = 'none';
+        initialView.style.display = 'block';
+        initialView.style.opacity = '1';
+        otherView.style.opacity = '0';
+
+        // Set the initial height of the wrapper after the browser has had time to render the content.
+        requestAnimationFrame(() => {
+            contentWrapper.style.maxHeight = `${initialView.scrollHeight}px`;
+        });
 
         // Add event listeners for view switching
         infoboxEl.querySelectorAll('.map-infobox-toggle-btn').forEach(btn => {
