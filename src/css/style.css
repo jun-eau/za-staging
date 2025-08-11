@@ -616,24 +616,6 @@ body.home-page::before {
     color: #b0b0b0;
 }
 
-.map-infobox-close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 24px;
-    height: 24px;
-    background: none;
-    border: none;
-    color: #aaa;
-    font-size: 24px;
-    line-height: 24px;
-    cursor: pointer;
-    text-align: center;
-}
-.map-infobox-close:hover {
-    color: #fff;
-}
-
 .map-infobox-content {
     padding: 12px;
 }
