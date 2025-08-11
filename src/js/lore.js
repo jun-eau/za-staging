@@ -527,6 +527,7 @@ export function initLorePage() {
     // --- Map Logic & Data ---
     let mapRegionsData = [];
     let mapGamesData = [];
+    let infobox1, infobox2, currentInfobox; // Variables for the two infobox elements and state tracking
 
     let dataReadyPromise = null;
 
@@ -537,9 +538,10 @@ export function initLorePage() {
         const svgNS = "http://www.w3.org/2000/svg";
         const mapContainer = document.querySelector('.map-container');
         const mapOverlay = document.getElementById('map-overlay');
-        const infobox1 = document.getElementById('map-infobox-1');
-        const infobox2 = document.getElementById('map-infobox-2');
-        let currentInfobox = infobox1;
+        // Assign to the variables declared in the higher scope
+        infobox1 = document.getElementById('map-infobox-1');
+        infobox2 = document.getElementById('map-infobox-2');
+        currentInfobox = infobox1;
 
         if (!mapContainer || !mapOverlay || !infobox1 || !infobox2) {
             console.error("Required map elements not found!");
