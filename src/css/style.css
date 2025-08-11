@@ -635,15 +635,19 @@ body #map-view .map-infobox.active {
     padding: 12px;
 }
 
-.map-infobox-content-wrapper {
-    transition: max-height 0.25s ease-in-out;
-    overflow: hidden;
-}
-
 /* View-specific containers */
 .map-infobox-games-view, .map-infobox-lore-view {
+    /* Base styles for views */
+}
+
+/* Animation classes */
+.view-fade-out {
+    opacity: 0;
     transition: opacity 0.15s ease-in-out;
-    /* Opacity will be controlled by JS */
+}
+.view-fade-in {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .map-infobox-games-grid {
