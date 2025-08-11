@@ -568,7 +568,7 @@ body.home-page::before {
 }
 
 /* --- Map Infobox --- */
-.map-infobox {
+#map-infobox {
     position: absolute;
     min-width: 320px;
     max-width: 90vw;
@@ -578,9 +578,21 @@ body.home-page::before {
     box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     color: #f0f0f0;
     font-family: 'Inter', sans-serif;
-    display: none; /* Initially hidden */
     z-index: 1000;
     overflow: hidden; /* Ensures content respects border-radius */
+
+    /* Default state: invisible and non-interactive */
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+    transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+}
+
+#map-infobox.active {
+    /* Active state: visible and interactive */
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
 }
 
 .map-infobox-header {

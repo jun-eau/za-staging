@@ -711,39 +711,37 @@ export function initLorePage() {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // Set initial position and display to measure
-        infoboxEl.style.left = `${clickX}px`;
-        infoboxEl.style.top = `${clickY}px`;
-        infoboxEl.style.visibility = 'hidden';
-        infoboxEl.style.display = 'block';
-
+        // Since the infobox is always in the DOM (just transparent), we can measure it directly.
         const rect = infoboxEl.getBoundingClientRect();
 
-        // Hide it again before final positioning
-        infoboxEl.style.display = 'none';
-        infoboxEl.style.visibility = 'visible';
-
-        // Determine final position
+        // Determine final position, trying to place it to the bottom-right of the cursor.
         let top = clickY + offsetY;
         let left = clickX + offsetX;
 
+        // Adjust if it overflows the viewport.
         if (left + rect.width > viewportWidth) {
-            left = clickX - rect.width - offsetX;
+            left = clickX - rect.width - offsetX; // Move to the left of the cursor
         }
         if (top + rect.height > viewportHeight) {
-            top = clickY - rect.height - offsetY;
+            top = clickY - rect.height - offsetY; // Move above the cursor
         }
 
-        // Final position assignment
+        // Set the final calculated position.
         infoboxEl.style.left = `${Math.max(5, left)}px`;
         infoboxEl.style.top = `${Math.max(5, top)}px`;
 
-        // Make it visible
-        infoboxEl.style.display = 'block';
+        // Add the .active class to trigger the fade-in and scale-up animation.
+        infoboxEl.classList.add('active');
     }
 
     function initializeMap() {
         if (isMapInitialized) return;
+
+        // Programmatically remove the inline style attribute from the infobox.
+        // This is a critical step to ensure CSS-based transitions can function.
+        if (infoboxEl) {
+            infoboxEl.removeAttribute('style');
+        }
 
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
@@ -817,18 +815,19 @@ export function initLorePage() {
                 if (clickedPath) {
                     const regionId = clickedPath.dataset.regionId;
 
-                    // If the clicked region is the one that's already open and the infobox is visible, close it.
-                    if (regionId === currentOpenRegionId && infoboxEl.style.display === 'block') {
-                        infoboxEl.style.display = 'none';
+                    // If the clicked region is the one that's already open, close it.
+                    if (regionId === currentOpenRegionId && infoboxEl.classList.contains('active')) {
+                        infoboxEl.classList.remove('active');
                         currentOpenRegionId = null;
                     } else {
                         // Otherwise, create the infobox for the new region.
+                        // Note: createInfobox will call positionInfobox, which adds the 'active' class.
                         createInfobox(regionId, e.clientX, e.clientY);
                         currentOpenRegionId = regionId;
                     }
                 } else {
-                    // The map background was clicked, hide the infobox and reset state.
-                    infoboxEl.style.display = 'none';
+                    // The map background was clicked, so hide the infobox.
+                    infoboxEl.classList.remove('active');
                     currentOpenRegionId = null;
                 }
             });
