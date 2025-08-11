@@ -604,11 +604,32 @@ export function initLorePage() {
     }
 
     /**
-     * Toggles the 'lore-view-active' class on the content wrapper to switch between views.
+     * Handles the fade animation when switching between infobox views.
      * @param {HTMLElement} contentWrapper The element containing the two views.
      */
     function switchView(contentWrapper) {
-        contentWrapper.classList.toggle('lore-view-active');
+        const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
+        const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
+
+        const isGamesViewVisible = gamesView.style.display !== 'none';
+
+        const viewToHide = isGamesViewVisible ? gamesView : loreView;
+        const viewToShow = isGamesViewVisible ? loreView : gamesView;
+
+        viewToHide.classList.add('view-fade-out');
+        viewToHide.classList.remove('view-fade-in');
+
+        viewToHide.addEventListener('transitionend', function handler() {
+            viewToHide.style.display = 'none';
+            viewToHide.classList.remove('view-fade-out');
+
+            viewToShow.style.display = 'block';
+            // Delay ensures the 'display' property is set before the opacity transition starts
+            setTimeout(() => {
+                viewToShow.classList.add('view-fade-in');
+                viewToShow.classList.remove('view-fade-out');
+            }, 10);
+        }, { once: true });
     }
 
     /**
@@ -658,10 +679,18 @@ export function initLorePage() {
         // Render and append both views
         contentWrapper.innerHTML = renderGamesView(region) + renderLoreView(region);
 
-        // Set default view state. 'major' regions default to games view (no class),
-        // 'minor' regions default to lore view.
-        if (region.regionType === 'minor') {
-            contentWrapper.classList.add('lore-view-active');
+        const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
+        const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
+
+        // Set default visibility based on regionType
+        if (region.regionType === 'major') {
+            loreView.style.display = 'none';
+            gamesView.style.display = 'block';
+            gamesView.classList.add('view-fade-in');
+        } else { // 'minor'
+            gamesView.style.display = 'none';
+            loreView.style.display = 'block';
+            loreView.classList.add('view-fade-in');
         }
 
         // Add event listeners for view switching

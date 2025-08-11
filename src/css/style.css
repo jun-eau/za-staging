@@ -631,50 +631,23 @@ body #map-view .map-infobox.active {
     color: #b0b0b0;
 }
 
-.map-infobox-content-wrapper {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    perspective: 800px;
-}
-
 .map-infobox-content {
     padding: 12px;
 }
 
-/* --- View Switching Animation --- */
-.map-infobox-games-view,
-.map-infobox-lore-view {
-    grid-area: 1 / 1;
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    backface-visibility: hidden; /* Prevents flickering during transform */
+/* View-specific containers */
+.map-infobox-games-view, .map-infobox-lore-view {
+    /* Base styles for views */
 }
 
-/* Default state: Games view is visible */
-.map-infobox-lore-view {
+/* Animation classes */
+.view-fade-out {
     opacity: 0;
-    transform: rotateX(-20deg) scale(0.95);
-    pointer-events: none;
+    transition: opacity 0.15s ease-in-out;
 }
-
-.map-infobox-games-view {
+.view-fade-in {
     opacity: 1;
-    transform: rotateX(0deg) scale(1);
-    pointer-events: auto;
-}
-
-/* Active state ('lore-view-active' on wrapper): Lore view is visible */
-.map-infobox-content-wrapper.lore-view-active .map-infobox-games-view {
-    opacity: 0;
-    transform: rotateX(20deg) scale(0.95);
-    pointer-events: none;
-}
-
-.map-infobox-content-wrapper.lore-view-active .map-infobox-lore-view {
-    opacity: 1;
-    transform: rotateX(0deg) scale(1);
-    pointer-events: auto;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .map-infobox-games-grid {
