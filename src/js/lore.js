@@ -818,20 +818,22 @@ export function initLorePage() {
                 // Always start by closing the infobox if it's already active.
                 if (wasActive) {
                     infoboxEl.classList.remove('active');
-                    currentOpenRegionId = null; // Immediately mark as closing.
                 }
 
                 if (clickedPath) {
                     const regionId = clickedPath.dataset.regionId;
-                    // Open a new infobox only if the clicked region is different from the one that was just closing.
+                    // Open a new infobox if the clicked region is different from the one that was just closing.
+                    // Clicking the same region twice will result in it closing (from the check above) and not re-opening.
                     if (regionId !== previouslyOpenRegionId) {
-                        // Wait for the closing animation to finish before opening the new one.
-                        const openDelay = wasActive ? 200 : 0;
-                        setTimeout(() => {
-                            createInfobox(regionId, e.clientX, e.clientY);
-                            currentOpenRegionId = regionId;
-                        }, openDelay);
+                        createInfobox(regionId, e.clientX, e.clientY);
+                        currentOpenRegionId = regionId;
+                    } else {
+                        // The region that was just closed was clicked again. Reset the tracking ID.
+                        currentOpenRegionId = null;
                     }
+                } else {
+                    // Clicked the map background, so ensure any tracking ID is cleared.
+                    currentOpenRegionId = null;
                 }
             });
 
