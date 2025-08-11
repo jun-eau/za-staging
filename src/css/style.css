@@ -568,7 +568,7 @@ body.home-page::before {
 }
 
 /* --- Map Infobox --- */
-#map-infobox {
+.map-infobox {
     position: absolute;
     min-width: 320px;
     max-width: 90vw;
@@ -588,12 +588,15 @@ body.home-page::before {
     transform: scale(0.95);
     transform-origin: top left;
     transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    /* By default, infoboxes are not clickable until active */
+    pointer-events: none;
 }
 
-#map-infobox.active {
+.map-infobox.active {
     opacity: 1;
     transform: scale(1);
     transition-delay: 0s; /* Explicitly reset delay for the active state */
+    pointer-events: auto; /* Make the active infobox clickable */
 }
 
 .map-infobox-header {
@@ -655,11 +658,11 @@ body.home-page::before {
 }
 
 /* State Modifier: Show Lore View */
-#map-infobox.show-lore-view .infobox-games-view {
+.map-infobox.show-lore-view .infobox-games-view {
     opacity: 0;
     visibility: hidden;
 }
-#map-infobox.show-lore-view .infobox-lore-view {
+.map-infobox.show-lore-view .infobox-lore-view {
     opacity: 1;
     visibility: visible;
 }
