@@ -631,13 +631,23 @@ body #map-view .map-infobox.active {
     color: #b0b0b0;
 }
 
+.map-infobox-content-wrapper {
+    position: relative;
+    transition: height 0.25s ease-in-out;
+}
+
 .map-infobox-content {
     padding: 12px;
 }
 
 /* View-specific containers */
 .map-infobox-games-view, .map-infobox-lore-view {
-    /* Base styles for views */
+    width: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    opacity: 0; /* Start transparent */
 }
 
 /* Animation classes */

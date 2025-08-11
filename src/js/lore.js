@@ -604,31 +604,49 @@ export function initLorePage() {
     }
 
     /**
-     * Handles the fade animation when switching between infobox views.
+     * Handles the animated transition between infobox views.
      * @param {HTMLElement} contentWrapper The element containing the two views.
      */
     function switchView(contentWrapper) {
         const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
         const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
 
-        const isGamesViewVisible = gamesView.style.display !== 'none';
-
+        // Determine which view is currently visible and which is hidden.
+        const isGamesViewVisible = gamesView.style.position !== 'absolute';
         const viewToHide = isGamesViewVisible ? gamesView : loreView;
         const viewToShow = isGamesViewVisible ? loreView : gamesView;
 
+        // 1. Prepare the view-to-show to measure its height.
+        // It's moved off-screen, made visible, but kept transparent.
+        viewToShow.style.visibility = 'hidden';
+        viewToShow.style.display = 'block'; // Make it part of the layout
+        const targetHeight = viewToShow.scrollHeight;
+        viewToShow.style.display = ''; // Revert display
+        viewToShow.style.visibility = ''; // Revert visibility
+
+        // 2. Set the content wrapper's height to the new target height.
+        // The CSS transition on the wrapper will handle the smooth height change.
+        contentWrapper.style.height = `${targetHeight}px`;
+
+        // 3. Simultaneously fade out the old view.
         viewToHide.classList.add('view-fade-out');
         viewToHide.classList.remove('view-fade-in');
 
-        viewToHide.addEventListener('transitionend', function handler() {
-            viewToHide.style.display = 'none';
+        // 4. After the fade-out is complete, switch the views' positions.
+        viewToHide.addEventListener('transitionend', function onFadeOut() {
+            viewToHide.style.display = 'none'; // Hide it completely
+            viewToHide.style.position = 'absolute'; // Take it out of layout flow
             viewToHide.classList.remove('view-fade-out');
 
             viewToShow.style.display = 'block';
-            // Delay ensures the 'display' property is set before the opacity transition starts
-            setTimeout(() => {
+            viewToShow.style.position = 'relative'; // Put it back in layout flow
+            
+            // 5. Fade in the new view.
+            // A small delay ensures the browser has processed the display change.
+            requestAnimationFrame(() => {
                 viewToShow.classList.add('view-fade-in');
                 viewToShow.classList.remove('view-fade-out');
-            }, 10);
+            });
         }, { once: true });
     }
 
@@ -682,16 +700,26 @@ export function initLorePage() {
         const gamesView = contentWrapper.querySelector('.map-infobox-games-view');
         const loreView = contentWrapper.querySelector('.map-infobox-lore-view');
 
-        // Set default visibility based on regionType
-        if (region.regionType === 'major') {
-            loreView.style.display = 'none';
-            gamesView.style.display = 'block';
-            gamesView.classList.add('view-fade-in');
-        } else { // 'minor'
-            gamesView.style.display = 'none';
-            loreView.style.display = 'block';
-            loreView.classList.add('view-fade-in');
-        }
+        // Set initial view state and calculate initial height
+        const isMajorRegion = region.regionType === 'major';
+        const initialView = isMajorRegion ? gamesView : loreView;
+        const hiddenView = isMajorRegion ? loreView : gamesView;
+
+        // Position the hidden view absolutely so it doesn't affect layout
+        hiddenView.style.display = 'none';
+        hiddenView.style.position = 'absolute';
+
+        // Make the initial view visible so we can measure it
+        initialView.style.display = 'block';
+        initialView.style.position = 'relative';
+        
+        // Set the wrapper to the initial view's height
+        contentWrapper.style.height = `${initialView.scrollHeight}px`;
+
+        // Fade in the initial view
+        requestAnimationFrame(() => {
+            initialView.classList.add('view-fade-in');
+        });
 
         // Add event listeners for view switching
         infoboxEl.querySelectorAll('.map-infobox-toggle-btn').forEach(btn => {
