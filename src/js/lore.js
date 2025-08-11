@@ -529,29 +529,13 @@ export function initLorePage() {
 
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
-        const infobox = document.getElementById('map-infobox');
-        const infoboxCard = infobox.querySelector('.infobox-card');
 
-        // Infobox Front Side
-        const infoboxHeaderFront = infobox.querySelector('.infobox-front .infobox-header');
-        const infoboxGames = infobox.querySelector('.infobox-games');
-
-        // Infobox Back Side
-        const infoboxHeaderBack = infobox.querySelector('.infobox-back .infobox-header');
-        const infoboxLore = infobox.querySelector('.infobox-lore');
-
-        // Controls
-        const closeButtons = infobox.querySelectorAll('.close-btn');
-        const flipButtons = infobox.querySelectorAll('.flip-btn');
-
-        if (!mapOverlay || !infobox || !infoboxCard || !infoboxHeaderFront || !infoboxGames || !infoboxHeaderBack || !infoboxLore) {
-            console.error("Map overlay SVG or crucial infobox element not found!");
+        if (!mapOverlay) {
+            console.error("Map overlay SVG not found!");
             return;
         }
 
         let regionsData = [];
-        let gamesData = [];
-        let currentRegionId = null; // Track the currently displayed region
 
         /**
          * Converts a hex color string to an rgba string.
@@ -572,31 +556,20 @@ export function initLorePage() {
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
-        // Fetch both JSON files
-        Promise.all([
-            fetch('src/data/regions.json').then(res => {
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                return res.json();
-            }),
-            fetch('src/data/games.json').then(res => {
+        // Fetch regions data
+        fetch('src/data/regions.json')
+            .then(res => {
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 return res.json();
             })
-        ])
-        .then(([regions, games]) => {
-            regionsData = regions;
-            gamesData = games;
+            .then(regions => {
+                regionsData = regions;
 
-            const maskGroup = mapOverlay.querySelector('#regions-mask g');
+                const maskGroup = mapOverlay.querySelector('#regions-mask g');
             if (!maskGroup) {
                 console.error("SVG mask group for regions not found!");
                 return;
             }
-
-            const gamesById = gamesData.reduce((acc, game) => {
-                acc[game.id] = game;
-                return acc;
-            }, {});
 
             regionsData.forEach(region => {
                 const path = document.createElementNS(svgNS, 'path');
@@ -620,201 +593,10 @@ export function initLorePage() {
                 maskGroup.appendChild(maskPath);
             });
 
-            mapOverlay.addEventListener('click', (e) => {
-                const path = e.target.closest('.region-path');
-                if (path && path.dataset.regionId) {
-                    const regionId = path.dataset.regionId;
-
-                    if (regionId === currentRegionId && infobox.classList.contains('active')) {
-                        hideInfobox();
-                        return;
-                    }
-
-                    currentRegionId = regionId;
-                    const region = regionsData.find(r => r.id === regionId);
-
-                    if (region) {
-                        // --- Populate Header (Front) ---
-                        infoboxHeaderFront.innerHTML = ''; // Clear previous
-                        const headerContent = document.createDocumentFragment();
-
-                        const emblem = document.createElement('img');
-                        emblem.src = `assets/logo/${region.emblemAsset}`;
-                        emblem.alt = `${region.name} Emblem`;
-                        emblem.className = 'infobox-emblem-img';
-                        headerContent.appendChild(emblem);
-
-                        const name = document.createElement('h2');
-                        name.textContent = region.name;
-                        headerContent.appendChild(name);
-
-                        const statBlock = document.createElement('div');
-                        statBlock.className = 'infobox-stat-block';
-                        if (region.government) {
-                            const p = document.createElement('p');
-                            p.innerHTML = `<strong>Government</strong><span>${region.government}</span>`;
-                            statBlock.appendChild(p);
-                        }
-                        if (region.capital) {
-                            const p = document.createElement('p');
-                            p.innerHTML = `<strong>Capital</strong><span>${region.capital}</span>`;
-                            statBlock.appendChild(p);
-                        }
-                        headerContent.appendChild(statBlock);
-                        infoboxHeaderFront.appendChild(headerContent);
-
-                        // --- Clone Header to Back ---
-                        infoboxHeaderBack.innerHTML = ''; // Clear previous
-                        infoboxHeaderBack.appendChild(infoboxHeaderFront.cloneNode(true));
-
-                        // --- Populate Games View (Front) ---
-                        infoboxGames.innerHTML = '';
-                        region.games.forEach(gameId => {
-                            const game = gamesById[gameId];
-                            if (game) {
-                                const img = document.createElement('img');
-                                img.src = `assets/grid/${game.assetName}.jpg`;
-                                img.alt = game.englishTitle;
-                                img.title = game.englishTitle;
-                                infoboxGames.appendChild(img);
-                            }
-                        });
-
-                        // --- Populate Lore View (Back) ---
-                        infoboxLore.innerHTML = '';
-                        if (region.description) {
-                            const descP = document.createElement('p');
-                            descP.textContent = region.description;
-                            infoboxLore.appendChild(descP);
-                        }
-                        if (region.history) {
-                            const histP = document.createElement('p');
-                            histP.textContent = region.history;
-                            infoboxLore.appendChild(histP);
-                        }
-
-                        // Featured In section
-                        const featuredInGames = [...region.featuredIn, ...region.games];
-                        const uniqueGameIds = [...new Set(featuredInGames)];
-
-                        if (uniqueGameIds.length > 0) {
-                            const featuredTitle = document.createElement('h3');
-                            featuredTitle.textContent = 'Featured In';
-                            infoboxLore.appendChild(featuredTitle);
-
-                            const featuredList = document.createElement('ul');
-                            uniqueGameIds.forEach(gameId => {
-                                const game = gamesById[gameId];
-                                if (game) {
-                                    const li = document.createElement('li');
-                                    li.textContent = game.englishTitle;
-                                    featuredList.appendChild(li);
-                                }
-                            });
-                            infoboxLore.appendChild(featuredList);
-                        }
-
-                        // --- Show Infobox ---
-                        infobox.dataset.lastClickX = e.clientX;
-                        infobox.dataset.lastClickY = e.clientY;
-                        infobox.style.display = 'block';
-                        updateInfobox();
-                        infobox.classList.add('active');
-
-                        // Handle region-specific view states
-                        infobox.dataset.regionType = region.regionType; // Set data attribute for CSS styling
-                        if (region.regionType === 'minor') {
-                            infoboxCard.classList.add('is-flipped');
-                        }
-                    }
-                } else if (!infobox.contains(e.target)) {
-                    hideInfobox();
-                }
-            });
-
-            // Add event listeners to both close buttons
-            closeButtons.forEach(button => button.addEventListener('click', () => hideInfobox()));
-
-            // Add event listeners to both flip buttons
-            flipButtons.forEach(button => button.addEventListener('click', () => {
-                infoboxCard.classList.toggle('is-flipped');
-            }));
-
-            document.addEventListener('click', (e) => {
-                const mapContainer = document.querySelector('.map-container');
-                if (!mapContainer.contains(e.target) && !infobox.contains(e.target) && infobox.classList.contains('active')) {
-                    hideInfobox();
-                }
-            });
-
-            window.addEventListener('resize', () => {
-                if (infobox.classList.contains('active')) {
-                    updateInfobox();
-                }
-            });
-
             isMapInitialized = true;
         })
         .catch(error => {
             console.error("Error loading or processing map/game data:", error);
         });
-
-        function updateInfobox() {
-            const referenceWidth = 1440;
-            const scale = Math.min(window.innerWidth / referenceWidth, 1);
-            infobox.style.transform = `scale(${scale})`;
-
-            if (infobox.dataset.lastClickX && infobox.dataset.lastClickY) {
-                const x = parseInt(infobox.dataset.lastClickX);
-                const y = parseInt(infobox.dataset.lastClickY);
-
-                // Use the dimensions of the front face for calculation, as both faces are the same size
-                const frontFace = infobox.querySelector('.infobox-front');
-                if (!frontFace) return;
-
-                const infoboxWidth = frontFace.offsetWidth;
-                const infoboxHeight = frontFace.offsetHeight;
-                const scaledWidth = infoboxWidth * scale;
-                const scaledHeight = infoboxHeight * scale;
-
-                const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
-                const margin = 15;
-
-                let top = y + 20;
-                let left = x + 20;
-
-                if (left + scaledWidth + margin > viewportWidth) {
-                    left = x - scaledWidth - 20;
-                }
-                if (top + scaledHeight + margin > viewportHeight) {
-                    top = y - scaledHeight - 20;
-                }
-
-                if (top < margin) top = margin;
-                if (left < margin) left = margin;
-
-                infobox.style.top = `${top}px`;
-                infobox.style.left = `${left}px`;
-            }
-        }
-
-        function hideInfobox() {
-            infobox.classList.remove('active');
-            currentRegionId = null;
-
-            // Reset the flip state when hiding
-            infoboxCard.classList.remove('is-flipped');
-
-            infobox.addEventListener('transitionend', function handler(event) {
-                // Ensure we only trigger on the opacity transition of the main infobox container
-                if (event.target === infobox && event.propertyName === 'opacity') {
-                    if (!infobox.classList.contains('active')) {
-                        infobox.style.display = 'none';
-                    }
-                    infobox.removeEventListener('transitionend', handler);
-                }
-            });
-        }
     }
 }
