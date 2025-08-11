@@ -631,23 +631,50 @@ body #map-view .map-infobox.active {
     color: #b0b0b0;
 }
 
+.map-infobox-content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    perspective: 800px;
+}
+
 .map-infobox-content {
     padding: 12px;
 }
 
-/* View-specific containers */
-.map-infobox-games-view, .map-infobox-lore-view {
-    /* Base styles for views */
+/* --- View Switching Animation --- */
+.map-infobox-games-view,
+.map-infobox-lore-view {
+    grid-area: 1 / 1;
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    backface-visibility: hidden; /* Prevents flickering during transform */
 }
 
-/* Animation classes */
-.view-fade-out {
+/* Default state: Games view is visible */
+.map-infobox-lore-view {
     opacity: 0;
-    transition: opacity 0.15s ease-in-out;
+    transform: rotateX(-20deg) scale(0.95);
+    pointer-events: none;
 }
-.view-fade-in {
+
+.map-infobox-games-view {
     opacity: 1;
-    transition: opacity 0.15s ease-in-out;
+    transform: rotateX(0deg) scale(1);
+    pointer-events: auto;
+}
+
+/* Active state ('lore-view-active' on wrapper): Lore view is visible */
+.map-infobox-content-wrapper.lore-view-active .map-infobox-games-view {
+    opacity: 0;
+    transform: rotateX(20deg) scale(0.95);
+    pointer-events: none;
+}
+
+.map-infobox-content-wrapper.lore-view-active .map-infobox-lore-view {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+    pointer-events: auto;
 }
 
 .map-infobox-games-grid {
