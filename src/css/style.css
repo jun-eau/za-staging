@@ -585,7 +585,7 @@ body.home-page::before {
     opacity: 0;
     visibility: hidden;
     transform: scale(0.95);
-    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, visibility 0.2s;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
     pointer-events: none;
 }
 
