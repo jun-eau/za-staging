@@ -796,6 +796,9 @@ body.home-page::before {
     box-shadow: 0 0 15px rgba(233, 213, 161, 0.3);
     box-sizing: border-box;
 }
+.map-container.is-loading {
+    cursor: wait;
+}
 .map-image {
     display: block;
     width: 100%;

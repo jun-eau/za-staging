@@ -660,17 +660,23 @@ export function initLorePage() {
         infoboxEl.classList.add('active');
     }
     
+    let dataReadyPromise = null;
+
     function initializeMap() {
         if (isMapInitialized) return;
+        isMapInitialized = true;
 
         const svgNS = "http://www.w3.org/2000/svg";
+        const mapContainer = document.querySelector('.map-container');
         const mapOverlay = document.getElementById('map-overlay');
         const infoboxEl = document.getElementById('map-infobox');
 
-        if (!mapOverlay || !infoboxEl) {
+        if (!mapContainer || !mapOverlay || !infoboxEl) {
             console.error("Required map elements not found!");
             return;
         }
+
+        mapContainer.classList.add('is-loading');
 
         function hexToRgba(hex, alpha = 1) {
             hex = hex.replace(/^#/, '');
@@ -681,7 +687,7 @@ export function initLorePage() {
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
-        Promise.all([
+        dataReadyPromise = Promise.all([
             fetch('src/data/regions.json').then(res => res.ok ? res.json() : Promise.reject(res.status)),
             fetch('src/data/games.json').then(res => res.ok ? res.json() : Promise.reject(res.status))
         ])
@@ -709,24 +715,27 @@ export function initLorePage() {
                 maskGroup.appendChild(maskPath);
             });
 
-            mapOverlay.addEventListener('click', (e) => {
-                const clickedPath = e.target.closest('.region-path');
-                const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
-                const currentRegionId = infoboxEl.dataset.regionId;
-                const isInfoboxActive = infoboxEl.classList.contains('active');
-
-                // Hide infobox if clicking the same region again or clicking outside
-                if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
-                    infoboxEl.classList.remove('active');
-                    infoboxEl.dataset.regionId = '';
-                } else {
-                    // Show/update for a new region
-                    updateInfobox(clickedRegionId, e.clientX, e.clientY);
-                }
-            });
-
-            isMapInitialized = true;
+            mapContainer.classList.remove('is-loading');
         })
-        .catch(error => console.error("Error loading map/game data:", error));
+        .catch(error => {
+            console.error("Error loading map/game data:", error);
+            mapContainer.classList.remove('is-loading');
+        });
+
+        mapOverlay.addEventListener('click', async (e) => {
+            await dataReadyPromise; // Wait for data to be loaded
+
+            const clickedPath = e.target.closest('.region-path');
+            const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
+            const currentRegionId = infoboxEl.dataset.regionId;
+            const isInfoboxActive = infoboxEl.classList.contains('active');
+
+            if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
+                infoboxEl.classList.remove('active');
+                infoboxEl.dataset.regionId = '';
+            } else {
+                updateInfobox(clickedRegionId, e.clientX, e.clientY);
+            }
+        });
     }
 }
