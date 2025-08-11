@@ -645,6 +645,7 @@ export function initLorePage() {
         // Create a new infobox element for each click.
         const infoboxEl = document.createElement('div');
         infoboxEl.className = 'map-infobox';
+        infoboxEl.dataset.regionId = regionId; // Tag the infobox with its region ID
 
         // Dynamically set width for the games view if applicable
         if (region.regionType === 'major' && region.games && region.games.length > 0) {
@@ -814,21 +815,21 @@ export function initLorePage() {
             // Use event delegation for a single click handler on the overlay
             mapOverlay.addEventListener('click', (e) => {
                 const clickedPath = e.target.closest('.region-path');
+                const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
 
-                // Close any currently active infoboxes
-                const activeInfoboxes = document.querySelectorAll('.map-infobox.active');
-                activeInfoboxes.forEach(box => {
-                    box.classList.remove('active');
-                    // Remove the element from the DOM after its closing animation finishes.
-                    box.addEventListener('transitionend', () => {
-                        box.remove();
-                    }, { once: true });
-                });
+                // Find the currently open infobox (if any)
+                const openInfobox = document.querySelector('.map-infobox.active');
+                const openRegionId = openInfobox ? openInfobox.dataset.regionId : null;
 
-                // If a region was clicked, create a new infobox for it.
-                if (clickedPath) {
-                    const regionId = clickedPath.dataset.regionId;
-                    createInfobox(regionId, e.clientX, e.clientY);
+                // Always close what's open.
+                if (openInfobox) {
+                    openInfobox.classList.remove('active');
+                    openInfobox.addEventListener('transitionend', () => openInfobox.remove(), { once: true });
+                }
+
+                // Open a new box ONLY if a region was clicked AND it's a DIFFERENT region than the one that was just closed.
+                if (clickedRegionId && clickedRegionId !== openRegionId) {
+                    createInfobox(clickedRegionId, e.clientX, e.clientY);
                 }
             });
 
