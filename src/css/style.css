@@ -578,9 +578,23 @@ body.home-page::before {
     box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     color: #f0f0f0;
     font-family: 'Inter', sans-serif;
-    display: none; /* Initially hidden */
     z-index: 1000;
     overflow: hidden; /* Ensures content respects border-radius */
+
+    /* Animation Properties */
+    visibility: hidden;
+    opacity: 0;
+    transform: scale(0.95);
+    transform-origin: top left;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, visibility 0s 0.2s;
+}
+
+/* Use a more specific selector to ensure the transition override works */
+body #map-view .map-infobox.active {
+    visibility: visible;
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0s; /* Override the closing delay for a snappy opening */
 }
 
 .map-infobox-header {
