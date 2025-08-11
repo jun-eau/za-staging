@@ -555,14 +555,16 @@ export function initLorePage() {
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
-        dataReadyPromise = Promise.all([
+        Promise.all([
             fetch('src/data/regions.json').then(res => res.ok ? res.json() : Promise.reject(res.status)),
             fetch('src/data/games.json').then(res => res.ok ? res.json() : Promise.reject(res.status))
         ])
         .then(([regions, games]) => {
+            // Now that data is loaded, assign it
             mapRegionsData = regions;
             mapGamesData = games;
 
+            // Create the SVG paths for regions and the mask
             const maskGroup = mapOverlay.querySelector('#regions-mask g');
             if (!maskGroup) return;
 
@@ -583,151 +585,160 @@ export function initLorePage() {
                 maskGroup.appendChild(maskPath);
             });
 
+            // ATTACH THE EVENT LISTENER - only after data is ready and paths are drawn
+            mapOverlay.addEventListener('click', (e) => {
+                const clickedPath = e.target.closest('.region-path');
+                const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
+                
+                handleMapClick(clickedRegionId, e.clientX, e.clientY);
+            });
+
+            // Remove the loading state
             mapContainer.classList.remove('is-loading');
         })
         .catch(error => {
             console.error("Error loading map/game data:", error);
             mapContainer.classList.remove('is-loading');
         });
+    }
 
-        mapOverlay.addEventListener('click', async (e) => {
-            await dataReadyPromise; // Wait for data to be loaded
+    /**
+     * Handles clicks on the map overlay. Assumes mapRegionsData and mapGamesData are populated.
+     * @param {string|null} clickedRegionId The ID of the clicked region, or null.
+     * @param {number} clickX The clientX of the click event.
+     * @param {number} clickY The clientY of the click event.
+     */
+    function handleMapClick(clickedRegionId, clickX, clickY) {
+        const infoboxEl = document.getElementById('map-infobox');
+        const currentRegionId = infoboxEl.dataset.regionId;
+        const isInfoboxActive = infoboxEl.classList.contains('active');
 
-            const clickedPath = e.target.closest('.region-path');
-            const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
-            const currentRegionId = infoboxEl.dataset.regionId;
-            const isInfoboxActive = infoboxEl.classList.contains('active');
+        if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
+            infoboxEl.classList.remove('active');
+            infoboxEl.dataset.regionId = '';
+            return;
+        }
+        
+        const region = mapRegionsData.find(r => r.id === clickedRegionId);
+        if (!region) return;
 
-            // If clicking outside a region, or on the currently active region, hide the infobox.
-            if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
-                infoboxEl.classList.remove('active');
-                infoboxEl.dataset.regionId = '';
-                return;
-            }
+        updateInfoboxContents(region, infoboxEl);
 
-            const region = mapRegionsData.find(r => r.id === clickedRegionId);
-            if (!region) return;
+        positionAndShowInfobox(region, infoboxEl, clickX, clickY);
+    }
 
-            // --- Get Static Elements ---
-            const headerEl = infoboxEl.querySelector('.map-infobox-header');
-            const bodyEl = infoboxEl.querySelector('.infobox-body');
-            const gamesViewEl = infoboxEl.querySelector('.infobox-games-view');
-            const loreViewEl = infoboxEl.querySelector('.infobox-lore-view');
-            const footerEl = infoboxEl.querySelector('.map-infobox-footer');
+    /**
+     * Populates the infobox with content for a given region.
+     * @param {object} region The region data object.
+     * @param {HTMLElement} infoboxEl The main infobox element.
+     */
+    function updateInfoboxContents(region, infoboxEl) {
+        const headerEl = infoboxEl.querySelector('.map-infobox-header');
+        const gamesViewEl = infoboxEl.querySelector('.infobox-games-view');
+        const loreViewEl = infoboxEl.querySelector('.infobox-lore-view');
+        const footerEl = infoboxEl.querySelector('.map-infobox-footer');
+        const bodyEl = infoboxEl.querySelector('.infobox-body');
 
-            // --- 1. Populate All Content (Header, Both Views, Footer) ---
+        // Populate Header
+        headerEl.innerHTML = `
+            <img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="map-infobox-emblem">
+            <div class="map-infobox-title-section">
+                <h3>${region.name}</h3>
+                <p>${region.government}</p>
+            </div>
+            <div class="map-infobox-stats">
+                <strong>Capital:</strong><br>${region.capital}
+            </div>
+        `;
 
-            // Populate Header
-            headerEl.innerHTML = `
-                <img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="map-infobox-emblem">
-                <div class="map-infobox-title-section">
-                    <h3>${region.name}</h3>
-                    <p>${region.government}</p>
-                </div>
-                <div class="map-infobox-stats">
-                    <strong>Capital:</strong><br>${region.capital}
-                </div>
-            `;
+        // Populate Games View
+        const gamesInRegion = mapGamesData.filter(game => (region.games || []).includes(game.id));
+        gamesViewEl.innerHTML = gamesInRegion.length > 0
+            ? `<div class="map-infobox-games-grid">${gamesInRegion.map(game => `
+                <img src="assets/grid/${game.assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}" class="map-infobox-game-art">
+              `).join('')}</div>`
+            : '<p style="font-size: 0.8em; color: #999;">No specific games are primarily set in this region.</p>';
+        
+        // Populate Lore View
+        const featuredInGames = mapGamesData.filter(game => (region.featuredIn || []).includes(game.id));
+        let featuredInHtml = featuredInGames.length > 0 ? `
+            <div class="map-infobox-lore-section">
+                <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">${region.regionType === 'major' ? "Also Featured In" : "Featured In"}</h4>
+                <ul>${featuredInGames.map(game => `<li>${game.englishTitle}</li>`).join('')}</ul>
+            </div>` : '';
+        loreViewEl.innerHTML = `
+            <div class="map-infobox-lore-section">
+                <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Description</h4>
+                <p>${region.description}</p>
+            </div>
+            <div class="map-infobox-lore-section">
+                <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">History</h4>
+                <p>${region.history}</p>
+            </div>
+            ${featuredInHtml}
+        `;
 
-            // Populate Games View
-            const gameIds = region.games || [];
-            const gamesInRegion = mapGamesData.filter(game => gameIds.includes(game.id));
-            const gamesGridHtml = gamesInRegion.length > 0
-                ? `<div class="map-infobox-games-grid">${gamesInRegion.map(game => `
-                    <img src="assets/grid/${game.assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}" class="map-infobox-game-art">
-                  `).join('')}</div>`
-                : '<p style="font-size: 0.8em; color: #999;">No specific games are primarily set in this region.</p>';
-            gamesViewEl.innerHTML = gamesGridHtml;
+        // Populate Footer & Set Up Toggle
+        footerEl.innerHTML = '';
+        if (region.regionType === 'major') {
+            const toggleButton = document.createElement('button');
+            toggleButton.className = 'map-infobox-toggle-btn';
             
-            // Dynamically set width based on games grid if applicable, otherwise reset
-            if (region.regionType === 'major' && gamesInRegion.length > 0) {
-                const gameArtWidth = 80;
-                const gap = 8;
-                const contentPadding = 2 * 12;
-                const gridWidth = (gamesInRegion.length * gameArtWidth) + ((gamesInRegion.length - 1) * gap);
-                infoboxEl.style.width = `${gridWidth + contentPadding}px`;
-            } else {
-                infoboxEl.style.width = '320px'; // Reset to default for lore-only or empty views
-            }
-
-            // Populate Lore View
-            const featuredInGames = mapGamesData.filter(game => (region.featuredIn || []).includes(game.id));
-            let featuredInHtml = '';
-            if (featuredInGames.length > 0) {
-                const featuredInTitle = region.regionType === 'major' ? "Also Featured In" : "Featured In";
-                featuredInHtml = `
-                    <div class="map-infobox-lore-section">
-                        <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">${featuredInTitle}</h4>
-                        <ul>${featuredInGames.map(game => `<li>${game.englishTitle}</li>`).join('')}</ul>
-                    </div>`;
-            }
-            loreViewEl.innerHTML = `
-                <div class="map-infobox-lore-section">
-                    <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Description</h4>
-                    <p>${region.description}</p>
-                </div>
-                <div class="map-infobox-lore-section">
-                    <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">History</h4>
-                    <p>${region.history}</p>
-                </div>
-                ${featuredInHtml}
-            `;
-
-            // Populate Footer & Set Up Toggle
-            footerEl.innerHTML = ''; // Clear previous content
-            if (region.regionType === 'major') {
-                const toggleButton = document.createElement('button');
-                toggleButton.className = 'map-infobox-toggle-btn';
-                
-                const updateButtonText = () => {
-                    const isLoreVisible = infoboxEl.classList.contains('show-lore-view');
-                    toggleButton.textContent = isLoreVisible ? 'Show Game Art' : 'View Lore Details';
-                };
-
-                toggleButton.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent click from bubbling to the map overlay
-                    infoboxEl.classList.toggle('show-lore-view');
-                    updateButtonText(); // Update text after toggling
-
-                    // Animate height change
-                    const isLoreVisible = infoboxEl.classList.contains('show-lore-view');
-                    const targetView = isLoreVisible ? loreViewEl : gamesViewEl;
-                    bodyEl.style.height = `${targetView.scrollHeight}px`;
-                });
-                
-                footerEl.appendChild(toggleButton);
-                updateButtonText(); // Set initial text
-            }
-
-            // --- 2. Determine Initial State & Animate ---
+            const updateButtonText = () => {
+                toggleButton.textContent = infoboxEl.classList.contains('show-lore-view') ? 'Show Game Art' : 'View Lore Details';
+            };
+            toggleButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                infoboxEl.classList.toggle('show-lore-view');
+                updateButtonText();
+                const targetView = infoboxEl.classList.contains('show-lore-view') ? loreViewEl : gamesViewEl;
+                bodyEl.style.height = `${targetView.scrollHeight}px`;
+            });
             
-            // Set initial view state (show games for major, lore for minor)
-            const showLoreInitially = region.regionType !== 'major';
-            infoboxEl.classList.toggle('show-lore-view', showLoreInitially);
-            
-            // Calculate height of the initially visible view
-            const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
-            bodyEl.style.height = `${initialView.scrollHeight}px`;
+            footerEl.appendChild(toggleButton);
+            updateButtonText();
+        }
+    }
 
-            // Position the infobox before making it visible
-            const rect = infoboxEl.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            const offsetX = 20;
-            const offsetY = 20;
+    /**
+     * Sizes, positions, and displays the infobox.
+     * @param {object} region The region data object.
+     * @param {HTMLElement} infoboxEl The main infobox element.
+     * @param {number} clickX The clientX of the click event.
+     * @param {number} clickY The clientY of the click event.
+     */
+    function positionAndShowInfobox(region, infoboxEl, clickX, clickY) {
+        const bodyEl = infoboxEl.querySelector('.infobox-body');
+        const gamesViewEl = infoboxEl.querySelector('.infobox-games-view');
+        const loreViewEl = infoboxEl.querySelector('.infobox-lore-view');
+        const gamesInRegion = mapGamesData.filter(game => (region.games || []).includes(game.id));
 
-            let top = e.clientY + offsetY;
-            let left = e.clientX + offsetX;
+        // Set width before calculating height
+        if (region.regionType === 'major' && gamesInRegion.length > 0) {
+            const gridWidth = (gamesInRegion.length * 80) + ((gamesInRegion.length - 1) * 8);
+            infoboxEl.style.width = `${gridWidth + 24}px`;
+        } else {
+            infoboxEl.style.width = '320px';
+        }
 
-            if (left + rect.width > viewportWidth) left = e.clientX - rect.width - offsetX;
-            if (top + rect.height > viewportHeight) top = e.clientY - rect.height - offsetY;
+        // Set initial view state and calculate height
+        const showLoreInitially = region.regionType !== 'major';
+        infoboxEl.classList.toggle('show-lore-view', showLoreInitially);
+        const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
+        bodyEl.style.height = `${initialView.scrollHeight}px`;
 
-            infoboxEl.style.left = `${Math.max(5, left)}px`;
-            infoboxEl.style.top = `${Math.max(5, top)}px`;
-            infoboxEl.dataset.regionId = clickedRegionId;
+        // Position the infobox
+        const rect = infoboxEl.getBoundingClientRect();
+        const offsetX = 20, offsetY = 20;
+        let top = clickY + offsetY;
+        let left = clickX + offsetX;
+        if (left + rect.width > window.innerWidth) left = clickX - rect.width - offsetX;
+        if (top + rect.height > window.innerHeight) top = clickY - rect.height - offsetY;
+        infoboxEl.style.left = `${Math.max(5, left)}px`;
+        infoboxEl.style.top = `${Math.max(5, top)}px`;
 
-            // Make it visible
-            infoboxEl.classList.add('active');
-        });
+        // Set dataset and show
+        infoboxEl.dataset.regionId = region.id;
+        infoboxEl.classList.add('active');
     }
 }
