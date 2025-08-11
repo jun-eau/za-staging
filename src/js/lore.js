@@ -1,34 +1,5 @@
-let allGamesData = [];
-let allRegionsData = [];
-
-export async function initLorePage() {
+export function initLorePage() {
     let isMapInitialized = false;
-
-    async function loadPageData() {
-        try {
-            const [gamesRes, regionsRes] = await Promise.all([
-                fetch('src/data/games.json'),
-                fetch('src/data/regions.json')
-            ]);
-
-            if (!gamesRes.ok) throw new Error(`HTTP error! status: ${gamesRes.status}`);
-            if (!regionsRes.ok) throw new Error(`HTTP error! status: ${regionsRes.status}`);
-
-            const games = await gamesRes.json();
-            const regions = await regionsRes.json();
-
-            allGamesData = games;
-            allRegionsData = regions;
-
-        } catch (error) {
-            console.error("Failed to load page data:", error);
-            // Optionally, display a user-facing error message on the page
-        }
-    }
-
-    await loadPageData(); // Wait for data to be fetched and cached
-
-    initializeTimeline(); // Initialize the timeline first, as it's always visible initially
 
     // --- Tabbed Interface Logic ---
     const tabsContainer = document.querySelector('.lore-tabs');
@@ -42,14 +13,13 @@ export async function initLorePage() {
         if (tabLinkToShow) tabLinkToShow.classList.add('active');
         if (contentToShow) contentToShow.classList.add('active');
 
-        // Check if the map is the active tab on load and initialize it
-        if (tabIdToShow === 'map-view' && !isMapInitialized) {
-            initializeMap();
-        }
-
-        // Add 'show' class to make the active content visible with a fade-in effect
+        // Check if the map is the active tab on load (either default or from storage) and initialize it
         const initialActiveContent = document.querySelector('.tab-content.active');
         if (initialActiveContent) {
+            if (initialActiveContent.id === 'map-view' && !isMapInitialized) {
+                initializeMap();
+            }
+            // Add 'show' class to make it visible with fade-in effect
             setTimeout(() => initialActiveContent.classList.add('show'), 10);
         }
 
@@ -128,26 +98,29 @@ export async function initLorePage() {
         return parsedDate.year * 12 + parsedDate.month;
     }
 
-    function initializeTimeline() {
-        if (!allGamesData || allGamesData.length === 0) {
-            console.error("Timeline initialization called before game data was loaded.");
-            return;
-        }
+    async function initializeTimeline() {
+        try {
+            const response = await fetch('src/data/games.json');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const rawGames = await response.json();
+            
+            allGames = processGameData(rawGames);
+            if (allGames.length === 0) {
+                console.warn("No valid game data to display.");
+                return;
+            }
 
-        allGames = processGameData(allGamesData);
-        if (allGames.length === 0) {
-            console.warn("No valid game data to display for timeline.");
-            return;
-        }
+            calculateDateRange(); // This will now use timelinePeriods
+            if (!minDate || !maxDate) {
+                console.error("Date range not calculated, cannot render timeline.");
+                return;
+            }
+            renderTimeAxis();
+            renderGameEntries();
 
-        calculateDateRange();
-        if (!minDate || !maxDate) {
-            console.error("Date range not calculated, cannot render timeline.");
-            return;
+        } catch (error) {
+            console.error("Error initializing timeline:", error);
         }
-
-        renderTimeAxis();
-        renderGameEntries();
     }
 
     function processGameData(rawGames) {
@@ -549,7 +522,11 @@ export async function initLorePage() {
         }); // End of game loop
     }
 
+    initializeTimeline();
+
     // --- Map Logic & Data ---
+    let mapRegionsData = [];
+    let mapGamesData = [];
     const infoboxEl = document.getElementById('map-infobox');
 
     /**
@@ -559,7 +536,7 @@ export async function initLorePage() {
      */
     function renderGamesView(region) {
         const gameIds = region.games || [];
-        const gamesInRegion = allGamesData.filter(game => gameIds.includes(game.id));
+        const gamesInRegion = mapGamesData.filter(game => gameIds.includes(game.id));
 
         const gamesGridHtml = gamesInRegion.length > 0
             ? gamesInRegion.map(game => `
@@ -585,7 +562,7 @@ export async function initLorePage() {
      * @returns {string} The HTML string for the lore view.
      */
     function renderLoreView(region) {
-        const featuredInGames = allGamesData.filter(game => (region.featuredIn || []).includes(game.id));
+        const featuredInGames = mapGamesData.filter(game => (region.featuredIn || []).includes(game.id));
         let featuredInHtml = '';
 
         if (featuredInGames.length > 0) {
@@ -663,7 +640,7 @@ export async function initLorePage() {
      * @param {number} clickY The vertical coordinate of the click event.
      */
     function createInfobox(regionId, clickX, clickY) {
-        const region = allRegionsData.find(r => r.id === regionId);
+        const region = mapRegionsData.find(r => r.id === regionId);
         if (!region) return;
 
         // Reset width from any previous infobox
@@ -789,61 +766,76 @@ export async function initLorePage() {
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
 
-        if (!allRegionsData.length || !allGamesData.length) {
-            console.error("Map initialization called before data was loaded.");
-            return;
-        }
+        // Fetch both regions and games data
+        Promise.all([
+            fetch('src/data/regions.json').then(res => {
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                return res.json();
+            }),
+            fetch('src/data/games.json').then(res => {
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                return res.json();
+            })
+        ])
+        .then(([regions, games]) => {
+            mapRegionsData = regions;
+            mapGamesData = games;
+            let currentOpenRegionId = null; // Track the currently open region
 
-        let currentOpenRegionId = null; // Track the currently open region
-        const maskGroup = mapOverlay.querySelector('#regions-mask g');
-        if (!maskGroup) {
-            console.error("SVG mask group for regions not found!");
-            return;
-        }
-
-        // Create region paths and append them
-        allRegionsData.forEach(region => {
-            const path = document.createElementNS(svgNS, 'path');
-            path.setAttribute('d', region.svgPathData);
-            path.setAttribute('class', 'region-path');
-            path.setAttribute('id', `region-${region.id}`);
-            path.dataset.regionId = region.id;
-
-            if (region.baseColor) {
-                const highlightColor = hexToRgba(region.baseColor, 0.7);
-                path.style.setProperty('--region-highlight-color', highlightColor);
+            const maskGroup = mapOverlay.querySelector('#regions-mask g');
+            if (!maskGroup) {
+                console.error("SVG mask group for regions not found!");
+                return;
             }
-            mapOverlay.appendChild(path);
 
-            const maskPath = document.createElementNS(svgNS, 'path');
-            maskPath.setAttribute('d', region.svgPathData);
-            maskPath.setAttribute('fill', 'black');
-            maskGroup.appendChild(maskPath);
-        });
+            // Create region paths and append them
+            mapRegionsData.forEach(region => {
+                const path = document.createElementNS(svgNS, 'path');
+                path.setAttribute('d', region.svgPathData);
+                path.setAttribute('class', 'region-path');
+                path.setAttribute('id', `region-${region.id}`);
+                path.dataset.regionId = region.id;
 
-        // Use event delegation for a single click handler on the overlay
-        mapOverlay.addEventListener('click', (e) => {
-            const clickedPath = e.target.closest('.region-path');
+                if (region.baseColor) {
+                    const highlightColor = hexToRgba(region.baseColor, 0.7);
+                    path.style.setProperty('--region-highlight-color', highlightColor);
+                }
+                mapOverlay.appendChild(path);
 
-            if (clickedPath) {
-                const regionId = clickedPath.dataset.regionId;
+                const maskPath = document.createElementNS(svgNS, 'path');
+                maskPath.setAttribute('d', region.svgPathData);
+                maskPath.setAttribute('fill', 'black');
+                maskGroup.appendChild(maskPath);
+            });
 
-                // If the clicked region is the one that's already open, close it.
-                if (regionId === currentOpenRegionId && infoboxEl.classList.contains('active')) {
+            // Use event delegation for a single click handler on the overlay
+            mapOverlay.addEventListener('click', (e) => {
+                const clickedPath = e.target.closest('.region-path');
+
+                if (clickedPath) {
+                    const regionId = clickedPath.dataset.regionId;
+
+                    // If the clicked region is the one that's already open, close it.
+                    if (regionId === currentOpenRegionId && infoboxEl.classList.contains('active')) {
+                        infoboxEl.classList.remove('active');
+                        currentOpenRegionId = null;
+                    } else {
+                        // Otherwise, create the infobox for the new region.
+                        // Note: createInfobox will call positionInfobox, which adds the 'active' class.
+                        createInfobox(regionId, e.clientX, e.clientY);
+                        currentOpenRegionId = regionId;
+                    }
+                } else {
+                    // The map background was clicked, so hide the infobox.
                     infoboxEl.classList.remove('active');
                     currentOpenRegionId = null;
-                } else {
-                    // Otherwise, create the infobox for the new region.
-                    createInfobox(regionId, e.clientX, e.clientY);
-                    currentOpenRegionId = regionId;
                 }
-            } else {
-                // The map background was clicked, so hide the infobox.
-                infoboxEl.classList.remove('active');
-                currentOpenRegionId = null;
-            }
-        });
+            });
 
-        isMapInitialized = true;
+            isMapInitialized = true;
+        })
+        .catch(error => {
+            console.error("Error loading or processing map/game data:", error);
+        });
     }
 }
