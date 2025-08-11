@@ -682,21 +682,54 @@ body.home-page::before {
 #map-infobox {
     position: fixed;
     z-index: 2000;
-    background: rgba(20, 20, 30, 0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--accent-gold);
-    border-radius: 8px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-    color: var(--text-primary);
-    padding: 0.75rem 1.5rem;
-    transform-origin: top left;
     width: max-content;
     max-width: 90vw;
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
+    /* Added for 3D effect */
+    perspective: 1500px;
+    background: transparent; /* The background is now on the card faces */
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    transform-origin: top left;
+}
+
+.infobox-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.infobox-card.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.infobox-front,
+.infobox-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--accent-gold);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
+}
+
+.infobox-back {
+    transform: rotateY(180deg);
 }
 #map-infobox.active {
     opacity: 1;
@@ -784,6 +817,72 @@ body.home-page::before {
     width: auto;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.infobox-footer {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(233, 213, 161, 0.2);
+    text-align: center;
+}
+
+.flip-btn {
+    background: none;
+    border: none;
+    color: var(--accent-gold);
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s ease;
+}
+
+.flip-btn:hover {
+    color: #fff;
+}
+
+.infobox-lore {
+    flex-grow: 1;
+    overflow-y: auto;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+}
+
+.infobox-lore h3 {
+    color: var(--accent-gold);
+    font-family: 'Playfair Display', serif;
+    font-size: var(--font-size-md);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.infobox-lore p {
+    margin: 0 0 1rem 0;
+}
+
+.infobox-lore p:last-child {
+    margin-bottom: 0;
+}
+
+.infobox-lore ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.infobox-lore li {
+    display: inline-block;
+    background: rgba(0,0,0,0.3);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin: 0 5px 5px 0;
+    font-size: var(--font-size-xs);
+}
+
+/* Hide flip functionality for minor regions */
+#map-infobox[data-region-type="minor"] .infobox-footer {
+    display: none;
 }
 @media (min-width: 1200px) {
     .infobox-header h2 {

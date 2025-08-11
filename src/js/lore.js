@@ -530,11 +530,21 @@ export function initLorePage() {
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
         const infobox = document.getElementById('map-infobox');
-        const infoboxHeader = infobox.querySelector('.infobox-header');
-        const infoboxGames = infobox.querySelector('.infobox-games');
-        const closeButton = infobox.querySelector('.close-btn');
+        const infoboxCard = infobox.querySelector('.infobox-card');
 
-        if (!mapOverlay || !infobox || !infoboxHeader || !infoboxGames) {
+        // Infobox Front Side
+        const infoboxHeaderFront = infobox.querySelector('.infobox-front .infobox-header');
+        const infoboxGames = infobox.querySelector('.infobox-games');
+
+        // Infobox Back Side
+        const infoboxHeaderBack = infobox.querySelector('.infobox-back .infobox-header');
+        const infoboxLore = infobox.querySelector('.infobox-lore');
+
+        // Controls
+        const closeButtons = infobox.querySelectorAll('.close-btn');
+        const flipButtons = infobox.querySelectorAll('.flip-btn');
+
+        if (!mapOverlay || !infobox || !infoboxCard || !infoboxHeaderFront || !infoboxGames || !infoboxHeaderBack || !infoboxLore) {
             console.error("Map overlay SVG or crucial infobox element not found!");
             return;
         }
@@ -615,33 +625,29 @@ export function initLorePage() {
                 if (path && path.dataset.regionId) {
                     const regionId = path.dataset.regionId;
 
-                    // If clicking the same region that's already active, hide it.
                     if (regionId === currentRegionId && infobox.classList.contains('active')) {
                         hideInfobox();
-                        return; // Stop further execution
+                        return;
                     }
 
-                    // A new region is clicked, so proceed with showing the infobox.
                     currentRegionId = regionId;
                     const region = regionsData.find(r => r.id === regionId);
 
                     if (region) {
-                        // --- Populate Header ---
-                        infoboxHeader.innerHTML = ''; // Clear previous content
+                        // --- Populate Header (Front) ---
+                        infoboxHeaderFront.innerHTML = ''; // Clear previous
+                        const headerContent = document.createDocumentFragment();
 
-                        // 1. Emblem
                         const emblem = document.createElement('img');
                         emblem.src = `assets/logo/${region.emblemAsset}`;
                         emblem.alt = `${region.name} Emblem`;
                         emblem.className = 'infobox-emblem-img';
-                        infoboxHeader.appendChild(emblem);
+                        headerContent.appendChild(emblem);
 
-                        // 2. Nation Name
                         const name = document.createElement('h2');
                         name.textContent = region.name;
-                        infoboxHeader.appendChild(name);
+                        headerContent.appendChild(name);
 
-                        // 3. Stat Block
                         const statBlock = document.createElement('div');
                         statBlock.className = 'infobox-stat-block';
                         if (region.government) {
@@ -654,11 +660,15 @@ export function initLorePage() {
                             p.innerHTML = `<strong>Capital</strong><span>${region.capital}</span>`;
                             statBlock.appendChild(p);
                         }
-                        infoboxHeader.appendChild(statBlock);
+                        headerContent.appendChild(statBlock);
+                        infoboxHeaderFront.appendChild(headerContent);
 
+                        // --- Clone Header to Back ---
+                        infoboxHeaderBack.innerHTML = ''; // Clear previous
+                        infoboxHeaderBack.appendChild(infoboxHeaderFront.cloneNode(true));
 
-                        // --- Populate Game Art Grid ---
-                        infoboxGames.innerHTML = ''; // Clear previous art
+                        // --- Populate Games View (Front) ---
+                        infoboxGames.innerHTML = '';
                         region.games.forEach(gameId => {
                             const game = gamesById[gameId];
                             if (game) {
@@ -670,27 +680,67 @@ export function initLorePage() {
                             }
                         });
 
-                        // Store click coordinates for repositioning on resize
+                        // --- Populate Lore View (Back) ---
+                        infoboxLore.innerHTML = '';
+                        if (region.description) {
+                            const descP = document.createElement('p');
+                            descP.textContent = region.description;
+                            infoboxLore.appendChild(descP);
+                        }
+                        if (region.history) {
+                            const histP = document.createElement('p');
+                            histP.textContent = region.history;
+                            infoboxLore.appendChild(histP);
+                        }
+
+                        // Featured In section
+                        const featuredInGames = [...region.featuredIn, ...region.games];
+                        const uniqueGameIds = [...new Set(featuredInGames)];
+
+                        if (uniqueGameIds.length > 0) {
+                            const featuredTitle = document.createElement('h3');
+                            featuredTitle.textContent = 'Featured In';
+                            infoboxLore.appendChild(featuredTitle);
+
+                            const featuredList = document.createElement('ul');
+                            uniqueGameIds.forEach(gameId => {
+                                const game = gamesById[gameId];
+                                if (game) {
+                                    const li = document.createElement('li');
+                                    li.textContent = game.englishTitle;
+                                    featuredList.appendChild(li);
+                                }
+                            });
+                            infoboxLore.appendChild(featuredList);
+                        }
+
+                        // --- Show Infobox ---
                         infobox.dataset.lastClickX = e.clientX;
                         infobox.dataset.lastClickY = e.clientY;
-
-                        // Position and show infobox
-                        infobox.style.display = 'block'; // Make it visible to calculate size
-                        updateInfobox(); // This now handles both scaling and positioning
+                        infobox.style.display = 'block';
+                        updateInfobox();
                         infobox.classList.add('active');
+
+                        // Handle region-specific view states
+                        infobox.dataset.regionType = region.regionType; // Set data attribute for CSS styling
+                        if (region.regionType === 'minor') {
+                            infoboxCard.classList.add('is-flipped');
+                        }
                     }
                 } else if (!infobox.contains(e.target)) {
-                    // Hide infobox if clicking outside a region path and not inside the infobox
                     hideInfobox();
                 }
             });
 
-            closeButton.addEventListener('click', () => {
-                hideInfobox();
-            });
+            // Add event listeners to both close buttons
+            closeButtons.forEach(button => button.addEventListener('click', () => hideInfobox()));
+
+            // Add event listeners to both flip buttons
+            flipButtons.forEach(button => button.addEventListener('click', () => {
+                infoboxCard.classList.toggle('is-flipped');
+            }));
 
             document.addEventListener('click', (e) => {
-                // If the click is outside the map container and the infobox, hide it.
                 const mapContainer = document.querySelector('.map-container');
                 if (!mapContainer.contains(e.target) && !infobox.contains(e.target) && infobox.classList.contains('active')) {
                     hideInfobox();
@@ -714,24 +764,26 @@ export function initLorePage() {
             const scale = Math.min(window.innerWidth / referenceWidth, 1);
             infobox.style.transform = `scale(${scale})`;
 
-            // Position the infobox, taking the new scale into account.
             if (infobox.dataset.lastClickX && infobox.dataset.lastClickY) {
                 const x = parseInt(infobox.dataset.lastClickX);
                 const y = parseInt(infobox.dataset.lastClickY);
 
-                const infoboxWidth = infobox.offsetWidth;
-                const infoboxHeight = infobox.offsetHeight;
+                // Use the dimensions of the front face for calculation, as both faces are the same size
+                const frontFace = infobox.querySelector('.infobox-front');
+                if (!frontFace) return;
+
+                const infoboxWidth = frontFace.offsetWidth;
+                const infoboxHeight = frontFace.offsetHeight;
                 const scaledWidth = infoboxWidth * scale;
                 const scaledHeight = infoboxHeight * scale;
 
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
-                const margin = 15; // Margin from the viewport edges
+                const margin = 15;
 
                 let top = y + 20;
                 let left = x + 20;
 
-                // Adjust if it goes off-screen
                 if (left + scaledWidth + margin > viewportWidth) {
                     left = x - scaledWidth - 20;
                 }
@@ -739,7 +791,6 @@ export function initLorePage() {
                     top = y - scaledHeight - 20;
                 }
 
-                // Final check to ensure it's not off the top/left after adjustments
                 if (top < margin) top = margin;
                 if (left < margin) left = margin;
 
@@ -750,13 +801,19 @@ export function initLorePage() {
 
         function hideInfobox() {
             infobox.classList.remove('active');
-            currentRegionId = null; // Reset the currently selected region ID
-            // Listen for transition to end before setting display to none
-            infobox.addEventListener('transitionend', function handler() {
-                if (!infobox.classList.contains('active')) {
-                    infobox.style.display = 'none';
+            currentRegionId = null;
+
+            // Reset the flip state when hiding
+            infoboxCard.classList.remove('is-flipped');
+
+            infobox.addEventListener('transitionend', function handler(event) {
+                // Ensure we only trigger on the opacity transition of the main infobox container
+                if (event.target === infobox && event.propertyName === 'opacity') {
+                    if (!infobox.classList.contains('active')) {
+                        infobox.style.display = 'none';
+                    }
+                    infobox.removeEventListener('transitionend', handler);
                 }
-                infobox.removeEventListener('transitionend', handler);
             });
         }
     }
