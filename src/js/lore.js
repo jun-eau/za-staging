@@ -527,7 +527,6 @@ export function initLorePage() {
     // --- Map Logic & Data ---
     let mapRegionsData = [];
     let mapGamesData = [];
-    const infoboxEl = document.getElementById('map-infobox');
 
     /**
      * Renders the HTML for the "Games View" of the infobox.
@@ -643,8 +642,9 @@ export function initLorePage() {
         const region = mapRegionsData.find(r => r.id === regionId);
         if (!region) return;
 
-        // Reset width from any previous infobox
-        infoboxEl.style.width = '';
+        // Create a new infobox element for each click.
+        const infoboxEl = document.createElement('div');
+        infoboxEl.className = 'map-infobox';
 
         // Dynamically set width for the games view if applicable
         if (region.regionType === 'major' && region.games && region.games.length > 0) {
@@ -697,15 +697,18 @@ export function initLorePage() {
             btn.addEventListener('click', () => switchView(contentWrapper));
         });
 
-        positionInfobox(clickX, clickY);
+        // Append to the container and start positioning and animation
+        document.getElementById('map-view').appendChild(infoboxEl);
+        positionInfobox(infoboxEl, clickX, clickY);
     }
 
     /**
      * Positions the infobox near the click coordinates, ensuring it stays within the viewport.
+     * @param {HTMLElement} infoboxEl The infobox element to position.
      * @param {number} clickX The horizontal coordinate of the click event.
      * @param {number} clickY The vertical coordinate of the click event.
      */
-    function positionInfobox(clickX, clickY) {
+    function positionInfobox(infoboxEl, clickX, clickY) {
         const offsetX = 20;
         const offsetY = 20;
         const viewportWidth = window.innerWidth;
@@ -781,7 +784,6 @@ export function initLorePage() {
         .then(([regions, games]) => {
             mapRegionsData = regions;
             mapGamesData = games;
-            let currentOpenRegionId = null; // Track the currently open region
 
             const maskGroup = mapOverlay.querySelector('#regions-mask g');
             if (!maskGroup) {
@@ -812,28 +814,21 @@ export function initLorePage() {
             // Use event delegation for a single click handler on the overlay
             mapOverlay.addEventListener('click', (e) => {
                 const clickedPath = e.target.closest('.region-path');
-                const wasActive = infoboxEl.classList.contains('active');
-                const previouslyOpenRegionId = currentOpenRegionId;
 
-                // Always start by closing the infobox if it's already active.
-                if (wasActive) {
-                    infoboxEl.classList.remove('active');
-                }
+                // Close any currently active infoboxes
+                const activeInfoboxes = document.querySelectorAll('.map-infobox.active');
+                activeInfoboxes.forEach(box => {
+                    box.classList.remove('active');
+                    // Remove the element from the DOM after its closing animation finishes.
+                    box.addEventListener('transitionend', () => {
+                        box.remove();
+                    }, { once: true });
+                });
 
+                // If a region was clicked, create a new infobox for it.
                 if (clickedPath) {
                     const regionId = clickedPath.dataset.regionId;
-                    // Open a new infobox if the clicked region is different from the one that was just closing.
-                    // Clicking the same region twice will result in it closing (from the check above) and not re-opening.
-                    if (regionId !== previouslyOpenRegionId) {
-                        createInfobox(regionId, e.clientX, e.clientY);
-                        currentOpenRegionId = regionId;
-                    } else {
-                        // The region that was just closed was clicked again. Reset the tracking ID.
-                        currentOpenRegionId = null;
-                    }
-                } else {
-                    // Clicked the map background, so ensure any tracking ID is cleared.
-                    currentOpenRegionId = null;
+                    createInfobox(regionId, e.clientX, e.clientY);
                 }
             });
 
