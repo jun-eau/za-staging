@@ -711,17 +711,9 @@ export function initLorePage() {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // Set initial position and display to measure
-        infoboxEl.style.left = `${clickX}px`;
-        infoboxEl.style.top = `${clickY}px`;
-        infoboxEl.style.visibility = 'hidden';
-        infoboxEl.style.display = 'block';
-
+        // The infobox is now invisible via CSS (opacity: 0, visibility: hidden)
+        // so we don't need to juggle display properties to measure it.
         const rect = infoboxEl.getBoundingClientRect();
-
-        // Hide it again before final positioning
-        infoboxEl.style.display = 'none';
-        infoboxEl.style.visibility = 'visible';
 
         // Determine final position
         let top = clickY + offsetY;
@@ -738,8 +730,15 @@ export function initLorePage() {
         infoboxEl.style.left = `${Math.max(5, left)}px`;
         infoboxEl.style.top = `${Math.max(5, top)}px`;
 
-        // Make it visible
-        infoboxEl.style.display = 'block';
+        // Make it visible with a guaranteed animation frame.
+        // Using a double requestAnimationFrame is a robust way to ensure the browser
+        // has processed the element's initial (invisible) state before the 'active'
+        // class is added, which triggers the transition.
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                infoboxEl.classList.add('active');
+            });
+        });
     }
 
     function initializeMap() {
@@ -813,23 +812,26 @@ export function initLorePage() {
             // Use event delegation for a single click handler on the overlay
             mapOverlay.addEventListener('click', (e) => {
                 const clickedPath = e.target.closest('.region-path');
+                const wasActive = infoboxEl.classList.contains('active');
+                const previouslyOpenRegionId = currentOpenRegionId;
+
+                // Always start by closing the infobox if it's already active.
+                if (wasActive) {
+                    infoboxEl.classList.remove('active');
+                    currentOpenRegionId = null; // Immediately mark as closing.
+                }
 
                 if (clickedPath) {
                     const regionId = clickedPath.dataset.regionId;
-
-                    // If the clicked region is the one that's already open and the infobox is visible, close it.
-                    if (regionId === currentOpenRegionId && infoboxEl.style.display === 'block') {
-                        infoboxEl.style.display = 'none';
-                        currentOpenRegionId = null;
-                    } else {
-                        // Otherwise, create the infobox for the new region.
-                        createInfobox(regionId, e.clientX, e.clientY);
-                        currentOpenRegionId = regionId;
+                    // Open a new infobox only if the clicked region is different from the one that was just closing.
+                    if (regionId !== previouslyOpenRegionId) {
+                        // Wait for the closing animation to finish before opening the new one.
+                        const openDelay = wasActive ? 200 : 0;
+                        setTimeout(() => {
+                            createInfobox(regionId, e.clientX, e.clientY);
+                            currentOpenRegionId = regionId;
+                        }, openDelay);
                     }
-                } else {
-                    // The map background was clicked, hide the infobox and reset state.
-                    infoboxEl.style.display = 'none';
-                    currentOpenRegionId = null;
                 }
             });
 
