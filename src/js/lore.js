@@ -544,6 +544,14 @@ export function initLorePage() {
             return;
         }
 
+        // Listen for the end of the fade-out transition to hide the box completely
+        infoboxEl.addEventListener('transitionend', () => {
+            // If the active class is not present, the box has just finished fading out
+            if (!infoboxEl.classList.contains('active')) {
+                infoboxEl.style.display = 'none';
+            }
+        });
+
         mapContainer.classList.add('is-loading');
 
         function hexToRgba(hex, alpha = 1) {
@@ -616,11 +624,16 @@ export function initLorePage() {
         if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
             infoboxEl.classList.remove('active');
             infoboxEl.dataset.regionId = '';
+            // The 'transitionend' event listener will now handle setting display to 'none'.
             return;
         }
         
         const region = mapRegionsData.find(r => r.id === clickedRegionId);
         if (!region) return;
+
+        // First, ensure the infobox is part of the layout so we can calculate its size.
+        // It will be invisible due to opacity: 0.
+        infoboxEl.style.display = 'block';
 
         updateInfoboxContents(region, infoboxEl);
 
@@ -721,24 +734,30 @@ export function initLorePage() {
             infoboxEl.style.width = '320px';
         }
 
-        // Set initial view state and calculate height
+        // Set initial view state
         const showLoreInitially = region.regionType !== 'major';
         infoboxEl.classList.toggle('show-lore-view', showLoreInitially);
-        const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
-        bodyEl.style.height = `${initialView.scrollHeight}px`;
 
-        // Position the infobox
-        const rect = infoboxEl.getBoundingClientRect();
-        const offsetX = 20, offsetY = 20;
-        let top = clickY + offsetY;
-        let left = clickX + offsetX;
-        if (left + rect.width > window.innerWidth) left = clickX - rect.width - offsetX;
-        if (top + rect.height > window.innerHeight) top = clickY - rect.height - offsetY;
-        infoboxEl.style.left = `${Math.max(5, left)}px`;
-        infoboxEl.style.top = `${Math.max(5, top)}px`;
+        // --- Font Loading Fix ---
+        // Wait until fonts are loaded before calculating height and positioning.
+        // This prevents the box from having the wrong initial size.
+        document.fonts.ready.then(() => {
+            const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
+            bodyEl.style.height = `${initialView.scrollHeight}px`;
 
-        // Set dataset and show
-        infoboxEl.dataset.regionId = region.id;
-        infoboxEl.classList.add('active');
+            // Position the infobox
+            const rect = infoboxEl.getBoundingClientRect();
+            const offsetX = 20, offsetY = 20;
+            let top = clickY + offsetY;
+            let left = clickX + offsetX;
+            if (left + rect.width > window.innerWidth) left = clickX - rect.width - offsetX;
+            if (top + rect.height > window.innerHeight) top = clickY - rect.height - offsetY;
+            infoboxEl.style.left = `${Math.max(5, left)}px`;
+            infoboxEl.style.top = `${Math.max(5, top)}px`;
+
+            // Set dataset and show
+            infoboxEl.dataset.regionId = region.id;
+            infoboxEl.classList.add('active');
+        });
     }
 }
