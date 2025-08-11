@@ -736,10 +736,19 @@ export function initLorePage() {
         const showLoreInitially = region.regionType !== 'major';
         infoboxEl.classList.toggle('show-lore-view', showLoreInitially);
 
-        // --- Font Loading Fix ---
-        // Wait until fonts are loaded before calculating height and positioning.
+        // --- Image and Font Loading Fix ---
+        // Wait until fonts AND images are loaded before calculating height and positioning.
         // This prevents the box from having the wrong initial size.
-        document.fonts.ready.then(() => {
+        const images = gamesViewEl.querySelectorAll('img');
+        const imageLoadPromises = [...images].map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = resolve; // Resolve on error too so it doesn't hang forever
+            });
+        });
+
+        Promise.all([document.fonts.ready, ...imageLoadPromises]).then(() => {
             const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
             bodyEl.style.height = `${initialView.scrollHeight}px`;
 
