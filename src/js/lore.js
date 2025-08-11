@@ -544,14 +544,6 @@ export function initLorePage() {
             return;
         }
 
-        // Listen for the end of the fade-out transition to hide the box completely
-        infoboxEl.addEventListener('transitionend', () => {
-            // If the active class is not present, the box has just finished fading out
-            if (!infoboxEl.classList.contains('active')) {
-                infoboxEl.style.display = 'none';
-            }
-        });
-
         mapContainer.classList.add('is-loading');
 
         function hexToRgba(hex, alpha = 1) {
@@ -621,22 +613,26 @@ export function initLorePage() {
         const currentRegionId = infoboxEl.dataset.regionId;
         const isInfoboxActive = infoboxEl.classList.contains('active');
 
+        // Logic to CLOSE the infobox
         if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
             infoboxEl.classList.remove('active');
             infoboxEl.dataset.regionId = '';
-            // The 'transitionend' event listener will now handle setting display to 'none'.
+            // Use a temporary, one-time listener to hide the element after the transition.
+            // This is more robust than a permanent listener.
+            infoboxEl.addEventListener('transitionend', () => {
+                infoboxEl.style.display = 'none';
+            }, { once: true });
             return;
         }
         
         const region = mapRegionsData.find(r => r.id === clickedRegionId);
         if (!region) return;
 
-        // First, ensure the infobox is part of the layout so we can calculate its size.
-        // It will be invisible due to opacity: 0.
+        // Logic to OPEN the infobox
+        // Ensure the infobox is part of the layout before we calculate its size.
         infoboxEl.style.display = 'block';
 
         updateInfoboxContents(region, infoboxEl);
-
         positionAndShowInfobox(region, infoboxEl, clickX, clickY);
     }
 
@@ -757,7 +753,13 @@ export function initLorePage() {
 
             // Set dataset and show
             infoboxEl.dataset.regionId = region.id;
-            infoboxEl.classList.add('active');
+
+            // Use a minimal timeout to ensure the browser has applied the new
+            // styles (like display: block and the new height) before we add the
+            // 'active' class that triggers the transition. This prevents animation bugs.
+            setTimeout(() => {
+                infoboxEl.classList.add('active');
+            }, 10);
         });
     }
 }
