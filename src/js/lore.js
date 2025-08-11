@@ -716,17 +716,9 @@ export function initLorePage() {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // To measure the box, we make it visible but transparent and disable transitions
-        infoboxEl.style.transition = 'none';
-        infoboxEl.classList.add('visible');
-        infoboxEl.offsetHeight; // Force a reflow so the browser calculates the layout with the new content
-
+        // The element is in the layout but invisible (opacity: 0, visibility: hidden).
+        // We can safely get its dimensions.
         const rect = infoboxEl.getBoundingClientRect();
-
-        // Immediately hide it again and restore transitions before setting position
-        infoboxEl.classList.remove('visible');
-        infoboxEl.offsetHeight; // Force another reflow to process the class removal
-        infoboxEl.style.transition = '';
 
         // Determine final position
         let top = clickY + offsetY;
@@ -746,6 +738,9 @@ export function initLorePage() {
 
     function initializeMap() {
         if (isMapInitialized) return;
+
+        // This is the key fix: remove the inline display:none that prevents CSS-based animations.
+        infoboxEl.style.display = '';
 
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
