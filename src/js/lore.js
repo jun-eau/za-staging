@@ -699,10 +699,10 @@ export function initLorePage() {
 
         positionInfobox(clickX, clickY);
 
-        // Use a short delay to ensure the position is set before the transition starts
-        setTimeout(() => {
+        // Use requestAnimationFrame to ensure the position is set before the transition starts
+        requestAnimationFrame(() => {
             infoboxEl.classList.add('visible');
-        }, 10);
+        });
     }
 
     /**
@@ -716,17 +716,16 @@ export function initLorePage() {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        // Set initial position and make it temporarily visible to measure
-        infoboxEl.style.left = `${clickX}px`;
-        infoboxEl.style.top = `${clickY}px`;
-        infoboxEl.style.visibility = 'hidden'; // Keep it hidden from view
-        infoboxEl.classList.add('visible'); // Add class to get dimensions
+        // To measure the box, we make it visible but transparent and disable transitions
+        infoboxEl.style.transition = 'none';
+        infoboxEl.classList.add('visible');
 
         const rect = infoboxEl.getBoundingClientRect();
 
-        // Hide it again immediately after measuring
+        // Immediately hide it again and restore transitions before setting position
         infoboxEl.classList.remove('visible');
-        infoboxEl.style.visibility = 'visible'; // Reset visibility for the animation
+        infoboxEl.offsetHeight; // Force a reflow to ensure the class removal is processed
+        infoboxEl.style.transition = '';
 
         // Determine final position
         let top = clickY + offsetY;
