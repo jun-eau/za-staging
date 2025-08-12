@@ -668,7 +668,11 @@ export function initLorePage() {
 
         // Populate Header
         const hasEmblem = region.emblemAsset;
-        headerEl.classList.toggle('no-emblem', !hasEmblem);
+        if (hasEmblem) {
+            headerEl.style.gridTemplateColumns = '40px 1fr auto';
+        } else {
+            headerEl.style.gridTemplateColumns = '1fr auto';
+        }
 
         let headerHTML = '';
         if (hasEmblem) {
