@@ -150,15 +150,10 @@
     "name": "Jurai SEZ",
     "government": "Erebonian Province",
     "capital": "Jurai City",
-    "emblemAsset": "jurai-emblem.webp",
     "baseColor": "#d3a089",
     "regionType": "minor",
     "description": "A coastal city at the northwesternmost point of Erebonia. Formerly a prosperous city-state, its economy is now deeply integrated with the Empire.",
     "history": "An independent city-state until S.1197, Jurai was economically pressured into becoming a province of Erebonia after a mysterious railway sabotage crippled its trade.",
-    "featuredIn": [
-      "trails-of-cold-steel",
-      "trails-of-cold-steel-ii"
-    ],
     "wikiLink": "https://kiseki.fandom.com/wiki/Jurai",
     "games": [],
     "svgPathData": ""
@@ -168,13 +163,11 @@
     "name": "Ored State",
     "government": "Autonomous State",
     "capital": "L'avance",
-    "emblemAsset": "ored-emblem.webp",
     "baseColor": "#e8c97c",
     "regionType": "minor",
     "description": "A state of unspoiled natural beauty in north-central Zemuria, known for its hot springs and high-quality agriculture. It is the headquarters of the Marduk Company.",
     "history": "Ored maintained its neutrality during the Great War, focusing on domestic affairs and commerce. It has recently become a key economic hub in the northern region.",
     "featuredIn": [
-      "trails-through-daybreak-ii",
       "trails-beyond-the-horizon"
     ],
     "wikiLink": "https://kiseki.fandom.com/wiki/Ored",
@@ -186,14 +179,12 @@
     "name": "Leman State",
     "government": "Autonomous State",
     "capital": "N/A",
-    "emblemAsset": "leman-emblem.webp",
     "baseColor": "#c5b6de",
     "regionType": "minor",
     "description": "A sovereign state in northern Zemuria that maintains a neutral stance in continental politics. It is famously home to the international headquarters of both the Bracer Guild and the Epstein Foundation.",
     "history": "Leman has long been a center for continent-wide organizations. Its prestigious universities and research institutes contribute to its reputation as a hub of knowledge and public service.",
     "featuredIn": [
-      "trails-in-the-sky-sc",
-      "trails-of-cold-steel-iv"
+      "trails-in-the-sky-sc"
     ],
     "wikiLink": "https://kiseki.fandom.com/wiki/Leman",
     "games": [],
@@ -209,9 +200,6 @@
     "regionType": "minor",
     "description": "A leading power in central east Zemuria, blessed with a wealth of natural resources like oil and septium. It has deep commercial and financial ties with Calvard.",
     "history": "An ancient power that has exported technology to its neighbors for centuries, Elsaim is currently in a state of economic rivalry with the rapidly growing city-state of Valis.",
-    "featuredIn": [
-      "trails-through-daybreak"
-    ],
     "wikiLink": "https://kiseki.fandom.com/wiki/Elsaim",
     "games": [],
     "svgPathData": ""
@@ -221,14 +209,10 @@
     "name": "Valis City-State",
     "government": "City-State",
     "capital": "Valis City",
-    "emblemAsset": "valis-emblem.webp",
     "baseColor": "#f0b89b",
     "regionType": "minor",
     "description": "A coastal city-state in central east Zemuria that has experienced rapid economic development. It is home to the Valis Investment Bank and the primary shareholder of the Marduk Company.",
     "history": "A small but massive city that has grown to rival the Principality of Elsaim for economic supremacy in the region, investing heavily in seashore resort development and technology.",
-    "featuredIn": [
-      "trails-through-daybreak"
-    ],
     "wikiLink": "https://kiseki.fandom.com/wiki/Valis",
     "games": [],
     "svgPathData": ""
