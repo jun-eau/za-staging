@@ -667,8 +667,14 @@ export function initLorePage() {
         const bodyEl = infoboxEl.querySelector('.infobox-body');
 
         // Populate Header
-        headerEl.innerHTML = `
-            <img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="map-infobox-emblem">
+        const hasEmblem = region.emblemAsset;
+        headerEl.classList.toggle('no-emblem', !hasEmblem);
+
+        let headerHTML = '';
+        if (hasEmblem) {
+            headerHTML += `<img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="map-infobox-emblem">`;
+        }
+        headerHTML += `
             <div class="map-infobox-title-section">
                 <h3>${region.name}</h3>
                 <p>${region.government}</p>
@@ -679,6 +685,7 @@ export function initLorePage() {
                 </a>
             </div>
         `;
+        headerEl.innerHTML = headerHTML;
 
         // Populate Games View
         const gamesInRegion = mapGamesData.filter(game => (region.games || []).includes(game.id));
@@ -715,6 +722,7 @@ export function initLorePage() {
         // Populate Footer & Set Up Toggle
         footerEl.innerHTML = '';
         if (region.regionType === 'major') {
+            footerEl.style.display = 'block';
             const toggleButton = document.createElement('button');
             toggleButton.className = 'map-infobox-toggle-btn';
             
@@ -731,6 +739,8 @@ export function initLorePage() {
             
             footerEl.appendChild(toggleButton);
             updateButtonText();
+        } else {
+            footerEl.style.display = 'none';
         }
     }
 
