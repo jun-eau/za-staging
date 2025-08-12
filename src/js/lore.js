@@ -1,3 +1,5 @@
+import { calculateRegionAreaInSelge } from './lib/geometry.js';
+
 export function initLorePage() {
     let isMapInitialized = false;
     let infobox1, infobox2, currentInfobox; // Variables for the two infobox elements and state tracking
@@ -564,9 +566,12 @@ export function initLorePage() {
             fetch('src/data/games.json').then(res => res.ok ? res.json() : Promise.reject(res.status))
         ])
         .then(([regions, games]) => {
-            // Now that data is loaded, assign it
-            mapRegionsData = regions;
+            // Now that data is loaded, assign it and calculate areas
             mapGamesData = games;
+            mapRegionsData = regions.map(region => ({
+                ...region,
+                formattedArea: calculateRegionAreaInSelge(region)
+            }));
 
             // Create the SVG paths for regions and the mask
             const maskGroup = mapOverlay.querySelector('#regions-mask g');
@@ -694,6 +699,7 @@ export function initLorePage() {
             <div class="map-infobox-lore-section">
                 <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Region Details</h4>
                 <p><strong>Capital:</strong> ${region.capital}</p>
+                ${region.formattedArea ? `<p><strong>Area:</strong> ${region.formattedArea}</p>` : ''}
             </div>
             <div class="map-infobox-lore-section">
                 <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Description</h4>
