@@ -668,8 +668,10 @@ export function initLorePage() {
                 <h3>${region.name}</h3>
                 <p>${region.government}</p>
             </div>
-            <div class="map-infobox-stats">
-                <strong>Capital:</strong><br>${region.capital}
+            <div class="map-infobox-links">
+                <a href="${region.wikiLink}" target="_blank" rel="noopener noreferrer" title="View on Kiseki Wiki">
+                    <img src="assets/logo/fandom.webp" alt="Fandom Wiki">
+                </a>
             </div>
         `;
 
@@ -689,6 +691,10 @@ export function initLorePage() {
                 <ul>${featuredInGames.map(game => `<li>${game.englishTitle}</li>`).join('')}</ul>
             </div>` : '';
         loreViewEl.innerHTML = `
+            <div class="map-infobox-lore-section">
+                <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Region Details</h4>
+                <p><strong>Capital:</strong> ${region.capital}</p>
+            </div>
             <div class="map-infobox-lore-section">
                 <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Description</h4>
                 <p>${region.description}</p>
