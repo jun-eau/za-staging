@@ -84,5 +84,66 @@
       "trails-beyond-the-horizon"
     ],
     "svgPathData": "M812 1326 816 1312 817 1281 826 1271 836 1267 844 1258 853 1254 856 1245 854 1240 862 1220 863 1214 864 1210 871 1197 872 1185 870 1180 876 1174 877 1170 847 1144 840 1135 828 1129 821 1124 814 1123 804 1118 815 1110 821 1108 828 1103 837 1098 852 1079 867 1052 869 1045 870 1041 892 1021 892 1000 907 989 925 955 927 944 947 920 950 918 966 915 993 925 1003 925 1017 912 1037 868 1037 863 1035 858 1037 852 1042 848 1055 847 1067 849 1082 849 1094 841 1098 840 1110 839 1121 828 1124 823 1122 815 1113 807 1109 794 1101 773 1111 770 1115 768 1120 763 1127 741 1131 714 1128 688 1120 671 1097 655 1076 650 1061 641 1054 640 1037 609 1033 604 1033 576 1039 570 1039 552 1043 546 1049 544 1058 533 1059 521 1065 508 1068 503 1059 493 1056 478 1064 458 1068 452 1079 441 1088 438 1096 430 1112 434 1120 440 1140 441 1150 443 1162 449 1169 449 1179 455 1189 456 1207 468 1211 476 1211 492 1209 497 1214 514 1217 518 1227 519 1234 515 1248 502 1254 500 1260 500 1271 507 1275 511 1290 506 1305 506 1316 511 1329 509 1336 493 1339 490 1349 489 1356 489 1361 485 1367 485 1381 479 1411 482 1408 494 1403 497 1396 493 1391 499 1395 547 1386 556 1384 559 1389 563 1395 558 1403 565 1405 579 1423 588 1433 591 1440 605 1447 607 1447 598 1451 592 1449 584 1447 574 1451 561 1463 558 1466 561 1467 553 1475 556 1491 575 1494 576 1504 588 1507 581 1506 576 1500 572 1499 566 1501 563 1498 560 1498 551 1486 543 1483 530 1526 546 1533 543 1562 544 1566 553 1581 559 1596 565 1612 566 1619 569 1653 605 1664 619 1674 636 1690 641 1726 665 1727 676 1736 698 1739 707 1766 735 1769 748 1779 759 1779 765 1763 767 1745 767 1714 779 1715 799 1704 836 1702 851 1704 866 1711 884 1715 893 1740 908 1714 932 1705 928 1701 932 1699 952 1713 954 1712 967 1693 992 1690 1050 1680 1063 1673 1066 1683 1092 1681 1105 1690 1117 1690 1125 1677 1126 1642 1154 1613 1159 1604 1174 1590 1180 1590 1206 1594 1213 1593 1218 1582 1225 1562 1262 1533 1277 1517 1280 1512 1288 1491 1293 1489 1301 1481 1305 1463 1303 1453 1305 1438 1300 1440 1277 1433 1265 1421 1258 1405 1253 1389 1245 1372 1239 1362 1234 1345 1234 1341 1231 1340 1236 1327 1240 1324 1245 1316 1247 1307 1246 1301 1244 1298 1248 1283 1253 1281 1255 1276 1253 1268 1255 1265 1262 1251 1268 1244 1267 1236 1264 1228 1261 1223 1261 1218 1255 1212 1253 1210 1241 1223 1242 1225 1235 1229 1232 1234 1232 1230 1226 1231 1221 1223 1215 1214 1215 1208 1219 1202 1218 1199 1216 1189 1216 1184 1213 1181 1217 1173 1221 1167 1221 1164 1228 1159 1230 1153 1225 1152 1218 1108 1217 1102 1212 1093 1211 1092 1206 1088 1206 1084 1212 1080 1212 1072 1204 1068 1205 1064 1212 1061 1212 1058 1207 1058 1215 1053 1221 1039 1221 1030 1217 1018 1213 1015 1213 1005 1218 979 1224 966 1231 964 1236 956 1240 956 1249 951 1265 945 1275 942 1285 934 1291 924 1298 916 1302 896 1305 886 1307 878 1322 860 1333 847 1339 831 1343 831 1340 842 1332 851 1329 860 1318 855 1313 842 1317 838 1322 831 1323 827 1320 812 1326"
+  },
+  {
+    "id": "north-ambria",
+    "name": "North Ambria",
+    "government": "Autonomous State",
+    "capital": "Haliask",
+    "emblemAsset": "north-ambria-emblem.webp",
+    "baseColor": "#a9b1b6",
+    "regionType": "minor",
+    "description": "A desolate, impoverished state north of Erebonia, annexed by the Empire following the Salt Pale disaster. It is known for its harsh climate and the resilience of its people.",
+    "history": "Formerly the Principality of North Ambria, the nation collapsed after the mysterious Salt Pale incident in S.1178 turned much of its land barren.",
+    "wikiLink": "https://kiseki.fandom.com/wiki/North_Ambria",
+    "games": [],
+    "svgPathData": ""
+  },
+  {
+    "id": "remiferia",
+    "name": "Principality of Remiferia",
+    "government": "Principality",
+    "capital": "Ardent",
+    "emblemAsset": "remiferia-emblem.webp",
+    "baseColor": "#85c4c3",
+    "regionType": "minor",
+    "description": "A northern principality renowned across the continent for its advanced medical technology (as the home of the Seiland Company) and prestigious medical schools.",
+    "history": "Established in S.943, Remiferia has maintained a long history of neutrality, focusing on humanitarian aid and medical research over military might.",
+    "wikiLink": "https://kiseki.fandom.com/wiki/Remiferia",
+    "games": [],
+    "svgPathData": ""
+  },
+  {
+    "id": "nord-highlands",
+    "name": "Nord Highlands",
+    "government": "Nomadic Tribes",
+    "capital": "N/A",
+    "emblemAsset": "nord-emblem.webp",
+    "baseColor": "#8a9a7a",
+    "regionType": "minor",
+    "description": "A vast, windswept plateau situated between the Erebonian and Calvardian borders. It is home to nomadic tribes, a proud warrior culture, and herds of horses.",
+    "history": "An ancient, sparsely populated region with no central government, the Nord Highlands have long been a contested buffer zone with deep historical ties to Erebonia.",
+    "featuredIn": [
+      "trails-of-cold-steel",
+      "trails-of-cold-steel-ii",
+      "trails-into-reverie"
+    ],
+    "wikiLink": "https://kiseki.fandom.com/wiki/Nord_Highlands",
+    "games": [],
+    "svgPathData": ""
+  },
+  {
+    "id": "arteria",
+    "name": "Holy City of Arteria",
+    "government": "Theocratic State",
+    "capital": "Arteria",
+    "emblemAsset": "arteria-emblem.webp",
+    "baseColor": "#d3a2c5",
+    "regionType": "minor",
+    "description": "The capital of the Septian Church, located on an island in the center of the Zemurian continent. It is the holiest site for followers of the goddess Aidios and the headquarters of the all church organizations.",
+    "history": "An ancient city-state whose history is intertwined with the Septian Church itself. Arteria maintains political neutrality and wields significant soft power across the continent.",
+    "wikiLink": "https://kiseki.fandom.com/wiki/Arteria",
+    "games": [],
+    "svgPathData": ""
   }
 ]
