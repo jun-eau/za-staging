@@ -633,6 +633,28 @@ body.home-page::before {
     color: #b0b0b0;
 }
 
+.map-infobox-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.map-infobox-links a {
+    display: inline-block;
+    line-height: 0; /* Remove extra space below the image */
+}
+
+.map-infobox-links img {
+    height: 40px;
+    width: auto;
+    opacity: 0.7;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.map-infobox-links img:hover {
+    opacity: 1;
+}
+
 .infobox-body {
     position: relative;
     transition: height 0.25s ease-in-out;
