@@ -601,21 +601,12 @@ body.home-page::before {
 
 .map-infobox-header {
     display: grid;
+    grid-template-columns: 40px 1fr 80px;
     align-items: center;
+    gap: 10px;
     padding: 10px;
     background-color: #252525;
     border-bottom: 1px solid #444;
-}
-.map-infobox-header.has-emblem {
-    grid-template-columns: 40px 1fr 80px;
-    gap: 10px;
-}
-.map-infobox-header.no-emblem {
-    grid-template-columns: 1fr 80px;
-    gap: 12px;
-}
-.map-infobox-header.no-emblem .map-infobox-title-section {
-    padding-left: 2px; /* Align with the edge */
 }
 
 .map-infobox-emblem {
