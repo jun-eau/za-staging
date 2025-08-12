@@ -609,6 +609,10 @@ body.home-page::before {
     border-bottom: 1px solid #444;
 }
 
+.map-infobox-header.no-emblem {
+    grid-template-columns: 1fr 80px;
+}
+
 .map-infobox-emblem {
     width: 40px;
     height: 40px;
