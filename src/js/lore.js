@@ -531,6 +531,40 @@ export function initLorePage() {
 
     let dataReadyPromise = null;
 
+    function calculatePathArea(pathData) {
+        if (!pathData) return 0;
+
+        const points = [];
+        const segments = pathData.match(/[MmLlHhVvCcSsQqTtAaZz][^MmLlHhVvCcSsQqTtAaZz]*/g);
+        if (!segments) return 0;
+
+        segments.forEach(segment => {
+            const command = segment.charAt(0);
+            if (command.toUpperCase() === 'Z') return;
+
+            const args = segment.substring(1).trim().split(/[\s,]+/);
+
+            if ((command.toUpperCase() === 'M' || command.toUpperCase() === 'L') && args.length >= 2) {
+                for (let i = 0; i < args.length; i += 2) {
+                    if(args[i] !== '' && args[i+1] !== '') {
+                        points.push({ x: parseFloat(args[i]), y: parseFloat(args[i+1]) });
+                    }
+                }
+            }
+        });
+
+        if (points.length < 3) return 0;
+
+        let area = 0;
+        for (let i = 0; i < points.length; i++) {
+            const p1 = points[i];
+            const p2 = points[(i + 1) % points.length];
+            area += (p1.x * p2.y - p2.x * p1.y);
+        }
+
+        return Math.abs(area) / 2;
+    }
+
     function initializeMap() {
         if (isMapInitialized) return;
         isMapInitialized = true;
@@ -567,6 +601,17 @@ export function initLorePage() {
             // Now that data is loaded, assign it
             mapRegionsData = regions;
             mapGamesData = games;
+
+            // Calculate and store area for each region
+            mapRegionsData.forEach(region => {
+                const pixelArea = calculatePathArea(region.svgPathData);
+                if (pixelArea > 0) {
+                    const selgeArea = pixelArea / 53.22;
+                    region.area = `${selgeArea.toLocaleString('en-US', { maximumFractionDigits: 0 })} selge²`;
+                } else {
+                    region.area = 'N/A';
+                }
+            });
 
             // Create the SVG paths for regions and the mask
             const maskGroup = mapOverlay.querySelector('#regions-mask g');
@@ -694,6 +739,7 @@ export function initLorePage() {
             <div class="map-infobox-lore-section">
                 <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Region Details</h4>
                 <p><strong>Capital:</strong> ${region.capital}</p>
+                <p><strong>Area:</strong> ${region.area}</p>
             </div>
             <div class="map-infobox-lore-section">
                 <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Description</h4>
