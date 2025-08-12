@@ -667,18 +667,35 @@ export function initLorePage() {
         const bodyEl = infoboxEl.querySelector('.infobox-body');
 
         // Populate Header
-        headerEl.innerHTML = `
-            <img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="map-infobox-emblem">
-            <div class="map-infobox-title-section">
-                <h3>${region.name}</h3>
-                <p>${region.government}</p>
-            </div>
-            <div class="map-infobox-links">
-                <a href="${region.wikiLink}" target="_blank" rel="noopener noreferrer" title="View on Kiseki Wiki">
-                    <img src="assets/logo/fandom.webp" alt="Fandom Wiki">
-                </a>
-            </div>
-        `;
+        headerEl.classList.remove('has-emblem', 'no-emblem'); // Clear existing classes
+        if (region.emblemAsset) {
+            headerEl.classList.add('has-emblem');
+            headerEl.innerHTML = `
+                <img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="map-infobox-emblem">
+                <div class="map-infobox-title-section">
+                    <h3>${region.name}</h3>
+                    <p>${region.government}</p>
+                </div>
+                <div class="map-infobox-links">
+                    <a href="${region.wikiLink}" target="_blank" rel="noopener noreferrer" title="View on Kiseki Wiki">
+                        <img src="assets/logo/fandom.webp" alt="Fandom Wiki">
+                    </a>
+                </div>
+            `;
+        } else {
+            headerEl.classList.add('no-emblem');
+            headerEl.innerHTML = `
+                <div class="map-infobox-title-section">
+                    <h3>${region.name}</h3>
+                    <p>${region.government}</p>
+                </div>
+                <div class="map-infobox-links">
+                    <a href="${region.wikiLink}" target="_blank" rel="noopener noreferrer" title="View on Kiseki Wiki">
+                        <img src="assets/logo/fandom.webp" alt="Fandom Wiki">
+                    </a>
+                </div>
+            `;
+        }
 
         // Populate Games View
         const gamesInRegion = mapGamesData.filter(game => (region.games || []).includes(game.id));
