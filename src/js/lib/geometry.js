@@ -121,5 +121,5 @@ export function calculateRegionAreaInSelge(region) {
     // 4. Format the number with commas and append the unit
     const formattedArea = Math.round(areaInSquareSelge).toLocaleString('en-US');
 
-    return `${formattedArea} selge²`;
+    return `~${formattedArea} selge²`;
 }
