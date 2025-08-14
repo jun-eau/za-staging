@@ -584,7 +584,7 @@ export function initLorePage() {
                 path.id = `region-${region.id}`;
                 path.dataset.regionId = region.id;
                 if (region.baseColor) {
-                    path.style.setProperty('--region-highlight-color', hexToRgba(region.baseColor, 0.7));
+                    path.style.setProperty('--region-highlight-color', hexToRgba(region.baseColor, 0.4));
                 }
                 mapOverlay.appendChild(path);
 

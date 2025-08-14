@@ -841,7 +841,7 @@ body.home-page::before {
     pointer-events: none;
 }
 .map-container:hover .dimming-rect {
-    opacity: 1;
+    opacity: 0.6;
 }
 .map-overlay-svg {
     position: absolute;
@@ -855,13 +855,13 @@ body.home-page::before {
     fill: transparent;
     stroke: transparent;
     stroke-width: 3;
-    transition: fill 0.2s ease-in-out, stroke 0.2s ease-in-out;
+    transition: fill 0.2s ease-in-out, stroke 0.2s ease-in-out, stroke-width 0.2s ease-in-out;
     cursor: pointer;
 }
 .region-path:hover {
     fill: var(--region-highlight-color);
-    stroke: var(--accent-gold);
-    stroke-width: 4;
+    stroke: rgba(255, 255, 255, 0.7);
+    stroke-width: 2.5;
 }
 
 /*
