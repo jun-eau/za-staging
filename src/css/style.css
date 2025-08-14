@@ -655,6 +655,22 @@ body.home-page::before {
     opacity: 1;
 }
 
+.map-infobox-close-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+    transition: color 0.2s ease-in-out;
+}
+
+.map-infobox-close-btn:hover {
+    color: #fff;
+}
+
 .infobox-body {
     position: relative;
     transition: height 0.25s ease-in-out;
@@ -835,7 +851,7 @@ body.home-page::before {
     transition: opacity 0.3s ease-in-out;
     pointer-events: none;
 }
-.map-container:hover .dimming-rect {
+.map-container:hover:not(.region-is-hovered) .dimming-rect {
     opacity: 1;
 }
 .map-overlay-svg {
