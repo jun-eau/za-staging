@@ -568,6 +568,11 @@ body.home-page::before {
 }
 
 /* --- Map Infobox --- */
+/* Utility class to disable transitions during JS calculations */
+.no-transition {
+    transition: none !important;
+}
+
 .map-infobox {
     position: absolute;
     min-width: 320px;

@@ -723,6 +723,10 @@ export function initLorePage() {
             ${featuredInHtml}
         `;
 
+        // Set initial view state first, so the button text is correct.
+        const showLoreInitially = region.regionType !== 'major';
+        infoboxEl.classList.toggle('show-lore-view', showLoreInitially);
+
         // Populate Footer & Set Up Toggle
         footerEl.innerHTML = '';
         if (region.regionType === 'major') {
@@ -742,7 +746,7 @@ export function initLorePage() {
             });
             
             footerEl.appendChild(toggleButton);
-            updateButtonText();
+            updateButtonText(); // Now this will be correct.
         } else {
             footerEl.style.display = 'none';
         }
@@ -770,10 +774,6 @@ export function initLorePage() {
             infoboxEl.style.width = '320px';
         }
 
-        // Set initial view state
-        const showLoreInitially = region.regionType !== 'major';
-        infoboxEl.classList.toggle('show-lore-view', showLoreInitially);
-
         // --- Image and Font Loading Fix ---
         const images = gamesViewEl.querySelectorAll('img');
         const imageLoadPromises = [...images].map(img => {
@@ -785,8 +785,23 @@ export function initLorePage() {
         });
 
         return Promise.all([document.fonts.ready, ...imageLoadPromises]).then(() => {
-            const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
+            // The 'show-lore-view' class is now set in updateInfoboxContents.
+            // We just need to read it here to determine the initial view for height calculation.
+            const initialView = infoboxEl.classList.contains('show-lore-view') ? loreViewEl : gamesViewEl;
+
+            // --- Height Calculation & Transition Fix ---
+            // 1. Add a class to disable transitions on the body.
+            bodyEl.classList.add('no-transition');
+            // 2. Set the height instantaneously.
             bodyEl.style.height = `${initialView.scrollHeight}px`;
+
+            // 3. Force a reflow. Accessing offsetHeight is a common way to do this.
+            // This ensures the browser applies the height change before we re-enable transitions.
+            void bodyEl.offsetHeight;
+
+            // 4. Remove the no-transition class so future toggles are animated.
+            bodyEl.classList.remove('no-transition');
+
 
             // Position the infobox
             const rect = infoboxEl.getBoundingClientRect();
