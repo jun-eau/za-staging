@@ -583,12 +583,6 @@ export function initLorePage() {
                 path.setAttribute('class', 'region-path');
                 path.id = `region-${region.id}`;
                 path.dataset.regionId = region.id;
-
-                // Accessibility Enhancements
-                path.setAttribute('role', 'button');
-                path.setAttribute('aria-label', region.name);
-                path.setAttribute('tabindex', '0');
-
                 if (region.baseColor) {
                     path.style.setProperty('--region-highlight-color', hexToRgba(region.baseColor, 0.7));
                 }
@@ -600,40 +594,12 @@ export function initLorePage() {
                 maskGroup.appendChild(maskPath);
             });
 
-            // ATTACH EVENT LISTENERS - only after data is ready and paths are drawn
+            // ATTACH THE EVENT LISTENER - only after data is ready and paths are drawn
             mapOverlay.addEventListener('click', (e) => {
                 const clickedPath = e.target.closest('.region-path');
                 const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
                 
                 handleMapClick(clickedRegionId, e.clientX, e.clientY);
-            });
-
-            mapOverlay.addEventListener('mouseover', (e) => {
-                if (e.target.classList.contains('region-path')) {
-                    mapContainer.classList.add('region-is-hovered');
-                }
-            });
-
-            mapOverlay.addEventListener('mouseout', (e) => {
-                if (e.target.classList.contains('region-path')) {
-                    mapContainer.classList.remove('region-is-hovered');
-                }
-            });
-
-            mapOverlay.addEventListener('keydown', (e) => {
-                if (e.target.classList.contains('region-path') && (e.key === 'Enter' || e.key === ' ')) {
-                    e.preventDefault(); // Prevent page scroll on spacebar
-                    const path = e.target;
-                    const regionId = path.dataset.regionId;
-
-                    // For keyboard users, we can't use mouse coordinates.
-                    // We'll calculate the center of the path to position the infobox.
-                    const rect = path.getBoundingClientRect();
-                    const clickX = rect.left + rect.width / 2;
-                    const clickY = rect.top + rect.height / 2;
-
-                    handleMapClick(regionId, clickX, clickY);
-                }
             });
 
             // Remove the loading state
@@ -652,35 +618,39 @@ export function initLorePage() {
      * @param {number} clickY The clientY of the click event.
      */
     function handleMapClick(clickedRegionId, clickX, clickY) {
-        const activeBox = document.querySelector('.map-infobox.active');
-        const previouslyClickedRegionId = activeBox ? activeBox.dataset.regionId : null;
+        const outgoingBox = currentInfobox;
+        const isInfoboxActive = outgoingBox.classList.contains('active');
+        const currentRegionId = outgoingBox.dataset.regionId;
 
-        // Always hide the currently active box, if there is one.
-        if (activeBox) {
-            activeBox.classList.remove('active');
-        }
-
-        // If no region was clicked, or if the clicked region was already open, we're done.
-        // The box is now closed and we don't need to open a new one.
-        if (!clickedRegionId || clickedRegionId === previouslyClickedRegionId) {
-            if(activeBox) activeBox.dataset.regionId = '';
+        // Case 1: Close the active infobox if clicking outside or on the same region
+        if (!clickedRegionId || (isInfoboxActive && clickedRegionId === currentRegionId)) {
+            if (isInfoboxActive) {
+                outgoingBox.classList.remove('active');
+                outgoingBox.dataset.regionId = '';
+            }
             return;
         }
 
         const region = mapRegionsData.find(r => r.id === clickedRegionId);
         if (!region) return;
 
-        // Determine which box to use for the new content.
-        // If we had an active box, use the other one. Otherwise, default to infobox1.
-        const incomingBox = (activeBox && activeBox.id === 'map-infobox-1') ? infobox2 : infobox1;
+        // Determine which box will be the new one
+        const incomingBox = (outgoingBox.id === 'map-infobox-1') ? infobox2 : infobox1;
+
+        // Make sure the incoming box is ready to be displayed (it might be display:none from a previous close)
+        incomingBox.style.display = 'block';
 
         // Populate the incoming box with new content
         updateInfoboxContents(region, incomingBox);
 
-        // Prepare, position, and then show the infobox.
+        // Prepare the incoming box (size and position it), and once it's ready, trigger the animation
         prepareAndPositionInfobox(region, incomingBox, clickX, clickY).then(() => {
+            // Now, trigger the cross-fade
+            outgoingBox.classList.remove('active');
             incomingBox.classList.add('active');
-            // No need to manage currentInfobox state here as we query for the active one each time.
+
+            // Update the state to track the new active box
+            currentInfobox = incomingBox;
         });
     }
 
@@ -717,20 +687,9 @@ export function initLorePage() {
                 <a href="${region.wikiLink}" target="_blank" rel="noopener noreferrer" title="View on Kiseki Wiki">
                     <img src="assets/logo/fandom.webp" alt="Fandom Wiki">
                 </a>
-                <button class="map-infobox-close-btn">&times;</button>
             </div>
         `;
         headerEl.innerHTML = headerHTML;
-
-        // Attach event listener to the new close button
-        const closeButton = headerEl.querySelector('.map-infobox-close-btn');
-        if (closeButton) {
-            closeButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                infoboxEl.classList.remove('active');
-                infoboxEl.dataset.regionId = '';
-            });
-        }
 
         // Populate Games View
         const gamesInRegion = mapGamesData.filter(game => (region.games || []).includes(game.id));
@@ -829,36 +788,15 @@ export function initLorePage() {
             const initialView = showLoreInitially ? loreViewEl : gamesViewEl;
             bodyEl.style.height = `${initialView.scrollHeight}px`;
 
-            // Position the infobox, ensuring it stays within the viewport
-            const boxWidth = infoboxEl.offsetWidth;
-            const boxHeight = infoboxEl.offsetHeight;
-            const margin = 10; // 10px margin from the viewport edges
-            const offsetX = 20; // Preferred distance from the cursor
-            const offsetY = 20;
-
-            // Try positioning to the bottom-right of the cursor first
-            let left = clickX + offsetX;
+            // Position the infobox
+            const rect = infoboxEl.getBoundingClientRect();
+            const offsetX = 20, offsetY = 20;
             let top = clickY + offsetY;
-
-            // Adjust if it goes off the right edge
-            if (left + boxWidth + margin > window.innerWidth) {
-                left = clickX - boxWidth - offsetX;
-            }
-            // Adjust if it goes off the bottom edge
-            if (top + boxHeight + margin > window.innerHeight) {
-                top = clickY - boxHeight - offsetY;
-            }
-            // Adjust if it goes off the left edge
-            if (left < margin) {
-                left = margin;
-            }
-            // Adjust if it goes off the top edge
-            if (top < margin) {
-                top = margin;
-            }
-
-            infoboxEl.style.left = `${left}px`;
-            infoboxEl.style.top = `${top}px`;
+            let left = clickX + offsetX;
+            if (left + rect.width > window.innerWidth) left = clickX - rect.width - offsetX;
+            if (top + rect.height > window.innerHeight) top = clickY - rect.height - offsetY;
+            infoboxEl.style.left = `${Math.max(5, left)}px`;
+            infoboxEl.style.top = `${Math.max(5, top)}px`;
 
             // Set dataset for identification
             infoboxEl.dataset.regionId = region.id;
