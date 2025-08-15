@@ -66,7 +66,7 @@
   },
   {
     "id": "calvard",
-    "name": "Calvard Republic",
+    "name": "Republic of Calvard",
     "government": "Democratic Republic",
     "capital": "Edith",
     "emblemAsset": "calvard-emblem.webp",
@@ -87,7 +87,7 @@
   },
   {
     "id": "north-ambria",
-    "name": "North Ambria",
+    "name": "North Ambria State",
     "government": "Independent State",
     "capital": "Haliask",
     "emblemAsset": "north-ambria-emblem.webp",
@@ -160,7 +160,7 @@
   },
   {
     "id": "ored",
-    "name": "Ored State",
+    "name": "Ored",
     "government": "Autonomous State",
     "capital": "L'avance",
     "baseColor": "#feea9f",
