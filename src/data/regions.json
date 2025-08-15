@@ -30,8 +30,8 @@
     "emblemAsset": "liberl-emblem.webp",
     "baseColor": "#e8eced",
     "regionType": "major",
-    "description": "A small but prosperous kingdom in southwest Zemuria, renowned for its technological innovation via the Zeiss Central Factory and a strong Bracer Guild presence.",
-    "history": "Established in S.1107. Its defining modern event was the Hundred Days War in S. 1192, where it successfully repelled an invasion from the Erebonian Empire.",
+    "description": "A kingdom in southwestern Zemuria, represented by the crest of a white falcon. It maintains its pacifism through diplomacy and possesses superior orbment technology developed at the Zeiss Central Factory.",
+    "history": "Established in approximately S.1 after the Great Collapse. Its modern history is defined by the Hundred Days War with Erebonia and its ongoing efforts to maintain stability between its two superpower neighbors.",
     "featuredIn": [],
     "wikiLink": "https://kiseki.fandom.com/wiki/Liberl",
     "games": [
@@ -44,13 +44,13 @@
   {
     "id": "crossbell",
     "name": "Crossbell",
-    "government": "Autonomous Republic",
+    "government": "Autonomous State",
     "capital": "Crossbell City",
     "emblemAsset": "crossbell-emblem.webp",
     "baseColor": "#65809e",
     "regionType": "major",
-    "description": "A crucial buffer state between Erebonia and Calvard, serving as a major international center for trade and finance, leading to constant political conflict.",
-    "history": "Established in S.1134 as an autonomous state under joint suzerainty. Its history is defined by the centuries-long struggle for independence from its powerful neighbors.",
+    "description": "A landlocked, self-governing buffer state located between Erebonia and Calvard. Crossbell is the heart of Zemuria's international economy and a technologically advanced center for trade and finance.",
+    "history": "Established in S.1134 as a territory under the joint suzerainty of Erebonia and Calvard. Its history is marked by a long series of conflicts between its neighbors and a persistent struggle for true sovereignty.",
     "featuredIn": [
       "trails-of-cold-steel-ii",
       "trails-of-cold-steel-iii",
@@ -72,8 +72,8 @@
     "emblemAsset": "calvard-emblem.webp",
     "baseColor": "#b5c994",
     "regionType": "major",
-    "description": "A large, diverse republic in central Zemuria, experiencing rapid economic growth and grappling with the social and political consequences of mass immigration.",
-    "history": "Established in S.1100 following a democratic revolution that overthrew the monarchy. It is now one of the continent's leading economic and political powers.",
+    "description": "A large democratic republic in central Zemuria and a continental superpower. It is known for its diverse population of immigrants and its advanced orbal firearm and vehicle technology.",
+    "history": "Founded after the Calvardian Democratic Revolution overthrew the ruling monarchy in S.1100. Its history is characterized by ideological ambition, tensions with immigrant populations, and a long-standing rivalry with the Erebonian Empire.",
     "featuredIn": [
       "trails-to-azure"
     ],
@@ -88,13 +88,13 @@
   {
     "id": "north-ambria",
     "name": "North Ambria",
-    "government": "Autonomous State",
+    "government": "Independent State",
     "capital": "Haliask",
     "emblemAsset": "north-ambria-emblem.webp",
     "baseColor": "#bec4c6",
     "regionType": "minor",
-    "description": "A desolate, impoverished state north of Erebonia, annexed by the Empire following the Salt Pale disaster. It is known for its harsh climate and the resilience of its people.",
-    "history": "Formerly the Principality of North Ambria, the nation collapsed after the mysterious Salt Pale incident in S.1178 turned much of its land barren.",
+    "description": "A state in northern Zemuria, formerly a principality, known for its harsh, cold climate and widespread poverty. Its economy has been overwhelmingly reliant on its famed jaeger corps, the Northern Jaegers.",
+    "history": "Its history was irrevocably shaped by the S.1178 Salt Pale disaster, which destroyed its capital and overthrew its government.",
     "wikiLink": "https://kiseki.fandom.com/wiki/North_Ambria",
     "games": [],
     "svgPathData": "M213 328 217 338 215 364 227 376 227 388 227 399 231 399 244 404 259 400 268 401 286 406 308 403 319 410 342 433 349 434 371 411 385 402 409 405 419 403 426 399 431 399 446 415 451 430 481 443 493 437 513 441 527 438 535 439 543 442 582 419 594 418 608 412 618 412 635 404 641 402 673 403 697 410 727 401 745 405 774 396 776 388 785 375 776 362 772 348 768 340 764 323 762 310 752 296 752 285 755 277 763 264 760 262 762 255 749 233 755 229 764 233 767 228 767 218 762 215 761 203 766 198 771 196 775 191 776 183 770 182 766 172 772 166 784 165 782 159 784 156 777 142 771 144 777 152 772 152 767 147 763 128 762 115 778 102 786 107 818 94 832 100 855 99 874 89 888 89 907 79 944 51 888 52 865 59 860 57 835 58 820 61 805 70 792 71 782 82 773 88 766 101 751 111 744 113 735 113 727 111 701 114 692 117 686 121 660 121 644 126 629 125 626 129 613 129 601 137 588 155 581 161 574 172 568 178 556 195 545 200 543 205 543 210 536 226 537 234 526 253 511 263 495 264 490 259 459 265 457 281 460 284 463 289 468 293 467 301 461 300 455 294 445 298 445 306 442 311 440 319 435 321 429 320 419 321 415 324 402 326 396 321 389 303 378 301 354 300 351 294 346 288 343 283 337 279 329 278 320 283 308 282 291 279 276 282 268 287 270 294 266 299 263 303 256 306 248 306 242 303 237 301 232 297 221 304 220 310 214 315 213 328"
@@ -107,8 +107,8 @@
     "emblemAsset": "remiferia-emblem.webp",
     "baseColor": "#9dcbc5",
     "regionType": "minor",
-    "description": "A northern principality renowned across the continent for its advanced medical technology (as the home of the Seiland Company) and prestigious medical schools.",
-    "history": "Established in S.943, Remiferia has maintained a long history of neutrality, focusing on humanitarian aid and medical research over military might.",
+    "description": "A principality in northwest Zemuria, known as the most medically advanced nation on the continent. It is home to the renowned Seiland Company, a worldwide producer of medical equipment.",
+    "history": "Its history is marked by a long-standing decree forbidding the development of medical technologies for warfare. This policy has ensured its geopolitical stability, though it has also made it a target for factions seeking to exploit its expertise for illegal purposes.",
     "wikiLink": "https://kiseki.fandom.com/wiki/Remiferia",
     "games": [],
     "svgPathData": "M761 266 754 279 752 296 762 311 764 324 768 341 774 350 777 362 786 375 776 387 775 397 782 400 788 410 813 424 819 431 834 433 845 436 868 437 890 419 902 410 926 390 961 390 970 393 981 398 991 396 1034 383 1046 381 1056 383 1063 386 1076 390 1090 397 1097 402 1101 408 1100 419 1096 430 1112 435 1120 440 1142 441 1154 445 1161 449 1169 450 1178 455 1191 456 1191 449 1186 445 1175 430 1175 409 1179 399 1179 385 1174 374 1174 360 1170 349 1172 338 1179 321 1183 318 1184 304 1191 298 1194 286 1198 281 1186 270 1186 263 1183 252 1178 247 1177 236 1169 230 1165 230 1163 214 1168 199 1168 195 1162 191 1147 190 1146 184 1147 176 1143 172 1133 174 1128 173 1116 178 1114 181 1115 185 1124 187 1126 191 1124 194 1121 189 1116 190 1114 194 1118 197 1117 201 1112 202 1109 194 1101 191 1101 196 1106 201 1105 211 1100 217 1087 224 1083 232 1077 232 1079 226 1078 222 1080 215 1073 205 1048 202 1036 213 1028 214 1029 225 1019 223 1008 229 1004 221 999 225 989 221 986 224 980 222 972 221 965 219 958 220 959 224 967 229 973 230 973 236 955 234 945 235 931 237 925 240 933 246 939 249 938 258 927 262 918 268 914 277 910 277 907 274 904 274 900 276 896 272 887 270 884 257 876 263 872 270 864 271 861 268 848 268 843 274 835 275 833 288 827 288 815 294 804 296 793 295 788 293 778 278 779 274 769 266 761 266"
@@ -116,12 +116,12 @@
   {
     "id": "nord-highlands",
     "name": "Nord Highlands",
-    "government": "Nomadic Tribes",
+    "government": "Nomadic Society",
     "capital": "N/A",
     "baseColor": "#9baa89",
     "regionType": "minor",
-    "description": "A vast, windswept plateau situated between the Erebonian and Calvardian borders. It is home to nomadic tribes, a proud warrior culture, and herds of horses.",
-    "history": "An ancient, sparsely populated region with no central government, the Nord Highlands have long been a contested buffer zone with deep historical ties to Erebonia.",
+    "description": "An independent, mountainous region of vast plains located northeast of Erebonia. The Highlands are home to the Nord Nomads, a people of spiritual faith known for hunting and breeding the war horses used by the Empire.",
+    "history": "The region's ancient history is tied to a Neolithic civilization, while its modern history is deeply connected to Erebonia. During the War of the Lions, the warriors of Nord developed deep historical ties to Erebonia.",
     "featuredIn": [
       "trails-of-cold-steel",
       "trails-of-cold-steel-ii",
@@ -134,13 +134,13 @@
   {
     "id": "arteria",
     "name": "Holy City of Arteria",
-    "government": "Theocratic State",
+    "government": "Theocracy",
     "capital": "Arteria",
     "emblemAsset": "arteria-emblem.webp",
     "baseColor": "#fde9f0",
     "regionType": "minor",
-    "description": "The capital of the Septian Church, located on an island in the center of the Zemurian continent. It is the holiest site for followers of the goddess Aidios and the headquarters of all church organizations.",
-    "history": "An ancient city-state whose history is intertwined with the Septian Church itself. Arteria maintains political neutrality and wields significant soft power across the continent.",
+    "description": "A theocratic city-state in northern Zemuria that serves as the High Seat of the Septian Church. It acts as a global gathering place for believers, church officials, and pilgrims.",
+    "history": "As the headquarters of the Septian Church, Arteria holds special authority in international relations. It has a significant political role, officially recognizing sovereign states and wielding soft power across the continent.",
     "wikiLink": "https://kiseki.fandom.com/wiki/Arteria",
     "games": [],
     "svgPathData": "M1592 379 1590 372 1590 369 1587 366 1583 363 1583 354 1586 346 1583 340 1579 336 1576 332 1579 328 1582 327 1586 327 1591 326 1598 322 1600 321 1608 321 1617 325 1626 329 1633 329 1648 324 1651 323 1655 320 1660 324 1667 329 1669 333 1665 339 1658 344 1649 351 1647 359 1647 367 1642 372 1637 375 1632 376 1629 379 1625 376 1621 375 1615 373 1606 375 1592 379"
@@ -148,12 +148,12 @@
   {
     "id": "jurai",
     "name": "Jurai SEZ",
-    "government": "Erebonian Province",
+    "government": "Erebonian Special Economic Zone",
     "capital": "Jurai City",
     "baseColor": "#d0bfa9",
     "regionType": "minor",
-    "description": "A coastal city at the northwesternmost point of Erebonia. Formerly a prosperous city-state, its economy is now deeply integrated with the Empire.",
-    "history": "An independent city-state until S.1197, Jurai was economically pressured into becoming a province of Erebonia after a mysterious railway sabotage crippled its trade.",
+    "description": "A coastal city in northwestern Erebonia, formerly an independent city-state. As a Special Economic Zone, it is an attractive location for investors and features a developed entertainment district.",
+    "history": "As a city-state, its prosperity was tied to maritime trade, which suffered after the North Ambrian disaster. Jurai was later merged into the Empire in S.1196 after Chancellor Osborne proposed connecting it to the imperial railway network.",
     "wikiLink": "https://kiseki.fandom.com/wiki/Jurai",
     "games": [],
     "svgPathData": "M122 467 123 462 135 453 143 453 152 457 160 458 168 458 176 455 181 455 188 455 193 454 196 451 198 447 200 445 203 444 206 442 207 427 209 421 214 416 220 408 229 399 227 397 227 390 228 381 228 377 215 364 216 358 217 341 216 333 213 327 210 331 202 335 193 338 186 339 182 337 177 334 174 330 171 329 147 329 141 334 138 336 133 336 131 340 132 346 138 351 137 354 132 359 128 364 134 371 134 376 128 381 132 383 128 384 125 384 112 385 105 383 99 375 98 365 100 360 101 358 100 356 95 361 93 366 93 373 95 379 95 391 98 396 98 400 101 404 101 407 105 411 106 414 121 422 122 425 127 431 129 435 133 438 129 443 123 448 116 457 110 460 105 461 106 464 111 465 116 467 122 467"
@@ -165,8 +165,8 @@
     "capital": "L'avance",
     "baseColor": "#feea9f",
     "regionType": "minor",
-    "description": "A state of unspoiled natural beauty in north-central Zemuria, known for its hot springs and high-quality agriculture. It is the headquarters of the Marduk Company.",
-    "history": "Ored maintained its neutrality during the Great War, focusing on domestic affairs and commerce. It has recently become a key economic hub in the northern region.",
+    "description": "An autonomous state in north-central Zemuria, known for its unspoiled natural beauty, hot springs, and high-quality agriculture. It is also the headquarters of the influential Marduk Total Security Company.",
+    "history": "Recognized as a state by the Septian Church, Ored has maintained its independence while developing its domestic economy, recently becoming a key economic hub in the northern region.",
     "featuredIn": [
       "trails-beyond-the-horizon"
     ],
@@ -181,8 +181,8 @@
     "capital": "N/A",
     "baseColor": "#d4b2eb",
     "regionType": "minor",
-    "description": "A sovereign state in northern Zemuria that maintains a neutral stance in continental politics. It is famously home to the international headquarters of both the Bracer Guild and the Epstein Foundation.",
-    "history": "Leman has long been a center for continent-wide organizations. Its prestigious universities and research institutes contribute to its reputation as a hub of knowledge and public service.",
+    "description": "A sovereign state in northern Zemuria, home to several continent-wide organizations. It hosts the international headquarters of both the Bracer Guild and the Epstein Foundation, the leaders in orbal technology.",
+    "history": "The state is the birthplace of C. Epstein, the father of the Orbal Revolution. Its history is defined by its neutral political stance and its role as a cooperative hub for research, education, and international peacekeeping.",
     "featuredIn": [
       "trails-in-the-sky-sc"
     ],
@@ -193,13 +193,13 @@
   {
     "id": "elsaim",
     "name": "Principality of Elsaim",
-    "government": "Principality (Aristocracy)",
+    "government": "Principality",
     "capital": "Ludos",
     "emblemAsset": "elsaim-emblem.webp",
     "baseColor": "#c89e87",
     "regionType": "minor",
-    "description": "A leading power in central east Zemuria, blessed with a wealth of natural resources like oil and septium. It has deep commercial and financial ties with Calvard.",
-    "history": "An ancient power that has exported technology to its neighbors for centuries, Elsaim is currently in a state of economic rivalry with the rapidly growing city-state of Valis.",
+    "description": "A principality and leading power in central east Zemuria, blessed with a wealth of natural resources like Septium and oil and deep commercial ties to Calvard. It is an aristocracy with an influential order of chivalry that practices a traditional form of swordsmanship.",
+    "history": "Since ancient times, Elsaim has exported its science and technology to neighboring nations, including Calvard. Its modern history is marked by a profound partnership with the Republic and a growing economic rivalry with the city-state of Valis.",
     "wikiLink": "https://kiseki.fandom.com/wiki/Elsaim",
     "games": [],
     "svgPathData": "M1437 1300 1449 1302 1451 1304 1453 1305 1462 1303 1466 1303 1472 1305 1481 1305 1489 1301 1489 1296 1493 1292 1497 1292 1507 1289 1511 1288 1514 1285 1515 1282 1518 1280 1523 1278 1529 1278 1533 1277 1547 1271 1562 1262 1564 1256 1568 1248 1571 1244 1573 1240 1576 1234 1578 1230 1582 1225 1586 1221 1594 1217 1594 1213 1593 1210 1590 1206 1589 1197 1590 1179 1598 1176 1605 1173 1611 1163 1614 1159 1624 1157 1642 1154 1648 1148 1655 1142 1666 1134 1677 1126 1690 1124 1693 1126 1701 1126 1707 1122 1714 1116 1721 1113 1731 1119 1737 1123 1744 1129 1751 1136 1760 1141 1762 1145 1782 1149 1796 1151 1808 1143 1817 1139 1831 1133 1839 1133 1847 1134 1857 1136 1866 1140 1871 1145 1882 1150 1891 1151 1898 1155 1910 1163 1925 1170 1933 1172 1941 1171 1952 1170 1958 1171 1953 1180 1947 1195 1941 1211 1942 1216 1944 1221 1946 1247 1944 1249 1943 1251 1943 1260 1944 1280 1936 1291 1914 1326 1896 1347 1886 1347 1853 1364 1849 1366 1845 1366 1815 1388 1809 1391 1801 1397 1795 1401 1792 1401 1795 1406 1797 1413 1797 1433 1790 1441 1785 1440 1765 1432 1761 1433 1752 1446 1746 1458 1735 1464 1730 1467 1723 1468 1713 1470 1709 1469 1704 1465 1699 1455 1682 1451 1676 1452 1666 1460 1661 1460 1656 1459 1647 1466 1641 1472 1635 1474 1631 1474 1624 1468 1619 1467 1612 1470 1608 1471 1604 1470 1597 1466 1592 1463 1555 1463 1548 1462 1538 1464 1530 1478 1523 1487 1517 1495 1515 1492 1508 1486 1505 1481 1504 1475 1501 1469 1494 1460 1487 1454 1480 1451 1476 1444 1468 1438 1465 1435 1461 1432 1448 1429 1439 1428 1430 1423 1419 1415 1417 1410 1417 1396 1417 1387 1419 1383 1419 1375 1423 1370 1420 1364 1421 1359 1426 1351 1430 1343 1436 1336 1436 1324 1439 1318 1439 1308 1437 1300"
@@ -211,8 +211,8 @@
     "capital": "Valis City",
     "baseColor": "#c89e87",
     "regionType": "minor",
-    "description": "A coastal city-state in central east Zemuria that has experienced rapid economic development. It is home to the Valis Investment Bank and the primary shareholder of the Marduk Company.",
-    "history": "A small but massive city that has grown to rival the Principality of Elsaim for economic supremacy in the region, investing heavily in seashore resort development and technology.",
+    "description": "A coastal city-state in central east Zemuria that has developed rapidly in recent years. It possesses a massive fortune from southern sea trade and is home to the Valis Investment Bank, a primary shareholder in major continental companies.",
+    "history": "A relatively new power, Valis has seen rapid growth through aggressive investment and resort development. It is an ally and rival to the Principality of Elsaim, vying for economic supremacy in the region.",
     "wikiLink": "https://kiseki.fandom.com/wiki/Valis",
     "games": [],
     "svgPathData": "M1696 1554 1701 1551 1708 1549 1712 1547 1719 1539 1724 1533 1726 1531 1729 1529 1742 1529 1751 1529 1758 1539 1762 1541 1768 1539 1775 1536 1785 1536 1800 1537 1804 1539 1808 1543 1812 1548 1812 1570 1807 1578 1805 1584 1804 1592 1805 1597 1804 1601 1802 1607 1789 1613 1785 1615 1772 1619 1771 1620 1751 1620 1744 1614 1727 1614 1724 1615 1718 1612 1712 1611 1694 1611 1684 1613 1675 1602 1676 1600 1683 1598 1693 1598 1695 1596 1699 1598 1705 1596 1708 1594 1706 1592 1702 1590 1705 1579 1706 1570 1706 1562 1696 1554"
