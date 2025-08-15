@@ -2,7 +2,6 @@ import { calculateRegionAreaInSelge } from './lib/geometry.js';
 
 export function initLorePage() {
     let isMapInitialized = false;
-    let isTimelineInitialized = false;
     let infobox1, infobox2, currentInfobox; // Variables for the two infobox elements and state tracking
 
     // --- Tabbed Interface Logic ---
@@ -22,8 +21,6 @@ export function initLorePage() {
         if (initialActiveContent) {
             if (initialActiveContent.id === 'map-view' && !isMapInitialized) {
                 initializeMap();
-            } else if (initialActiveContent.id === 'timeline-view' && !isTimelineInitialized) {
-                initializeTimelineView();
             }
             // Add 'show' class to make it visible with fade-in effect
             setTimeout(() => initialActiveContent.classList.add('show'), 10);
@@ -39,11 +36,9 @@ export function initLorePage() {
             const targetTabContentId = clickedTab.dataset.tab;
             localStorage.setItem('loreLastTab', targetTabContentId); // Save selection
 
-            // Initialize map or timeline if it's being shown for the first time
+            // Initialize map if it's being shown for the first time
             if (targetTabContentId === 'map-view' && !isMapInitialized) {
                 initializeMap();
-            } else if (targetTabContentId === 'timeline-view' && !isTimelineInitialized) {
-                initializeTimelineView();
             }
 
             const targetTabContent = document.getElementById(targetTabContentId);
@@ -104,12 +99,6 @@ export function initLorePage() {
     function dateToTotalMonths(parsedDate) {
         if (!parsedDate) return Infinity;
         return parsedDate.year * 12 + parsedDate.month;
-    }
-
-    function initializeTimelineView() {
-        if (isTimelineInitialized) return;
-        isTimelineInitialized = true;
-        initializeTimeline();
     }
 
     async function initializeTimeline() {
@@ -513,28 +502,34 @@ export function initLorePage() {
                 }
 
 
-                // Position the infoBelowContainer below the *lowest* rendered box for this game (CSIV).
-                let lowestBoxBottom = 0;
-                const gameBoxesInColumn = targetColumn.querySelectorAll(`.game-entry-box[data-game-title="${game.englishTitle}"]`);
+                // Defer positioning logic to allow browser to render first
+                setTimeout(() => {
+                    // Position the infoBelowContainer below the *lowest* rendered box for this game (CSIV).
+                    let lowestBoxBottom = 0;
+                    const gameBoxesInColumn = targetColumn.querySelectorAll(`.game-entry-box[data-game-title="${game.englishTitle}"]`);
 
-                if (gameBoxesInColumn.length > 0) {
-                    gameBoxesInColumn.forEach(box => { // Should only be one box for CSIV currently
-                        const boxBottom = box.offsetTop + box.offsetHeight;
-                        if (boxBottom > lowestBoxBottom) {
-                            lowestBoxBottom = boxBottom;
-                        }
-                    });
-                    infoBelowContainer.style.position = 'absolute';
-                    infoBelowContainer.style.top = `${lowestBoxBottom + 2}px`; // Tightened spacing to 2px
-                    infoBelowContainer.style.left = '5%';
-                    infoBelowContainer.style.width = '90%';
-                } else {
-                     console.warn(`No boxes found for game "${game.englishTitle}" to position its 'infoBelowContainer'.`);
-                }
+                    if (gameBoxesInColumn.length > 0) {
+                        gameBoxesInColumn.forEach(box => { // Should only be one box for CSIV currently
+                            const boxBottom = box.offsetTop + box.offsetHeight;
+                            if (boxBottom > lowestBoxBottom) {
+                                lowestBoxBottom = boxBottom;
+                            }
+                        });
+                        infoBelowContainer.style.position = 'absolute';
+                        infoBelowContainer.style.top = `${lowestBoxBottom + 2}px`; // Tightened spacing to 2px
+                        infoBelowContainer.style.left = '5%';
+                        infoBelowContainer.style.width = '90%';
+                    } else {
+                        console.warn(`No boxes found for game "${game.englishTitle}" to position its 'infoBelowContainer'.`);
+                    }
+                }, 0);
+
                 targetColumn.appendChild(infoBelowContainer);
             }
         }); // End of game loop
     }
+
+    initializeTimeline();
 
     // --- Map Logic & Data ---
     let mapRegionsData = [];
