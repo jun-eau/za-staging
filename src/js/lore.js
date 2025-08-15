@@ -295,9 +295,7 @@ export function initLorePage() {
         const minTotalMonths = dateToTotalMonths(minDate);
 
         allGames.forEach(game => {
-            // Skip games that don't have timeline data (i.e., no parsed periods)
             if (!game.timelinePeriodsParsed || game.timelinePeriodsParsed.length === 0) {
-                // console.log(`Skipping rendering for game without timeline periods: ${game.englishTitle}`);
                 return;
             }
 
@@ -315,6 +313,9 @@ export function initLorePage() {
                 console.warn(`Target column not found for game "${game.englishTitle}". Skipping rendering.`);
                 return;
             }
+
+            // New variable to track the bottom position for CSIV without reading from DOM
+            let csivCalculatedLowestBottom = 0;
 
             // Loop through each period of the game
             game.timelinePeriodsParsed.forEach((period, periodIndex) => {
@@ -359,16 +360,22 @@ export function initLorePage() {
 
                 if (entryHeight > 0 && entryHeight < 1) entryHeight = 1; // Min 1px height
 
-                // Ensure height is at least a small visible amount for very short periods (e.g., 1-day)
-                // For example, 1/30th of a month's pixel height for a single day.
-                // This ensures even single day events are clickable/visible.
                 const minPixelHeightForDay = Math.max(1, pixelsPerMonthVertical / 30);
                 entryHeight = Math.max(entryHeight, minPixelHeightForDay);
-
 
                 if (entryHeight <= 0) {
                     console.warn(`Invalid height for ${game.englishTitle} - ${period.label || `Period ${periodIndex+1}`}. Calculated Height: ${entryHeight}. Skipping period.`);
                     return; // Skip this period
+                }
+
+                // For CSIV, calculate the lowest point among its periods using the calculated variables.
+                if (game.englishTitle === "Trails of Cold Steel IV") {
+                    // The box's visual bottom is its calculated top position + its calculated height.
+                    // The box's `top` style is `topPosition + 2`.
+                    const calculatedBoxBottom = topPosition + 2 + entryHeight;
+                    if (calculatedBoxBottom > csivCalculatedLowestBottom) {
+                        csivCalculatedLowestBottom = calculatedBoxBottom;
+                    }
                 }
 
                 const gameEntryDiv = document.createElement('div');
@@ -379,31 +386,28 @@ export function initLorePage() {
                 gameEntryDiv.style.height = `${entryHeight}px`;
                 gameEntryDiv.style.width = '90%';
                 gameEntryDiv.style.left = '5%';
-                // Add a data attribute to identify boxes for a game, useful for positioning "info-below" text
                 gameEntryDiv.dataset.gameTitle = game.englishTitle;
-                gameEntryDiv.dataset.periodIndex = periodIndex; // Store period index for targeted text insertion
+                gameEntryDiv.dataset.periodIndex = periodIndex;
 
                 // --- Text Display Logic ---
                 const isSky3rd = game.englishTitle === "Trails in the Sky the 3rd";
                 const isCSII = game.englishTitle === "Trails of Cold Steel II";
                 const isReverie = game.englishTitle === "Trails into Reverie";
-                const isCSIV = game.englishTitle === "Trails of Cold Steel IV"; // CSIV remains as is
+                const isCSIV = game.englishTitle === "Trails of Cold Steel IV";
 
                 const isMultiPeriodSpecial = isSky3rd || isCSII || isReverie;
 
                 if (isMultiPeriodSpecial) {
                     gameEntryDiv.classList.add('special-info-below'); // Ensures no text inside these boxes
 
-                    // Create text container for this specific period box, to be placed below it
                     const periodTextContainer = document.createElement('div');
                     periodTextContainer.className = 'game-info-below-text-container individual-period-text';
-                    periodTextContainer.style.color = '#FFFFFF'; // Assuming default, adjust if needed
+                    periodTextContainer.style.color = '#FFFFFF';
                     periodTextContainer.style.textAlign = 'center';
                     periodTextContainer.style.position = 'absolute';
-                    periodTextContainer.style.left = '5%'; // Match box alignment
-                    periodTextContainer.style.width = '90%'; // Match box width
+                    periodTextContainer.style.left = '5%';
+                    periodTextContainer.style.width = '90%';
 
-                    let textContent = "";
                     if (period.isMain) {
                         periodTextContainer.classList.add('is-main-period-text');
                         const titleEl = document.createElement('div');
@@ -413,7 +417,7 @@ export function initLorePage() {
                     }
 
                     const periodDetailEl = document.createElement('div');
-                    periodDetailEl.className = 'game-entry-duration'; // Use existing class for similar styling
+                    periodDetailEl.className = 'game-entry-duration';
 
                     let lineText = "";
                     if (period.label) {
@@ -423,21 +427,15 @@ export function initLorePage() {
                     periodDetailEl.innerHTML = lineText;
                     periodTextContainer.appendChild(periodDetailEl);
 
-                    // Adjust spacing based on whether it's a main display or not
-                    const spacing = period.isMain ? 2 : 1; // 2px for main (tightened), 1px for others
+                    const spacing = period.isMain ? 2 : 1;
                     periodTextContainer.style.top = `${topPosition + entryHeight + spacing + 3}px`;
 
-                    targetColumn.appendChild(periodTextContainer); // Add text container to the column
+                    targetColumn.appendChild(periodTextContainer);
 
                 } else if (isCSIV) {
-                    // CSIV: Existing special placement logic (single text block below all its boxes)
-                    // This will be handled after the loop by the existing CSIV logic block
                     gameEntryDiv.classList.add('special-info-below');
                 } else {
-                    // Default behavior for single-period games (or games not matching above conditions)
-                    // Text (title + first period's display string) inside the first period's box.
-                    // Subsequent period boxes for these games (if any, though typically not for default) remain empty.
-                    if (periodIndex === 0) { // Only for the first box of such games
+                    if (periodIndex === 0) {
                         const titleEl = document.createElement('div');
                         titleEl.className = 'game-entry-title';
                         titleEl.textContent = game.englishTitle;
@@ -445,7 +443,7 @@ export function initLorePage() {
 
                         const dateDisplayEl = document.createElement('div');
                         dateDisplayEl.className = 'game-entry-duration';
-                        dateDisplayEl.textContent = period.display; // Uses the period's display string
+                        dateDisplayEl.textContent = period.display;
                         gameEntryDiv.appendChild(dateDisplayEl);
 
                         if (entryHeight < (pixelsPerMonthVertical * 0.8)) {
@@ -456,27 +454,14 @@ export function initLorePage() {
                         }
                     }
                 }
-
-                // Tooltip for ALL period boxes
-                // The tooltip should use the period's specific start/end for precision,
-                // potentially formatted differently from the main 'display' string if needed.
-                // Tooltip text construction for custom tooltips (if implemented later) or for clarity:
-                // The main display information now comes directly from period.display.
-                // Example: game.englishTitle + (period.label ? ` (${period.label})` : "") + "\n" + period.display
-                // gameEntryDiv.setAttribute('title', SomeTooltipText); // Browser default tooltips are disabled.
-
                 targetColumn.appendChild(gameEntryDiv);
             }); // End of period loop
 
             // --- Special Placement Text Rendering (Below the Box) FOR CSIV ONLY ---
-            // This runs once per game *after* all its period boxes have been created and added to the DOM.
-            // This section is now ONLY for Trails of Cold Steel IV.
-            // Sky 3rd, CSII, and Reverie have their text rendered individually per period box.
             if (game.englishTitle === "Trails of Cold Steel IV") {
                 const infoBelowContainer = document.createElement('div');
-                infoBelowContainer.className = 'game-info-below-text-container'; // Keep existing class for potential shared styles
-                infoBelowContainer.classList.add('is-main-period-text'); // Add class for spacing refinement
-                infoBelowContainer.style.color = '#FFFFFF'; // Default color
+                infoBelowContainer.className = 'game-info-below-text-container is-main-period-text';
+                infoBelowContainer.style.color = '#FFFFFF';
                 infoBelowContainer.style.textAlign = 'center';
 
                 const titleEl = document.createElement('div');
@@ -484,46 +469,27 @@ export function initLorePage() {
                 titleEl.textContent = game.englishTitle;
                 infoBelowContainer.appendChild(titleEl);
 
-                // For CSIV, it's a single period game effectively for this display logic,
-                // so we just show its main display string.
-                // If CSIV were to have multiple periods needing listing here, this would need game.timelinePeriodsParsed.forEach
                 if (game.timelinePeriodsParsed.length > 0) {
                     const periodDetailEl = document.createElement('div');
-                    periodDetailEl.className = 'game-entry-duration'; // Re-use class
-                    // CSIV only has one period defined in games.json for timeline purposes.
-                    // If it had more, and we wanted all listed like old Sky3rd/Reverie, we'd loop.
-                    // For now, assuming first period's display is representative for CSIV's single block.
+                    periodDetailEl.className = 'game-entry-duration';
                     let lineText = game.timelinePeriodsParsed[0].display;
-                    if (game.timelinePeriodsParsed[0].label) { // Should not happen for CSIV as it's not multi-period in the data
+                    if (game.timelinePeriodsParsed[0].label) {
                         lineText = `<strong>${game.timelinePeriodsParsed[0].label}:</strong> ${lineText}`;
                     }
                     periodDetailEl.innerHTML = lineText;
                     infoBelowContainer.appendChild(periodDetailEl);
                 }
 
-
-                // Defer positioning logic to allow browser to render first
-                setTimeout(() => {
-                    // Position the infoBelowContainer below the *lowest* rendered box for this game (CSIV).
-                    let lowestBoxBottom = 0;
-                    const gameBoxesInColumn = targetColumn.querySelectorAll(`.game-entry-box[data-game-title="${game.englishTitle}"]`);
-
-                    if (gameBoxesInColumn.length > 0) {
-                        gameBoxesInColumn.forEach(box => { // Should only be one box for CSIV currently
-                            const boxBottom = box.offsetTop + box.offsetHeight;
-                            if (boxBottom > lowestBoxBottom) {
-                                lowestBoxBottom = boxBottom;
-                            }
-                        });
-                        infoBelowContainer.style.position = 'absolute';
-                        infoBelowContainer.style.top = `${lowestBoxBottom + 2}px`; // Tightened spacing to 2px
-                        infoBelowContainer.style.left = '5%';
-                        infoBelowContainer.style.width = '90%';
-                    } else {
-                        console.warn(`No boxes found for game "${game.englishTitle}" to position its 'infoBelowContainer'.`);
-                    }
-                }, 0);
-
+                // Use the calculated bottom position instead of reading from the DOM
+                if (csivCalculatedLowestBottom > 0) {
+                    infoBelowContainer.style.position = 'absolute';
+                    infoBelowContainer.style.top = `${csivCalculatedLowestBottom + 2}px`; // Add 2px spacing below the box
+                    infoBelowContainer.style.left = '5%';
+                    infoBelowContainer.style.width = '90%';
+                } else {
+                     // This case should ideally not be hit if CSIV has periods, but keep for safety.
+                     console.warn(`Could not calculate a bottom position for game "${game.englishTitle}" to position its 'infoBelowContainer'.`);
+                }
                 targetColumn.appendChild(infoBelowContainer);
             }
         }); // End of game loop
