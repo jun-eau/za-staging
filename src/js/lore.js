@@ -7,6 +7,25 @@ export function initLorePage() {
     // --- Tabbed Interface Logic ---
     const tabsContainer = document.querySelector('.lore-tabs');
     if (tabsContainer) {
+        // Determine the tab to show: saved tab or default to 'map-view'.
+        const tabIdToShow = localStorage.getItem('loreLastTab') || 'map-view';
+
+        // Apply 'active' to the determined tab and its content.
+        const tabLinkToShow = document.querySelector(`.tab-link[data-tab="${tabIdToShow}"]`);
+        const contentToShow = document.getElementById(tabIdToShow);
+        if (tabLinkToShow) tabLinkToShow.classList.add('active');
+        if (contentToShow) contentToShow.classList.add('active');
+
+        // Check if the map is the active tab on load (either default or from storage) and initialize it
+        const initialActiveContent = document.querySelector('.tab-content.active');
+        if (initialActiveContent) {
+            if (initialActiveContent.id === 'map-view' && !isMapInitialized) {
+                initializeMap();
+            }
+            // Add 'show' class to make it visible with fade-in effect
+            setTimeout(() => initialActiveContent.classList.add('show'), 10);
+        }
+
         tabsContainer.addEventListener('click', (e) => {
             const clickedTab = e.target.closest('.tab-link');
             if (!clickedTab || clickedTab.classList.contains('active')) {
@@ -82,46 +101,29 @@ export function initLorePage() {
         return parsedDate.year * 12 + parsedDate.month;
     }
 
-    async function loadAllData() {
+    async function initializeTimeline() {
         try {
-            const [gamesResponse, regionsResponse] = await Promise.all([
-                fetch('src/data/games.json'),
-                fetch('src/data/regions.json')
-            ]);
-
-            if (!gamesResponse.ok) throw new Error(`HTTP error! status: ${gamesResponse.status}`);
-            if (!regionsResponse.ok) throw new Error(`HTTP error! status: ${regionsResponse.status}`);
-
-            const rawGames = await gamesResponse.json();
-            const regions = await regionsResponse.json();
-
-            // Process game data (for timeline)
+            const response = await fetch('src/data/games.json');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const rawGames = await response.json();
+            
             allGames = processGameData(rawGames);
-            if (allGames.length > 0) {
-                calculateDateRange();
+            if (allGames.length === 0) {
+                console.warn("No valid game data to display.");
+                return;
             }
 
-            // Process region data (for map)
-            mapRegionsData = regions.map(region => ({
-                ...region,
-                formattedArea: calculateRegionAreaInSelge(region)
-            }));
-            mapGamesData = rawGames; // Keep raw games data for map infoboxes
+            calculateDateRange(); // This will now use timelinePeriods
+            if (!minDate || !maxDate) {
+                console.error("Date range not calculated, cannot render timeline.");
+                return;
+            }
+            renderTimeAxis();
+            renderGameEntries();
 
-            return true;
         } catch (error) {
-            console.error("Error loading page data:", error);
-            return false;
+            console.error("Error initializing timeline:", error);
         }
-    }
-
-    function renderDesktopTimeline() {
-        if (!minDate || !maxDate) {
-            console.error("Date range not calculated, cannot render desktop timeline.");
-            return;
-        }
-        renderTimeAxis();
-        renderGameEntries();
     }
 
     function processGameData(rawGames) {
@@ -493,194 +495,7 @@ export function initLorePage() {
         }); // End of game loop
     }
 
-    function renderMobileMap() {
-        if (!mapRegionsData || mapRegionsData.length === 0) {
-            console.warn("Cannot render mobile map: missing region data.");
-            return;
-        }
-
-        const container = document.getElementById('mobile-map-view');
-        if (!container) {
-            console.warn("Mobile map container not found.");
-            return;
-        }
-
-        let html = `
-            <div class="mobile-map-content">
-                <h2 class="mobile-map-title">Map of Zemuria</h2>
-                <img src="assets/zemuria-map.webp" alt="Map of Zemuria" class="mobile-map-image">
-                <div class="mobile-region-list">
-        `;
-
-        // Sort regions, maybe alphabetically
-        const sortedRegions = [...mapRegionsData].sort((a, b) => a.name.localeCompare(b.name));
-
-        sortedRegions.forEach(region => {
-            html += `
-                <div class="mobile-region-item">
-                    <button class="mobile-region-header" data-region-id="${region.id}">
-                        <span>${region.name}</span>
-                        <span class="accordion-icon">+</span>
-                    </button>
-                    <div class="mobile-region-body" id="mobile-region-body-${region.id}">
-                        <div class="mobile-region-details">
-                            <p><strong>Government:</strong> ${region.government}</p>
-                            <p><strong>Capital:</strong> ${region.capital}</p>
-                            ${region.description ? `<p>${region.description}</p>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += `</div></div>`;
-        container.innerHTML = html;
-
-        // Add event listeners for accordion functionality
-        container.addEventListener('click', (e) => {
-            const header = e.target.closest('.mobile-region-header');
-            if (!header) return;
-
-            const body = header.nextElementSibling;
-            const icon = header.querySelector('.accordion-icon');
-
-            if (body.style.maxHeight) {
-                body.style.maxHeight = null;
-                icon.textContent = '+';
-                header.classList.remove('active');
-            } else {
-                body.style.maxHeight = body.scrollHeight + "px";
-                icon.textContent = '−';
-                header.classList.add('active');
-            }
-        });
-    }
-
-    // --- Mobile Timeline Rendering ---
-    function renderMobileTimeline() {
-        if (!allGames || allGames.length === 0) {
-            console.warn("Cannot render mobile timeline: missing game data.");
-            return;
-        }
-
-        const container = document.getElementById('mobile-timeline-view');
-        if (!container) {
-            console.warn("Mobile timeline container not found.");
-            return;
-        }
-
-        // Group games by arc
-        const gamesByArc = allGames.reduce((acc, game) => {
-            if (!game.timelinePeriodsParsed || game.timelinePeriodsParsed.length === 0) {
-                return acc; // Skip games with no timeline data
-            }
-            const arc = game.arc;
-            if (!acc[arc]) {
-                acc[arc] = [];
-            }
-            acc[arc].push(game);
-            return acc;
-        }, {});
-
-        // Define the desired order of arcs
-        const arcOrder = ["Liberl Arc", "Crossbell Arc", "Erebonia Arc", "Epilogue", "Calvard Arc"];
-
-        let html = '<div class="mobile-timeline-content">';
-
-        for (const arcName of arcOrder) {
-            if (gamesByArc[arcName]) {
-                html += `<div class="mobile-arc-section">`;
-                html += `<h2 class="mobile-arc-title">${arcName}</h2>`;
-
-                // Sort games within the arc based on their first timeline period's start date
-                const sortedGames = gamesByArc[arcName].sort((a, b) => {
-                    const aDate = dateToTotalMonths(a.timelinePeriodsParsed[0].startParsed);
-                    const bDate = dateToTotalMonths(b.timelinePeriodsParsed[0].startParsed);
-                    return aDate - bDate;
-                });
-
-                for (const game of sortedGames) {
-                    html += `<div class="mobile-game-entry">`;
-                    html += `<h3 class="mobile-game-title">${game.englishTitle}</h3>`;
-
-                    // Display all periods for the game
-                    game.timelinePeriodsParsed.forEach(period => {
-                        let periodText = '';
-                        if (period.label) {
-                            periodText += `<strong>${period.label}:</strong> `;
-                        }
-                        periodText += period.display;
-                        html += `<p class="mobile-game-period">${periodText}</p>`;
-                    });
-
-                    html += `</div>`;
-                }
-                html += `</div>`;
-            }
-        }
-
-        html += '</div>';
-        container.innerHTML = html;
-    }
-
-
-    // --- Main Initialization Logic ---
-    loadAllData().then(dataLoaded => {
-        if (!dataLoaded) return;
-
-        const isMobile = window.innerWidth <= 900;
-
-        // Adjust tab links for mobile
-        if (isMobile) {
-            const mapTabLink = document.querySelector('.tab-link[data-tab="map-view"]');
-            const timelineTabLink = document.querySelector('.tab-link[data-tab="timeline-view"]');
-            if (mapTabLink) mapTabLink.dataset.tab = 'mobile-map-view';
-            if (timelineTabLink) timelineTabLink.dataset.tab = 'mobile-timeline-view';
-        }
-
-        // Render the correct view
-        if (isMobile) {
-            renderMobileTimeline();
-            renderMobileMap();
-        } else {
-            renderDesktopTimeline();
-        }
-
-        // The tab switching logic is generic, but the default tab needs to be set correctly.
-        const initialTabId = localStorage.getItem('loreLastTab') || (isMobile ? 'mobile-map-view' : 'map-view');
-
-        // Let's check if the stored tab is valid for the current view (mobile/desktop)
-        let validTabId = initialTabId;
-        if (isMobile && !initialTabId.startsWith('mobile-')) {
-            validTabId = 'mobile-map-view'; // Default to mobile map
-        } else if (!isMobile && initialTabId.startsWith('mobile-')) {
-            validTabId = 'map-view'; // Default to desktop map
-        }
-
-        const tabLinkToShow = document.querySelector(`.tab-link[data-tab="${validTabId}"]`);
-        const contentToShow = document.getElementById(validTabId);
-
-        // Deactivate all first
-        document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => {
-            c.classList.remove('active', 'show');
-        });
-
-        if (tabLinkToShow && contentToShow) {
-            tabLinkToShow.classList.add('active');
-            contentToShow.classList.add('active');
-
-            if (contentToShow.id === 'map-view' && !isMapInitialized) {
-                initializeMap();
-            }
-            // Add 'show' class to make it visible with fade-in effect
-            setTimeout(() => contentToShow.classList.add('show'), 10);
-        }
-
-        // The original tab click listener should still work, as it's generic enough.
-        // Let's ensure it's placed correctly, after the main logic.
-    });
-
+    initializeTimeline();
 
     // --- Map Logic & Data ---
     let mapRegionsData = [];
