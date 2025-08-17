@@ -889,11 +889,11 @@ body.home-page::before {
     .slider-item {
         padding-bottom: 0;
     }
-    .desktop-only {
+    .desktop-only, .desktop-only-lore {
         display: none !important;
     }
-    .mobile-only {
-        display: block;
+    .mobile-only, .mobile-only-lore {
+        display: block !important;
     }
     .game-entry {
         padding: 0;
@@ -1088,7 +1088,109 @@ body.home-page::before {
         display: none !important;
     }
 
-    /* 7.4. Mobile Home Page */
+    /* 7.4. Mobile Lore Page */
+    .mobile-map-content, .mobile-timeline-content {
+        padding: 1rem 0.5rem;
+    }
+    .mobile-arc-section {
+        margin-bottom: 2rem;
+    }
+    .mobile-arc-title {
+        font-family: 'Playfair Display', serif;
+        font-size: var(--font-size-xxl);
+        color: var(--accent-gold);
+        text-align: center;
+        border-bottom: 1px solid var(--accent-gold);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .mobile-game-entry {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--accent-gold);
+    }
+    .mobile-game-title {
+        font-size: var(--font-size-lg);
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+    }
+    .mobile-game-period {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: var(--line-height-normal);
+    }
+    .mobile-game-period strong {
+        color: var(--accent-gold);
+        font-weight: 600;
+    }
+    .mobile-map-title {
+        font-family: 'Playfair Display', serif;
+        font-size: var(--font-size-xxl);
+        color: var(--accent-gold);
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    .mobile-map-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 2px solid var(--accent-gold);
+        margin-bottom: 1.5rem;
+    }
+    .mobile-region-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .mobile-region-header {
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(233, 213, 161, 0.2);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: var(--font-size-md);
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+        transition: background-color 0.2s ease;
+    }
+    .mobile-region-header:hover, .mobile-region-header.active {
+        background-color: rgba(233, 213, 161, 0.15);
+    }
+    .accordion-icon {
+        font-size: 1.5em;
+        line-height: 1;
+        color: var(--accent-gold);
+        transition: transform 0.3s ease;
+    }
+    .mobile-region-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 0 0 6px 6px;
+    }
+    .mobile-region-details {
+        padding: 1rem;
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        line-height: var(--line-height-normal);
+    }
+    .mobile-region-details p {
+        margin: 0 0 0.5rem 0;
+    }
+    .mobile-region-details p:last-child {
+        margin-bottom: 0;
+    }
+
+
+    /* 7.5. Mobile Home Page */
     .hero-section {
         min-height: 60vh;
         padding: 1rem;
@@ -1117,6 +1219,9 @@ body.home-page::before {
 
 /* --- Initial Hiding of Mobile/Desktop Specific Elements --- */
 /* This is out of the media query to ensure it's a base style. */
-.mobile-only {
+.mobile-only, .mobile-only-lore {
     display: none;
+}
+.desktop-only-lore {
+    display: block;
 }
