@@ -762,9 +762,6 @@ body.home-page::before {
     align-items: center;
     text-align: center;
 }
-.game-entry-box.spans-arcs {
-    z-index: 5; /* Ensure it renders above column borders */
-}
 .game-entry-box.special-info-below {
     overflow: visible;
 }

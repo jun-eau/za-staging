@@ -300,27 +300,17 @@ export function initLorePage() {
             }
 
             let targetColumn;
-            let columnSpan = 1;
-
-            // Define a map for easy lookup
-            const arcColumnMap = {
-                "Liberl Arc": liberlColumn,
-                "Crossbell Arc": crossbellColumn,
-                "Erebonia Arc": ereboniaColumn,
-                "Calvard Arc": calvardColumn
-            };
-
-            if (game.spansArcs && Array.isArray(game.spansArcs) && game.spansArcs.length > 0) {
-                const firstArc = game.spansArcs[0];
-                targetColumn = arcColumnMap[firstArc];
-                columnSpan = game.spansArcs.length;
-            } else if (game.arc) {
-                targetColumn = arcColumnMap[game.arc];
+            if (game.arc === "Liberl Arc") targetColumn = liberlColumn;
+            else if (game.arc === "Crossbell Arc") targetColumn = crossbellColumn;
+            else if (game.arc === "Erebonia Arc" || game.englishTitle === "Trails into Reverie") targetColumn = ereboniaColumn;
+            else if (game.arc === "Calvard Arc") targetColumn = calvardColumn;
+            else {
+                console.warn(`Game "${game.englishTitle}" arc "${game.arc}" unassigned. Skipping rendering.`);
+                return;
             }
 
             if (!targetColumn) {
-                const arcIdentifier = game.spansArcs ? `spansArcs: [${game.spansArcs.join(', ')}]` : `arc: ${game.arc}`;
-                console.warn(`Game "${game.englishTitle}" (${arcIdentifier}) could not be assigned to a column. Skipping rendering.`);
+                console.warn(`Target column not found for game "${game.englishTitle}". Skipping rendering.`);
                 return;
             }
 
@@ -394,19 +384,8 @@ export function initLorePage() {
                 gameEntryDiv.style.color = game.englishTitle === "Trails in the Sky SC" || game.englishTitle === "Trails through Daybreak" ? '#000000' : '#FFFFFF';
                 gameEntryDiv.style.top = `${topPosition + 2}px`; // -1 for border adjustment, +3 for shift
                 gameEntryDiv.style.height = `${entryHeight}px`;
-
-                if (columnSpan > 1) {
-                    gameEntryDiv.classList.add('spans-arcs');
-                    // The width needs to be 100% of the number of columns, plus the padding/border space between them.
-                    // Each column has 15px padding on each side, and a 1px border on the right.
-                    // So the space between two columns' content is 15px + 1px + 15px = 31px.
-                    // Let's use 32px for simplicity.
-                    gameEntryDiv.style.width = `calc(${100 * columnSpan}% + ${32 * (columnSpan - 1)}px)`;
-                } else {
-                    gameEntryDiv.style.width = '90%';
-                }
+                gameEntryDiv.style.width = '90%';
                 gameEntryDiv.style.left = '5%';
-
                 gameEntryDiv.dataset.gameTitle = game.englishTitle;
                 gameEntryDiv.dataset.periodIndex = periodIndex;
 
