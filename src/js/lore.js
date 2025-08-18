@@ -406,7 +406,6 @@ export function initLorePage() {
                     gameEntryDiv.style.width = '90%';
                 }
                 gameEntryDiv.style.left = '5%';
-
                 gameEntryDiv.dataset.gameTitle = game.englishTitle;
                 gameEntryDiv.dataset.periodIndex = periodIndex;
 
@@ -426,8 +425,14 @@ export function initLorePage() {
                     periodTextContainer.style.color = '#FFFFFF';
                     periodTextContainer.style.textAlign = 'center';
                     periodTextContainer.style.position = 'absolute';
-                    periodTextContainer.style.left = '5%';
-                    periodTextContainer.style.width = '90%';
+
+                    if (columnSpan > 1) {
+                        periodTextContainer.style.width = '195%';
+                        periodTextContainer.style.left = '50%';
+                    } else {
+                        periodTextContainer.style.left = '5%';
+                        periodTextContainer.style.width = '90%';
+                    }
 
                     if (period.isMain) {
                         periodTextContainer.classList.add('is-main-period-text');
