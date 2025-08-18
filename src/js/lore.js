@@ -397,19 +397,15 @@ export function initLorePage() {
 
                 if (columnSpan > 1) {
                     gameEntryDiv.classList.add('spans-arcs');
-                    // A normal box is 90% width with 5% left. To span 2, it needs to cover ~200% of a column's width.
-                    // 90% (col1) + 10% (gap) + 90% (col2) = 190%. Let's use a bit more to be safe.
-                    gameEntryDiv.style.width = '195%';
-                    // To center it, we shift it right. Original left is 5%.
-                    // It should be shifted by half a column, which is 50% of the column width.
-                    // But since the box is 195% wide, we need to adjust.
-                    // Let's try positioning its left edge at 50% of the first column.
-                    gameEntryDiv.style.left = '50%';
+                    // The width needs to be 100% of the number of columns, plus the padding/border space between them.
+                    // Each column has 15px padding on each side, and a 1px border on the right.
+                    // So the space between two columns' content is 15px + 1px + 15px = 31px.
+                    // Let's use 32px for simplicity.
+                    gameEntryDiv.style.width = `calc(${100 * columnSpan}% + ${32 * (columnSpan - 1)}px)`;
                 } else {
                     gameEntryDiv.style.width = '90%';
-                    gameEntryDiv.style.left = '5%';
                 }
-
+                gameEntryDiv.style.left = '5%';
                 gameEntryDiv.dataset.gameTitle = game.englishTitle;
                 gameEntryDiv.dataset.periodIndex = periodIndex;
 
