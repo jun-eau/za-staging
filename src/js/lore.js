@@ -300,17 +300,27 @@ export function initLorePage() {
             }
 
             let targetColumn;
-            if (game.arc === "Liberl Arc") targetColumn = liberlColumn;
-            else if (game.arc === "Crossbell Arc") targetColumn = crossbellColumn;
-            else if (game.arc === "Erebonia Arc" || game.englishTitle === "Trails into Reverie") targetColumn = ereboniaColumn;
-            else if (game.arc === "Calvard Arc") targetColumn = calvardColumn;
-            else {
-                console.warn(`Game "${game.englishTitle}" arc "${game.arc}" unassigned. Skipping rendering.`);
-                return;
+            let columnSpan = 1;
+
+            // Define a map for easy lookup
+            const arcColumnMap = {
+                "Liberl Arc": liberlColumn,
+                "Crossbell Arc": crossbellColumn,
+                "Erebonia Arc": ereboniaColumn,
+                "Calvard Arc": calvardColumn
+            };
+
+            if (game.spansArcs && Array.isArray(game.spansArcs) && game.spansArcs.length > 0) {
+                const firstArc = game.spansArcs[0];
+                targetColumn = arcColumnMap[firstArc];
+                columnSpan = game.spansArcs.length;
+            } else if (game.arc) {
+                targetColumn = arcColumnMap[game.arc];
             }
 
             if (!targetColumn) {
-                console.warn(`Target column not found for game "${game.englishTitle}". Skipping rendering.`);
+                const arcIdentifier = game.spansArcs ? `spansArcs: [${game.spansArcs.join(', ')}]` : `arc: ${game.arc}`;
+                console.warn(`Game "${game.englishTitle}" (${arcIdentifier}) could not be assigned to a column. Skipping rendering.`);
                 return;
             }
 
@@ -384,8 +394,22 @@ export function initLorePage() {
                 gameEntryDiv.style.color = game.englishTitle === "Trails in the Sky SC" || game.englishTitle === "Trails through Daybreak" ? '#000000' : '#FFFFFF';
                 gameEntryDiv.style.top = `${topPosition + 2}px`; // -1 for border adjustment, +3 for shift
                 gameEntryDiv.style.height = `${entryHeight}px`;
-                gameEntryDiv.style.width = '90%';
-                gameEntryDiv.style.left = '5%';
+
+                if (columnSpan > 1) {
+                    gameEntryDiv.classList.add('spans-arcs');
+                    // A normal box is 90% width with 5% left. To span 2, it needs to cover ~200% of a column's width.
+                    // 90% (col1) + 10% (gap) + 90% (col2) = 190%. Let's use a bit more to be safe.
+                    gameEntryDiv.style.width = '195%';
+                    // To center it, we shift it right. Original left is 5%.
+                    // It should be shifted by half a column, which is 50% of the column width.
+                    // But since the box is 195% wide, we need to adjust.
+                    // Let's try positioning its left edge at 50% of the first column.
+                    gameEntryDiv.style.left = '50%';
+                } else {
+                    gameEntryDiv.style.width = '90%';
+                    gameEntryDiv.style.left = '5%';
+                }
+
                 gameEntryDiv.dataset.gameTitle = game.englishTitle;
                 gameEntryDiv.dataset.periodIndex = periodIndex;
 
@@ -405,8 +429,14 @@ export function initLorePage() {
                     periodTextContainer.style.color = '#FFFFFF';
                     periodTextContainer.style.textAlign = 'center';
                     periodTextContainer.style.position = 'absolute';
-                    periodTextContainer.style.left = '5%';
-                    periodTextContainer.style.width = '90%';
+
+                    if (columnSpan > 1) {
+                        periodTextContainer.style.width = '195%';
+                        periodTextContainer.style.left = '50%';
+                    } else {
+                        periodTextContainer.style.left = '5%';
+                        periodTextContainer.style.width = '90%';
+                    }
 
                     if (period.isMain) {
                         periodTextContainer.classList.add('is-main-period-text');
