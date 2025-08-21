@@ -569,7 +569,7 @@ export function initLorePage() {
                 const clickedPath = e.target.closest('.region-path');
                 const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
                 
-                handleMapClick(clickedRegionId, e.clientX, e.clientY);
+                handleMapClick(clickedRegionId, e.pageX, e.pageY, e.clientX, e.clientY);
             });
 
             // Remove the loading state
@@ -584,10 +584,12 @@ export function initLorePage() {
     /**
      * Handles clicks on the map overlay. Assumes mapRegionsData and mapGamesData are populated.
      * @param {string|null} clickedRegionId The ID of the clicked region, or null.
-     * @param {number} clickX The clientX of the click event.
-     * @param {number} clickY The clientY of the click event.
+     * @param {number} pageX The pageX coordinate of the click event.
+     * @param {number} pageY The pageY coordinate of the click event.
+     * @param {number} clientX The clientX coordinate of the click event.
+     * @param {number} clientY The clientY coordinate of the click event.
      */
-    function handleMapClick(clickedRegionId, clickX, clickY) {
+    function handleMapClick(clickedRegionId, pageX, pageY, clientX, clientY) {
         const outgoingBox = currentInfobox;
         const isInfoboxActive = outgoingBox.classList.contains('active');
         const currentRegionId = outgoingBox.dataset.regionId;
@@ -614,7 +616,7 @@ export function initLorePage() {
         updateInfoboxContents(region, incomingBox);
 
         // Prepare the incoming box (size and position it), and once it's ready, trigger the animation
-        prepareAndPositionInfobox(region, incomingBox, clickX, clickY).then(() => {
+        prepareAndPositionInfobox(region, incomingBox, pageX, pageY, clientX, clientY).then(() => {
             // Now, trigger the cross-fade
             outgoingBox.classList.remove('active');
             incomingBox.classList.add('active');
@@ -726,11 +728,13 @@ export function initLorePage() {
      * Sizes, positions, and prepares the infobox, returning a promise that resolves when ready.
      * @param {object} region The region data object.
      * @param {HTMLElement} infoboxEl The main infobox element.
-     * @param {number} clickX The clientX of the click event.
-     * @param {number} clickY The clientY of the click event.
+     * @param {number} pageX The pageX coordinate of the click event.
+     * @param {number} pageY The pageY coordinate of the click event.
+     * @param {number} clientX The clientX coordinate of the click event.
+     * @param {number} clientY The clientY coordinate of the click event.
      * @returns {Promise} A promise that resolves when the infobox is sized and positioned.
      */
-    function prepareAndPositionInfobox(region, infoboxEl, clickX, clickY) {
+    function prepareAndPositionInfobox(region, infoboxEl, pageX, pageY, clientX, clientY) {
         const bodyEl = infoboxEl.querySelector('.infobox-body');
         const gamesViewEl = infoboxEl.querySelector('.infobox-games-view');
         const loreViewEl = infoboxEl.querySelector('.infobox-lore-view');
@@ -776,10 +780,21 @@ export function initLorePage() {
             // Position the infobox
             const rect = infoboxEl.getBoundingClientRect();
             const offsetX = 20, offsetY = 20;
-            let top = clickY + offsetY;
-            let left = clickX + offsetX;
-            if (left + rect.width > window.innerWidth) left = clickX - rect.width - offsetX;
-            if (top + rect.height > window.innerHeight) top = clickY - rect.height - offsetY;
+
+            // Default position is to the bottom-right of the cursor
+            let top = pageY + offsetY;
+            let left = pageX + offsetX;
+
+            // If it overflows the viewport horizontally, move it to the left of the cursor
+            if (clientX + offsetX + rect.width > window.innerWidth) {
+                left = pageX - rect.width - offsetX;
+            }
+
+            // If it overflows the viewport vertically, move it above the cursor
+            if (clientY + offsetY + rect.height > window.innerHeight) {
+                top = pageY - rect.height - offsetY;
+            }
+
             infoboxEl.style.left = `${Math.max(5, left)}px`;
             infoboxEl.style.top = `${Math.max(5, top)}px`;
 
