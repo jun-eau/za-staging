@@ -476,7 +476,6 @@ body.home-page::before {
 =================================================================
 */
 .main-lore {
-    max-width: 1600px;
 }
 
 /* 6.1. Timeline */
@@ -544,7 +543,7 @@ body.home-page::before {
     background-color: rgba(153, 153, 185, 0.3);
 }
 .timeline-arc-column {
-    flex: 1 1 0px;
+    flex: 0 0 400px;
     padding: 0 15px;
     border-right: 1px dashed rgba(153, 153, 185, 0.3);
     box-sizing: border-box;
