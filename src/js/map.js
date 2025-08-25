@@ -74,7 +74,7 @@ export function initMapPage() {
                 const clickedPath = e.target.closest('.region-path');
                 const clickedRegionId = clickedPath ? clickedPath.dataset.regionId : null;
 
-                handleMapClick(clickedRegionId, e.clientX, e.clientY);
+                handleMapClick(clickedRegionId, e.clientX, e.clientY, e.pageX, e.pageY);
             });
 
             // Remove the loading state
@@ -89,10 +89,12 @@ export function initMapPage() {
     /**
      * Handles clicks on the map overlay. Assumes mapRegionsData and mapGamesData are populated.
      * @param {string|null} clickedRegionId The ID of the clicked region, or null.
-     * @param {number} clickX The clientX of the click event.
-     * @param {number} clickY The clientY of the click event.
+     * @param {number} clientX The clientX of the click event.
+     * @param {number} clientY The clientY of the click event.
+     * @param {number} pageX The pageX of the click event.
+     * @param {number} pageY The pageY of the click event.
      */
-    function handleMapClick(clickedRegionId, clickX, clickY) {
+    function handleMapClick(clickedRegionId, clientX, clientY, pageX, pageY) {
         const outgoingBox = currentInfobox;
         const isInfoboxActive = outgoingBox.classList.contains('active');
         const currentRegionId = outgoingBox.dataset.regionId;
@@ -119,7 +121,7 @@ export function initMapPage() {
         updateInfoboxContents(region, incomingBox);
 
         // Prepare the incoming box (size and position it), and once it's ready, trigger the animation
-        prepareAndPositionInfobox(region, incomingBox, clickX, clickY).then(() => {
+        prepareAndPositionInfobox(region, incomingBox, clientX, clientY, pageX, pageY).then(() => {
             // Now, trigger the cross-fade
             outgoingBox.classList.remove('active');
             incomingBox.classList.add('active');
@@ -231,11 +233,13 @@ export function initMapPage() {
      * Sizes, positions, and prepares the infobox, returning a promise that resolves when ready.
      * @param {object} region The region data object.
      * @param {HTMLElement} infoboxEl The main infobox element.
-     * @param {number} clickX The clientX of the click event.
-     * @param {number} clickY The clientY of the click event.
+     * @param {number} clientX The clientX of the click event for viewport boundary checks.
+     * @param {number} clientY The clientY of the click event for viewport boundary checks.
+     * @param {number} pageX The pageX of the click event for document-relative positioning.
+     * @param {number} pageY The pageY of the click event for document-relative positioning.
      * @returns {Promise} A promise that resolves when the infobox is sized and positioned.
      */
-    function prepareAndPositionInfobox(region, infoboxEl, clickX, clickY) {
+    function prepareAndPositionInfobox(region, infoboxEl, clientX, clientY, pageX, pageY) {
         const bodyEl = infoboxEl.querySelector('.infobox-body');
         const gamesViewEl = infoboxEl.querySelector('.infobox-games-view');
         const loreViewEl = infoboxEl.querySelector('.infobox-lore-view');
@@ -281,10 +285,19 @@ export function initMapPage() {
             // Position the infobox
             const rect = infoboxEl.getBoundingClientRect();
             const offsetX = 20, offsetY = 20;
-            let top = clickY + offsetY;
-            let left = clickX + offsetX;
-            if (left + rect.width > window.innerWidth) left = clickX - rect.width - offsetX;
-            if (top + rect.height > window.innerHeight) top = clickY - rect.height - offsetY;
+
+            // Use pageX/pageY for the base position, making it relative to the document
+            let top = pageY + offsetY;
+            let left = pageX + offsetX;
+
+            // Use clientX/clientY for viewport boundary checks to decide if we need to flip
+            if (clientX + offsetX + rect.width > window.innerWidth) {
+                left = pageX - rect.width - offsetX;
+            }
+            if (clientY + offsetY + rect.height > window.innerHeight) {
+                top = pageY - rect.height - offsetY;
+            }
+
             infoboxEl.style.left = `${Math.max(5, left)}px`;
             infoboxEl.style.top = `${Math.max(5, top)}px`;
 
