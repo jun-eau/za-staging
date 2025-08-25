@@ -476,7 +476,6 @@ body.home-page::before {
 =================================================================
 */
 .main-lore {
-    max-width: 1600px;
 }
 
 /* 6.1. Timeline */
@@ -499,7 +498,6 @@ body.home-page::before {
     display: flex;
     position: relative;
     width: 100%;
-    min-width: 1600px;
 }
 #time-axis-container {
     flex: 0 0 80px;
