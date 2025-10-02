@@ -865,12 +865,6 @@ body.home-page::before {
     transition-delay: 0s;
 }
 
-@keyframes pulse-region {
-  0% { fill-opacity: 0; }
-  50% { fill-opacity: 0.2; }
-  100% { fill-opacity: 0; }
-}
-
 /*
 =================================================================
 7. Responsive Styles (Mobile)
@@ -1201,9 +1195,9 @@ body.home-page::before {
         background: none;
         border: none;
         color: var(--text-secondary);
-        font-size: 2rem; /* Increased from 1.75rem */
+        font-size: 1.75rem; /* Slightly larger for easier tapping */
         cursor: pointer;
-        padding: 10px; /* Increased from 0 */
+        padding: 0;
         line-height: 1;
         justify-self: end;
     }
@@ -1232,37 +1226,10 @@ body.home-page::before {
     }
 
     /* --- New Mobile Map Interaction Styles --- */
-    .map-banner {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-size: var(--font-size-sm);
-        z-index: 1000; /* Ensure it's above the map but below the panel */
-        pointer-events: none; /* Make it non-interactive */
-        opacity: 1;
-        transition: opacity 0.5s ease-in-out;
-    }
-
-    .map-banner.hidden {
-        opacity: 0;
-    }
-
     #mobile-map-container .leaflet-overlay-pane svg path {
         fill-opacity: 0;
         stroke-opacity: 0;
         transition: fill-opacity 0.3s ease, stroke-opacity 0.3s ease;
-        animation: pulse-region 3s infinite ease-in-out;
-    }
-
-    /* Stop the animation when a region is highlighted or the whole pane is disabled */
-    #mobile-map-container.interaction-disabled .leaflet-overlay-pane svg path,
-    #mobile-map-container .leaflet-overlay-pane svg path.highlighted {
-        animation: none;
     }
 
     #mobile-map-container .leaflet-overlay-pane svg path.highlighted {
