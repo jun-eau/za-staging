@@ -53,12 +53,10 @@ function initMobileMap() {
     const panelTabsContainer = infoPanel.querySelector('.panel-tabs');
     const loreContentPane = document.getElementById('panel-lore-content');
     const gamesContentPane = document.getElementById('panel-games-content');
-    const mapBanner = document.getElementById('mobile-map-banner');
 
     if (!mapContainer || !infoPanel) return;
 
     let highlightedPath = null;
-    let userHasInteracted = false;
 
     // --- Map Initialization ---
     const bounds = [[0, 0], [1744, 2800]];
@@ -84,14 +82,6 @@ function initMobileMap() {
         path.setAttribute('stroke-width', '8');
 
         path.addEventListener('click', () => {
-            if (!userHasInteracted) {
-                userHasInteracted = true;
-                if (mapBanner) {
-                    mapBanner.classList.add('hidden');
-                }
-                mapContainer.classList.add('interaction-disabled');
-            }
-
             if (highlightedPath) {
                 highlightedPath.classList.remove('highlighted');
             }
