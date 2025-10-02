@@ -40,21 +40,20 @@ export function initMapPage() {
     });
 }
 
-// --- MOBILE MAP IMPLEMENTATION (REFINED) ---
+// --- MOBILE MAP IMPLEMENTATION (FINAL FEATURE PARITY) ---
 function initMobileMap() {
     // --- Element References ---
     const mapContainer = document.getElementById('mobile-map-container');
     const dimOverlay = mapContainer.querySelector('.map-dim-overlay');
     const infoPanel = document.getElementById('mobile-info-panel');
-    const panelTitle = infoPanel.querySelector('.panel-title');
-    const closeBtn = infoPanel.querySelector('.close-panel-btn');
-    const tabs = infoPanel.querySelectorAll('.panel-tab');
+    const panelHeader = infoPanel.querySelector('.panel-header');
+    const panelTabsContainer = infoPanel.querySelector('.panel-tabs');
     const loreContentPane = document.getElementById('panel-lore-content');
     const gamesContentPane = document.getElementById('panel-games-content');
 
     if (!mapContainer || !infoPanel) return;
 
-    let highlightedPath = null; // To track the currently selected region path
+    let highlightedPath = null;
 
     // --- Map Initialization ---
     const bounds = [[0, 0], [1744, 2800]];
@@ -75,56 +74,23 @@ function initMobileMap() {
         const path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         path.setAttribute('d', region.svgPathData);
         path.style.cursor = 'pointer';
-
-        // Add base styling (invisible by default per new CSS)
         path.setAttribute('fill', region.baseColor || '#FFFFFF');
         path.setAttribute('stroke', region.baseColor || '#FFFFFF');
         path.setAttribute('stroke-width', '8');
 
         path.addEventListener('click', () => {
-            // Un-highlight the previously selected path
             if (highlightedPath) {
                 highlightedPath.classList.remove('highlighted');
             }
-
-            // Highlight the new path and update the tracking variable
             path.classList.add('highlighted');
             highlightedPath = path;
-
-            // Activate the dimming overlay
             dimOverlay.classList.add('active');
 
-            // --- Populate Info Panel ---
-            panelTitle.textContent = region.name;
+            // --- Dynamically Build Panel ---
+            buildPanelHeader(region);
+            buildPanelTabs(region);
+            buildPanelContent(region);
 
-            // Populate Lore Tab
-            loreContentPane.innerHTML = `
-                <h4>Description</h4>
-                <p>${region.description || 'No description available.'}</p>
-                <h4>History</h4>
-                <p>${region.history || 'No history available.'}</p>
-                ${region.capital ? `<h4>Capital</h4><p>${region.capital}</p>` : ''}
-                ${region.government ? `<h4>Government</h4><p>${region.government}</p>` : ''}
-            `;
-
-            // Populate Games Tab
-            const associatedGameIds = [...(region.games || []), ...(region.featuredIn || [])];
-            const uniqueGameIds = [...new Set(associatedGameIds)];
-            const gamesInRegion = mapGamesData.filter(game => uniqueGameIds.includes(game.id));
-
-            if (gamesInRegion.length > 0) {
-                gamesContentPane.innerHTML = `<div class="panel-games-grid">${gamesInRegion.map(game => {
-                    let assetName = game.assetName;
-                    if (game.id === 'trails-in-the-sky' && game.variants && game.variants.length > 0) {
-                        assetName = game.variants[0].assetName;
-                    }
-                    return `<img src="assets/grid/${assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}">`;
-                }).join('')}</div>`;
-            } else {
-                gamesContentPane.innerHTML = '<p>No specific games are primarily set in this region.</p>';
-            }
-
-            // Show the panel
             infoPanel.classList.add('active');
         });
 
@@ -133,7 +99,99 @@ function initMobileMap() {
 
     L.svgOverlay(svgElement, bounds, { interactive: true }).addTo(map);
 
-    // --- Panel Closing Logic ---
+    // --- Panel Header Builder ---
+    function buildPanelHeader(region) {
+        panelHeader.innerHTML = ''; // Clear previous header
+
+        const hasEmblem = region.emblemAsset;
+        panelHeader.style.gridTemplateColumns = hasEmblem ? '40px 1fr auto auto' : '1fr auto auto';
+
+        let headerHTML = '';
+        if (hasEmblem) {
+            headerHTML += `<img src="assets/logo/${region.emblemAsset}" alt="${region.name} Emblem" class="panel-emblem">`;
+        }
+        headerHTML += `
+            <div class="panel-title-section">
+                <h3 class="panel-title">${region.name}</h3>
+                <p class="panel-subtitle">${region.government}</p>
+            </div>
+            <a href="${region.falcomWikiUrl}" target="_blank" rel="noopener noreferrer" class="panel-links" title="View on Falcom Wiki">
+                <img src="assets/logo/falcom-wiki.png" alt="Falcom Wiki">
+            </a>
+            <button class="close-panel-btn">×</button>
+        `;
+        panelHeader.innerHTML = headerHTML;
+        panelHeader.querySelector('.close-panel-btn').addEventListener('click', closePanel);
+    }
+
+    // --- Panel Tabs Builder ---
+    function buildPanelTabs(region) {
+        panelTabsContainer.innerHTML = ''; // Clear previous tabs
+        const hasGames = region.games && region.games.length > 0;
+
+        if (hasGames) {
+            panelTabsContainer.style.display = 'flex';
+            panelTabsContainer.innerHTML = `
+                <button class="panel-tab active" data-tab="lore">Lore</button>
+                <button class="panel-tab" data-tab="games">Games</button>
+            `;
+            // Re-attach listeners after rebuilding
+            panelTabsContainer.querySelectorAll('.panel-tab').forEach(addTabListener);
+        } else {
+            panelTabsContainer.style.display = 'none';
+        }
+    }
+
+    // --- Panel Content Builder ---
+    function buildPanelContent(region) {
+        // LORE PANE
+        const hasGames = region.games && region.games.length > 0;
+        const featuredInGames = mapGamesData.filter(game => (region.featuredIn || []).includes(game.id));
+        let featuredInHtml = '';
+        if (!hasGames && featuredInGames.length > 0) {
+            featuredInHtml = `
+                <div class="panel-lore-section">
+                    <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Featured In</h4>
+                    <ul>${featuredInGames.map(game => `<li>${game.englishTitle}</li>`).join('')}</ul>
+                </div>`;
+        }
+        loreContentPane.innerHTML = `
+            <div class="panel-lore-section">
+                <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Description</h4>
+                <p>${region.description || 'No description available.'}</p>
+            </div>
+            <div class="panel-lore-section">
+                <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">History</h4>
+                <p>${region.history || 'No history available.'}</p>
+            </div>
+            <div class="panel-lore-section">
+                <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Region Details</h4>
+                ${region.capital ? `<p><strong>Capital:</strong> ${region.capital}</p>` : ''}
+                ${region.formattedArea ? `<p><strong>Area:</strong> ${region.formattedArea}</p>` : ''}
+            </div>
+            ${featuredInHtml}
+        `;
+
+        // GAMES PANE
+        if (hasGames) {
+            const gamesInRegion = mapGamesData.filter(game => region.games.includes(game.id));
+            gamesContentPane.innerHTML = `<div class="panel-games-grid">${gamesInRegion.map(game => {
+                let assetName = game.assetName;
+                if (game.id === 'trails-in-the-sky' && game.variants && game.variants.length > 0) {
+                    assetName = game.variants[0].assetName;
+                }
+                return `<img src="assets/grid/${assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}">`;
+            }).join('')}</div>`;
+        } else {
+            gamesContentPane.innerHTML = ''; // Clear it if not used
+        }
+
+        // Set initial active pane
+        loreContentPane.classList.add('active');
+        gamesContentPane.classList.remove('active');
+    }
+
+    // --- Event Listeners ---
     const closePanel = () => {
         infoPanel.classList.remove('active');
         dimOverlay.classList.remove('active');
@@ -143,24 +201,18 @@ function initMobileMap() {
         }
     };
 
-    closeBtn.addEventListener('click', closePanel);
-    dimOverlay.addEventListener('click', closePanel); // Also close when clicking the dimmed background
-
-    // --- Tab Switching Logic ---
-    tabs.forEach(tab => {
+    function addTabListener(tab) {
         tab.addEventListener('click', () => {
             const targetPaneId = `panel-${tab.dataset.tab}-content`;
-
-            // Update active state for tabs
-            tabs.forEach(t => t.classList.remove('active'));
+            panelTabsContainer.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-
-            // Update active state for content panes
             infoPanel.querySelectorAll('.panel-content-pane').forEach(pane => {
                 pane.classList.toggle('active', pane.id === targetPaneId);
             });
         });
-    });
+    }
+
+    dimOverlay.addEventListener('click', closePanel);
 
     // --- Final Map Setup ---
     map.fitBounds(bounds);
@@ -177,7 +229,6 @@ function initDesktopMap() {
     function initializeMap() {
         if (isMapInitialized) return;
         isMapInitialized = true;
-
         const svgNS = "http://www.w3.org/2000/svg";
         const mapOverlay = document.getElementById('map-overlay');
         infobox1 = document.getElementById('map-infobox-1');
