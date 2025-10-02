@@ -872,8 +872,8 @@ body.home-page::before {
 */
 /* 7.1. General Mobile Layout */
 @media (max-width: 900px) {
-    body {
-        overflow: hidden; /* Prevent scrolling on the page itself */
+    body.no-scroll {
+        overflow: hidden; /* Prevent scrolling ONLY on the mobile map page */
     }
 
     main {
