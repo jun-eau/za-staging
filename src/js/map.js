@@ -151,10 +151,11 @@ function initMobileMap() {
         const hasGames = region.games && region.games.length > 0;
         const featuredInGames = mapGamesData.filter(game => (region.featuredIn || []).includes(game.id));
         let featuredInHtml = '';
-        if (!hasGames && featuredInGames.length > 0) {
+        if (featuredInGames.length > 0) {
+            const title = hasGames ? "Also Featured In" : "Featured In";
             featuredInHtml = `
                 <div class="panel-lore-section">
-                    <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">Featured In</h4>
+                    <h4 style="color: ${region.baseColor}; border-bottom-color: ${region.baseColor};">${title}</h4>
                     <ul>${featuredInGames.map(game => `<li>${game.englishTitle}</li>`).join('')}</ul>
                 </div>`;
         }
