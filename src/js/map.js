@@ -47,16 +47,16 @@ function initMobileMap() {
 
     // --- Element References ---
     const mapContainer = document.getElementById('mobile-map-container');
-    const dimOverlay = mapContainer.querySelector('.map-dim-overlay');
     const infoPanel = document.getElementById('mobile-info-panel');
     const panelHeader = infoPanel.querySelector('.panel-header');
     const panelTabsContainer = infoPanel.querySelector('.panel-tabs');
     const loreContentPane = document.getElementById('panel-lore-content');
     const gamesContentPane = document.getElementById('panel-games-content');
+    const mapBanner = document.getElementById('mobile-map-banner');
 
     if (!mapContainer || !infoPanel) return;
 
-    let highlightedPath = null;
+    let selectedPath = null;
 
     // --- Map Initialization ---
     const bounds = [[0, 0], [1744, 2800]];
@@ -72,22 +72,60 @@ function initMobileMap() {
     svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
     svgElement.setAttribute('viewBox', '0 0 2800 1744');
 
+    // --- SVG Defs for Masking ---
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", 'defs');
+    const mask = document.createElementNS("http://www.w3.org/2000/svg", 'mask');
+    mask.id = 'mobile-regions-mask';
+
+    const maskRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    maskRect.setAttribute('x', '0');
+    maskRect.setAttribute('y', '0');
+    maskRect.setAttribute('width', '2800');
+    maskRect.setAttribute('height', '1744');
+    maskRect.setAttribute('fill', 'white');
+    mask.appendChild(maskRect);
+
+    const maskGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+    maskGroup.setAttribute('fill', 'black');
+    mask.appendChild(maskGroup);
+    defs.appendChild(mask);
+    svgElement.appendChild(defs);
+
+    // --- Dimming Rectangle ---
+    const dimmingRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    dimmingRect.setAttribute('class', 'mobile-dimming-rect');
+    dimmingRect.setAttribute('x', '0');
+    dimmingRect.setAttribute('y', '0');
+    dimmingRect.setAttribute('width', '2800');
+    dimmingRect.setAttribute('height', '1744');
+    dimmingRect.setAttribute('fill', 'rgba(0, 0, 0, 0.6)');
+    dimmingRect.setAttribute('mask', 'url(#mobile-regions-mask)');
+    svgElement.appendChild(dimmingRect);
+
     // --- Region Path Creation & Event Handling ---
     mapRegionsData.forEach(region => {
         const path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         path.setAttribute('d', region.svgPathData);
         path.style.cursor = 'pointer';
-        path.setAttribute('fill', region.baseColor || '#FFFFFF');
-        path.setAttribute('stroke', region.baseColor || '#FFFFFF');
-        path.setAttribute('stroke-width', '8');
+
+        // Add a clone of the path to the mask to make it visible by default
+        const maskPath = path.cloneNode();
+        maskGroup.appendChild(maskPath);
 
         path.addEventListener('click', () => {
-            if (highlightedPath) {
-                highlightedPath.classList.remove('highlighted');
+            // Hide banner on first interaction
+            if (mapBanner && !mapBanner.classList.contains('hidden')) {
+                mapBanner.classList.add('hidden');
             }
-            path.classList.add('highlighted');
-            highlightedPath = path;
-            dimOverlay.classList.add('active');
+
+            // Clear previous selection
+            if (selectedPath) {
+                selectedPath.classList.remove('selected');
+            }
+
+            // Set new selection
+            path.classList.add('selected');
+            selectedPath = path;
 
             // --- Dynamically Build Panel ---
             buildPanelHeader(region);
@@ -104,7 +142,7 @@ function initMobileMap() {
 
     // --- Panel Header Builder ---
     function buildPanelHeader(region) {
-        panelHeader.innerHTML = ''; // Clear previous header
+        panelHeader.innerHTML = '';
 
         const hasEmblem = region.emblemAsset;
         panelHeader.style.gridTemplateColumns = hasEmblem ? '40px 1fr auto auto' : '1fr auto auto';
@@ -129,7 +167,7 @@ function initMobileMap() {
 
     // --- Panel Tabs Builder ---
     function buildPanelTabs(region) {
-        panelTabsContainer.innerHTML = ''; // Clear previous tabs
+        panelTabsContainer.innerHTML = '';
         const hasGames = region.games && region.games.length > 0;
 
         if (hasGames) {
@@ -138,7 +176,6 @@ function initMobileMap() {
                 <button class="panel-tab active" data-tab="lore">Lore</button>
                 <button class="panel-tab" data-tab="games">Games</button>
             `;
-            // Re-attach listeners after rebuilding
             panelTabsContainer.querySelectorAll('.panel-tab').forEach(addTabListener);
         } else {
             panelTabsContainer.style.display = 'none';
@@ -147,7 +184,6 @@ function initMobileMap() {
 
     // --- Panel Content Builder ---
     function buildPanelContent(region) {
-        // LORE PANE
         const hasGames = region.games && region.games.length > 0;
         const featuredInGames = mapGamesData.filter(game => (region.featuredIn || []).includes(game.id));
         let featuredInHtml = '';
@@ -176,7 +212,6 @@ function initMobileMap() {
             ${featuredInHtml}
         `;
 
-        // GAMES PANE
         if (hasGames) {
             const gamesInRegion = mapGamesData.filter(game => region.games.includes(game.id));
             gamesContentPane.innerHTML = `<div class="panel-games-grid">${gamesInRegion.map(game => {
@@ -187,10 +222,9 @@ function initMobileMap() {
                 return `<img src="assets/grid/${assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}">`;
             }).join('')}</div>`;
         } else {
-            gamesContentPane.innerHTML = ''; // Clear it if not used
+            gamesContentPane.innerHTML = '';
         }
 
-        // Set initial active pane
         loreContentPane.classList.add('active');
         gamesContentPane.classList.remove('active');
     }
@@ -198,10 +232,9 @@ function initMobileMap() {
     // --- Event Listeners ---
     const closePanel = () => {
         infoPanel.classList.remove('active');
-        dimOverlay.classList.remove('active');
-        if (highlightedPath) {
-            highlightedPath.classList.remove('highlighted');
-            highlightedPath = null;
+        if (selectedPath) {
+            selectedPath.classList.remove('selected');
+            selectedPath = null;
         }
     };
 
@@ -215,8 +248,6 @@ function initMobileMap() {
             });
         });
     }
-
-    dimOverlay.addEventListener('click', closePanel);
 
     // --- Final Map Setup ---
     map.fitBounds(bounds);
