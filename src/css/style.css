@@ -1114,6 +1114,156 @@ body.home-page::before {
         font-size: var(--font-size-sm);
         max-width: 90%;
     }
+
+    /* 7.5. Mobile Map & Timeline */
+    .map-page-mobile-view .full-width-section h2,
+    .timeline-section h2,
+    .desktop-map-intro,
+    .desktop-timeline-intro,
+    .map-infobox {
+        display: none;
+    }
+
+    body.map-page-mobile-view,
+    body.map-page-mobile-view main.main-lore {
+        padding: 0;
+        margin: 0;
+    }
+
+    body.map-page-mobile-view .map-container {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        max-width: none;
+        border: none;
+        box-shadow: none;
+    }
+
+    .mobile-infobox {
+        --peek-height: 50px;
+        --panel-bg: #252525;
+        --handle-color: #555;
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+        height: 85vh;
+        max-height: 600px;
+        transform: translateY(100%);
+        transition: transform 0.4s ease-in-out;
+        background-color: var(--panel-bg);
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    }
+
+    .mobile-infobox.visible {
+        transform: translateY(calc(100% - var(--peek-height)));
+    }
+
+    .mobile-infobox.active {
+        transform: translateY(0);
+    }
+
+    .mobile-infobox-handle-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--peek-height);
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .mobile-infobox-handle {
+        width: 40px;
+        height: 5px;
+        background-color: var(--handle-color);
+        border-radius: 2.5px;
+    }
+
+    .mobile-infobox-content-wrapper {
+        padding-top: var(--peek-height);
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+
+    .mobile-infobox-content-wrapper .map-infobox-header {
+        background-color: transparent;
+        border-bottom: 1px solid #444;
+        position: sticky;
+        top: 0;
+        background: var(--panel-bg);
+        z-index: 1;
+    }
+    .mobile-infobox-content-wrapper .infobox-body {
+        transition: none;
+    }
+    .mobile-infobox-content-wrapper .map-infobox-footer {
+        background-color: transparent;
+        border-top: 1px solid #444;
+    }
+    .mobile-infobox-content-wrapper .infobox-games-view,
+    .mobile-infobox-content-wrapper .infobox-lore-view {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        padding-bottom: 0;
+    }
+    .mobile-infobox-content-wrapper .map-infobox-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    }
+
+    /* Mobile Timeline */
+    .lore-timeline-scroll-wrapper {
+        overflow-x: hidden;
+    }
+    #lore-timeline-main-container {
+        flex-direction: column;
+        min-width: 0;
+    }
+    #time-axis-container {
+        display: none;
+    }
+    #game-columns-container {
+        flex-direction: column;
+        width: 100%;
+    }
+    .timeline-arc-column {
+        border-right: none;
+        border-bottom: 1px dashed rgba(153, 153, 185, 0.3);
+        padding: 0 1rem 2rem 1rem;
+        margin-bottom: 1rem;
+    }
+    .timeline-arc-column:last-child {
+        border-bottom: none;
+    }
+    .timeline-arc-column .game-entries-area {
+        height: auto !important;
+    }
+    .timeline-arc-column .game-entry-box,
+    .timeline-arc-column .game-info-below-text-container {
+        position: static;
+        display: block;
+        padding: 8px;
+        margin: 8px 0;
+        width: auto;
+        text-shadow: none;
+    }
+    .timeline-arc-column .game-entry-box {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .timeline-arc-column .game-entry-title,
+    .timeline-arc-column .game-entry-duration {
+        display: block;
+        position: static;
+        opacity: 1;
+    }
 }
 
 /* --- Initial Hiding of Mobile/Desktop Specific Elements --- */
