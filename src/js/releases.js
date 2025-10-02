@@ -91,8 +91,8 @@ export function initReleasesPage() {
                 <a href="${game.wikiUrl}" target="_blank" rel="noopener noreferrer" title="Wikipedia">
                     <img src="assets/logo/wikipedia.png" alt="Wikipedia Logo" title="">
                 </a>
-                <a href="${game.fandomUrl}" target="_blank" rel="noopener noreferrer" title="Kiseki Fandom Wiki">
-                    <img src="assets/logo/fandom.webp" alt="Fandom Logo" title="">
+                <a href="${game.falcomWikiUrl}" target="_blank" rel="noopener noreferrer" title="Falcom Wiki">
+                    <img src="assets/logo/falcom-wiki.png" alt="Falcom Wiki Logo" title="">
                 </a>
             </div>`;
     }
@@ -216,8 +216,8 @@ export function initReleasesPage() {
                     <a href="${game.wikiUrl}" target="_blank" rel="noopener noreferrer" title="Wikipedia">
                         <img src="assets/logo/wikipedia.png" alt="Wikipedia Logo">
                     </a>
-                    <a href="${game.fandomUrl}" target="_blank" rel="noopener noreferrer" title="Kiseki Fandom Wiki">
-                        <img src="assets/logo/fandom.webp" alt="Fandom Logo">
+                    <a href="${game.falcomWikiUrl}" target="_blank" rel="noopener noreferrer" title="Falcom Wiki">
+                        <img src="assets/logo/falcom-wiki.png" alt="Falcom Wiki Logo">
                     </a>
                 </div>
 
@@ -343,7 +343,9 @@ export function initReleasesPage() {
                 if (game.variants && game.variants.length > 0) {
                     const sliderDisplayArea = document.createElement('div');
                     sliderDisplayArea.className = 'slider-display-area';
-                    sliderDisplayArea.setAttribute('data-current-index', '0');
+                    // Default to the 1st Chapter variant for the original Sky, per user request.
+                    const initialIndex = game.id === 'trails-in-the-sky' ? '1' : '0';
+                    sliderDisplayArea.setAttribute('data-current-index', initialIndex);
 
                     const gameEntrySlider = document.createElement('div');
                     gameEntrySlider.className = 'game-entry-slider';

@@ -186,7 +186,6 @@ main {
 =================================================================
 */
 body.home-page {
-    background-image: url('../../assets/home-bg.png');
     background-size: cover;
     background-position: center center;
     background-attachment: fixed;
@@ -195,7 +194,7 @@ body.home-page::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(8px);
     z-index: -1;
 }
@@ -329,14 +328,14 @@ body.home-page::before {
     inset: 0;
     background-size: cover;
     background-position: center center;
-    filter: blur(4px) brightness(0.95);
+    filter: blur(3px) brightness(0.95);
     transform: scale(1.1);
     transition: transform 0.4s ease-out, filter 0.4s ease-out;
     z-index: 1;
 }
-.game-entry:hover .hero-background {
+.info-container:hover .hero-background {
     transform: scale(1.05);
-    filter: blur(2px) brightness(1.1);
+    filter: blur(0px) brightness(1.0526);
 }
 .info-content {
     position: relative;
@@ -841,7 +840,7 @@ body.home-page::before {
     pointer-events: none;
 }
 .map-container:hover .dimming-rect {
-    opacity: 0.6;
+    opacity: 0.75;
 }
 .map-overlay-svg {
     position: absolute;
@@ -856,12 +855,14 @@ body.home-page::before {
     stroke: transparent;
     stroke-width: 3;
     transition: fill 0.2s ease-in-out, stroke 0.2s ease-in-out, stroke-width 0.2s ease-in-out;
+    transition-delay: 0.06s;
     cursor: pointer;
 }
 .region-path:hover {
     fill: var(--region-highlight-color);
     stroke: var(--accent-gold);
     stroke-width: 5;
+    transition-delay: 0s;
 }
 
 /*

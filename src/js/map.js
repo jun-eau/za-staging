@@ -161,8 +161,8 @@ export function initMapPage() {
                 <p>${region.government}</p>
             </div>
             <div class="map-infobox-links">
-                <a href="${region.wikiLink}" target="_blank" rel="noopener noreferrer" title="View on Kiseki Wiki">
-                    <img src="assets/logo/fandom.webp" alt="Fandom Wiki">
+                <a href="${region.falcomWikiUrl}" target="_blank" rel="noopener noreferrer" title="View on Falcom Wiki">
+                    <img src="assets/logo/falcom-wiki.png" alt="Falcom Wiki">
                 </a>
             </div>
         `;
@@ -171,9 +171,14 @@ export function initMapPage() {
         // Populate Games View
         const gamesInRegion = mapGamesData.filter(game => (region.games || []).includes(game.id));
         gamesViewEl.innerHTML = gamesInRegion.length > 0
-            ? `<div class="map-infobox-games-grid">${gamesInRegion.map(game => `
-                <img src="assets/grid/${game.assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}" class="map-infobox-game-art">
-              `).join('')}</div>`
+            ? `<div class="map-infobox-games-grid">${gamesInRegion.map(game => {
+                let assetName = game.assetName;
+                // Per user request, show the 1st Chapter variant grid art for the Liberl infobox.
+                if (game.id === 'trails-in-the-sky' && game.variants && game.variants.length > 0) {
+                    assetName = game.variants[0].assetName;
+                }
+                return `<img src="assets/grid/${assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}" class="map-infobox-game-art">`;
+              }).join('')}</div>`
             : '<p style="font-size: 0.8em; color: #999;">No specific games are primarily set in this region.</p>';
 
         // Populate Lore View
@@ -212,7 +217,7 @@ export function initMapPage() {
             toggleButton.className = 'map-infobox-toggle-btn';
 
             const updateButtonText = () => {
-                toggleButton.textContent = infoboxEl.classList.contains('show-lore-view') ? 'Show Game Art' : 'View Lore Details';
+                toggleButton.textContent = infoboxEl.classList.contains('show-lore-view') ? 'Show Game Art' : 'Show More Details';
             };
             toggleButton.addEventListener('click', (event) => {
                 event.stopPropagation();
