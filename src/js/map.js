@@ -47,7 +47,8 @@ function initMobileMap() {
 
     // --- Element References ---
     const mapContainer = document.getElementById('mobile-map-container');
-    const dimOverlay = mapContainer.querySelector('.map-dim-overlay');
+    const instruction = document.getElementById('mobile-map-instruction');
+    const instructionCloseBtn = instruction.querySelector('button');
     const infoPanel = document.getElementById('mobile-info-panel');
     const panelHeader = infoPanel.querySelector('.panel-header');
     const panelTabsContainer = infoPanel.querySelector('.panel-tabs');
@@ -72,6 +73,32 @@ function initMobileMap() {
     svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
     svgElement.setAttribute('viewBox', '0 0 2800 1744');
 
+    // --- SVG Mask for Dimming Effect ---
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", 'defs');
+    const mask = document.createElementNS("http://www.w3.org/2000/svg", 'mask');
+    mask.id = 'mobile-regions-mask';
+    const maskRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    maskRect.setAttribute('x', '0');
+    maskRect.setAttribute('y', '0');
+    maskRect.setAttribute('width', '2800');
+    maskRect.setAttribute('height', '1744');
+    maskRect.setAttribute('fill', 'white');
+    const maskGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+    mask.appendChild(maskRect);
+    mask.appendChild(maskGroup);
+    defs.appendChild(mask);
+    svgElement.appendChild(defs);
+
+    const dimmingRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    dimmingRect.setAttribute('class', 'dimming-rect');
+    dimmingRect.setAttribute('x', '0');
+    dimmingRect.setAttribute('y', '0');
+    dimmingRect.setAttribute('width', '2800');
+    dimmingRect.setAttribute('height', '1744');
+    dimmingRect.setAttribute('fill', 'rgba(0, 0, 0, 1)'); // Opacity is controlled by CSS
+    dimmingRect.setAttribute('mask', `url(#${mask.id})`);
+    svgElement.appendChild(dimmingRect);
+
     // --- Region Path Creation & Event Handling ---
     mapRegionsData.forEach(region => {
         const path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
@@ -81,13 +108,20 @@ function initMobileMap() {
         path.setAttribute('stroke', region.baseColor || '#FFFFFF');
         path.setAttribute('stroke-width', '8');
 
+        // Add all region paths to the mask from the start to create the default dimming effect
+        const maskPath = path.cloneNode(false);
+        maskPath.setAttribute('fill', 'black'); // Black areas in the mask are transparent
+        maskPath.removeAttribute('class');
+        maskGroup.appendChild(maskPath);
+
         path.addEventListener('click', () => {
+            hideInstruction(); // Hide instruction on first tap
+
             if (highlightedPath) {
                 highlightedPath.classList.remove('highlighted');
             }
             path.classList.add('highlighted');
             highlightedPath = path;
-            dimOverlay.classList.add('active');
 
             // --- Dynamically Build Panel ---
             buildPanelHeader(region);
@@ -198,7 +232,6 @@ function initMobileMap() {
     // --- Event Listeners ---
     const closePanel = () => {
         infoPanel.classList.remove('active');
-        dimOverlay.classList.remove('active');
         if (highlightedPath) {
             highlightedPath.classList.remove('highlighted');
             highlightedPath = null;
@@ -216,7 +249,16 @@ function initMobileMap() {
         });
     }
 
-    dimOverlay.addEventListener('click', closePanel);
+    const hideInstruction = () => {
+        if (instruction) {
+            instruction.classList.add('hidden');
+        }
+    };
+
+    instructionCloseBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent map click event
+        hideInstruction();
+    });
 
     // --- Final Map Setup ---
     map.fitBounds(bounds);
