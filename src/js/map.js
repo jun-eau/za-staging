@@ -40,16 +40,23 @@ export function initMapPage() {
     });
 }
 
-// --- MOBILE MAP IMPLEMENTATION (FINAL REFACTOR) ---
+// --- MOBILE MAP IMPLEMENTATION (REFINED) ---
 function initMobileMap() {
+    // --- Element References ---
     const mapContainer = document.getElementById('mobile-map-container');
+    const dimOverlay = mapContainer.querySelector('.map-dim-overlay');
     const infoPanel = document.getElementById('mobile-info-panel');
     const panelTitle = infoPanel.querySelector('.panel-title');
-    const panelContent = infoPanel.querySelector('.panel-content');
     const closeBtn = infoPanel.querySelector('.close-panel-btn');
+    const tabs = infoPanel.querySelectorAll('.panel-tab');
+    const loreContentPane = document.getElementById('panel-lore-content');
+    const gamesContentPane = document.getElementById('panel-games-content');
 
     if (!mapContainer || !infoPanel) return;
 
+    let highlightedPath = null; // To track the currently selected region path
+
+    // --- Map Initialization ---
     const bounds = [[0, 0], [1744, 2800]];
     const map = L.map('mobile-map-container', {
         crs: L.CRS.Simple,
@@ -59,57 +66,110 @@ function initMobileMap() {
 
     L.imageOverlay('assets/zemuria-map.webp', bounds).addTo(map);
 
-    // 1. Create a single SVG element that will contain all region paths.
     const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
     svgElement.setAttribute('viewBox', '0 0 2800 1744');
 
-    // 2. Loop through regions and add each as a <path> to the SVG element.
+    // --- Region Path Creation & Event Handling ---
     mapRegionsData.forEach(region => {
         const path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         path.setAttribute('d', region.svgPathData);
-
-        // Style the path
-        path.setAttribute('fill', region.baseColor || '#FFFFFF');
-        path.setAttribute('fill-opacity', '0.2');
-        path.setAttribute('stroke', region.baseColor || '#FFFFFF');
-        path.setAttribute('stroke-width', '5');
-        path.setAttribute('stroke-opacity', '0.7');
         path.style.cursor = 'pointer';
-        path.style.transition = 'fill-opacity 0.2s ease-in-out';
 
-        // Add event listeners directly to each path
-        path.addEventListener('mouseover', () => path.setAttribute('fill-opacity', '0.4'));
-        path.addEventListener('mouseout', () => path.setAttribute('fill-opacity', '0.2'));
+        // Add base styling (invisible by default per new CSS)
+        path.setAttribute('fill', region.baseColor || '#FFFFFF');
+        path.setAttribute('stroke', region.baseColor || '#FFFFFF');
+        path.setAttribute('stroke-width', '8');
+
         path.addEventListener('click', () => {
+            // Un-highlight the previously selected path
+            if (highlightedPath) {
+                highlightedPath.classList.remove('highlighted');
+            }
+
+            // Highlight the new path and update the tracking variable
+            path.classList.add('highlighted');
+            highlightedPath = path;
+
+            // Activate the dimming overlay
+            dimOverlay.classList.add('active');
+
+            // --- Populate Info Panel ---
             panelTitle.textContent = region.name;
-            panelContent.innerHTML = `
+
+            // Populate Lore Tab
+            loreContentPane.innerHTML = `
                 <h4>Description</h4>
                 <p>${region.description || 'No description available.'}</p>
                 <h4>History</h4>
                 <p>${region.history || 'No history available.'}</p>
                 ${region.capital ? `<h4>Capital</h4><p>${region.capital}</p>` : ''}
+                ${region.government ? `<h4>Government</h4><p>${region.government}</p>` : ''}
             `;
+
+            // Populate Games Tab
+            const associatedGameIds = [...(region.games || []), ...(region.featuredIn || [])];
+            const uniqueGameIds = [...new Set(associatedGameIds)];
+            const gamesInRegion = mapGamesData.filter(game => uniqueGameIds.includes(game.id));
+
+            if (gamesInRegion.length > 0) {
+                gamesContentPane.innerHTML = `<div class="panel-games-grid">${gamesInRegion.map(game => {
+                    let assetName = game.assetName;
+                    if (game.id === 'trails-in-the-sky' && game.variants && game.variants.length > 0) {
+                        assetName = game.variants[0].assetName;
+                    }
+                    return `<img src="assets/grid/${assetName}.jpg" alt="${game.englishTitle}" title="${game.englishTitle}">`;
+                }).join('')}</div>`;
+            } else {
+                gamesContentPane.innerHTML = '<p>No specific games are primarily set in this region.</p>';
+            }
+
+            // Show the panel
             infoPanel.classList.add('active');
         });
 
         svgElement.appendChild(path);
     });
 
-    // 3. Create a single SVG overlay with the complete SVG element.
     L.svgOverlay(svgElement, bounds, { interactive: true }).addTo(map);
 
-    closeBtn.addEventListener('click', () => {
+    // --- Panel Closing Logic ---
+    const closePanel = () => {
         infoPanel.classList.remove('active');
+        dimOverlay.classList.remove('active');
+        if (highlightedPath) {
+            highlightedPath.classList.remove('highlighted');
+            highlightedPath = null;
+        }
+    };
+
+    closeBtn.addEventListener('click', closePanel);
+    dimOverlay.addEventListener('click', closePanel); // Also close when clicking the dimmed background
+
+    // --- Tab Switching Logic ---
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetPaneId = `panel-${tab.dataset.tab}-content`;
+
+            // Update active state for tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Update active state for content panes
+            infoPanel.querySelectorAll('.panel-content-pane').forEach(pane => {
+                pane.classList.toggle('active', pane.id === targetPaneId);
+            });
+        });
     });
 
+    // --- Final Map Setup ---
     map.fitBounds(bounds);
     map.setMinZoom(map.getZoom());
     map.setMaxZoom(map.getZoom() + 3);
 }
 
 
-// --- DESKTOP MAP IMPLEMENTATION ---
+// --- DESKTOP MAP IMPLEMENTATION (Unchanged) ---
 function initDesktopMap() {
     let isMapInitialized = false;
     let infobox1, infobox2, currentInfobox;

@@ -83,7 +83,9 @@
                     </svg>
                 </div>
             </div>
-            <div id="mobile-map-container"></div>
+            <div id="mobile-map-container">
+                <div class="map-dim-overlay"></div>
+            </div>
 
             <!-- Static Infobox Structure -->
             <div id="map-infobox-1" class="map-infobox">
@@ -117,6 +119,18 @@
             <button class="close-panel-btn">×</button>
         </div>
         <div class="panel-content">
+            <div class="panel-tabs">
+                <button class="panel-tab active" data-tab="lore">Lore</button>
+                <button class="panel-tab" data-tab="games">Games</button>
+            </div>
+            <div class="panel-tab-content">
+                <div id="panel-lore-content" class="panel-content-pane active">
+                    <!-- Lore content injected by JS -->
+                </div>
+                <div id="panel-games-content" class="panel-content-pane">
+                    <!-- Games content injected by JS -->
+                </div>
+            </div>
         </div>
     </div>
 </body>
