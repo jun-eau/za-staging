@@ -47,8 +47,6 @@ function initMobileMap() {
 
     // --- Element References ---
     const mapContainer = document.getElementById('mobile-map-container');
-    const instruction = document.getElementById('mobile-map-instruction');
-    const instructionCloseBtn = instruction.querySelector('button');
     const dimOverlay = mapContainer.querySelector('.map-dim-overlay');
     const infoPanel = document.getElementById('mobile-info-panel');
     const panelHeader = infoPanel.querySelector('.panel-header');
@@ -84,7 +82,6 @@ function initMobileMap() {
         path.setAttribute('stroke-width', '8');
 
         path.addEventListener('click', () => {
-            hideInstruction(); // Hide instruction on first tap
             if (highlightedPath) {
                 highlightedPath.classList.remove('highlighted');
             }
@@ -218,17 +215,6 @@ function initMobileMap() {
             });
         });
     }
-
-    const hideInstruction = () => {
-        if (instruction) {
-            instruction.classList.add('hidden');
-        }
-    };
-
-    instructionCloseBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent map click event
-        hideInstruction();
-    });
 
     dimOverlay.addEventListener('click', closePanel);
 
