@@ -42,6 +42,9 @@ export function initMapPage() {
 
 // --- MOBILE MAP IMPLEMENTATION (FINAL FEATURE PARITY) ---
 function initMobileMap() {
+    // Add a class to the body to disable scrolling ONLY on the map page for mobile
+    document.body.classList.add('no-scroll');
+
     // --- Element References ---
     const mapContainer = document.getElementById('mobile-map-container');
     const dimOverlay = mapContainer.querySelector('.map-dim-overlay');
