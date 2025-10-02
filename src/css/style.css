@@ -1195,9 +1195,9 @@ body.home-page::before {
         background: none;
         border: none;
         color: var(--text-secondary);
-        font-size: 1.75rem; /* Slightly larger for easier tapping */
+        font-size: 2rem; /* Increased from 1.75rem */
         cursor: pointer;
-        padding: 0;
+        padding: 10px; /* Increased from 0 */
         line-height: 1;
         justify-self: end;
     }
@@ -1226,33 +1226,44 @@ body.home-page::before {
     }
 
     /* --- New Mobile Map Interaction Styles --- */
-    #mobile-map-container .leaflet-overlay-pane svg path {
-        fill-opacity: 0;
-        stroke-opacity: 0;
-        transition: fill-opacity 0.3s ease, stroke-opacity 0.3s ease;
-    }
-
-    #mobile-map-container .leaflet-overlay-pane svg path.highlighted {
-        fill-opacity: 0.4;
-        stroke-opacity: 0.9;
-    }
-
-    .map-dim-overlay {
+    .map-banner {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease-in-out;
-        z-index: 450; /* Above leaflet paths, below panel */
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: var(--font-size-sm);
+        z-index: 1000; /* Ensure it's above the map but below the panel */
+        pointer-events: none; /* Make it non-interactive */
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
     }
 
-    .map-dim-overlay.active {
-        opacity: 1;
-        pointer-events: auto; /* Allow clicks when active */
+    .map-banner.hidden {
+        opacity: 0;
+    }
+
+    #mobile-map-container .leaflet-overlay-pane svg path {
+        fill: transparent;
+        stroke: transparent;
+        stroke-width: 0;
+        transition: stroke 0.3s ease, stroke-width 0.3s ease, fill 0.3s ease;
+    }
+
+    /* Add a border and subtle fill to the selected path to show it's active */
+    #mobile-map-container .leaflet-overlay-pane svg path.selected {
+        fill: rgba(233, 213, 161, 0.2);
+        stroke: var(--accent-gold);
+        stroke-width: 8px;
+    }
+
+    /* Dimming effect is now on by default */
+    .mobile-dimming-rect {
+        opacity: 0.75;
+        pointer-events: none;
     }
 
     /* --- New Info Panel Tab Styles --- */
