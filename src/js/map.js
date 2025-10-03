@@ -107,6 +107,7 @@ function initMobileMap() {
         const path = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         path.setAttribute('d', region.svgPathData);
         path.style.cursor = 'pointer';
+        path.classList.add('interactive-region');
 
         // Add a clone of the path to the mask to make it visible by default
         const maskPath = path.cloneNode();

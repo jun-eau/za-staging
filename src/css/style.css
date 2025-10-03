@@ -1246,7 +1246,8 @@ body.home-page::before {
         opacity: 0;
     }
 
-    #mobile-map-container .leaflet-overlay-pane svg path {
+    /* Interactive paths are invisible click targets */
+    #mobile-map-container .leaflet-overlay-pane svg > .interactive-region {
         fill: transparent;
         stroke: transparent;
         stroke-width: 0;
@@ -1254,7 +1255,7 @@ body.home-page::before {
     }
 
     /* Add a border and subtle fill to the selected path to show it's active */
-    #mobile-map-container .leaflet-overlay-pane svg path.selected {
+    #mobile-map-container .leaflet-overlay-pane svg > .interactive-region.selected {
         fill: rgba(233, 213, 161, 0.2);
         stroke: var(--accent-gold);
         stroke-width: 8px;
