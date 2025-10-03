@@ -50,6 +50,7 @@ function initMobileMap() {
     const infoPanel = document.getElementById('mobile-info-panel');
     const panelHeader = infoPanel.querySelector('.panel-header');
     const panelTabsContainer = infoPanel.querySelector('.panel-tabs');
+    const scrollableContent = infoPanel.querySelector('.panel-tab-content');
     const loreContentPane = document.getElementById('panel-lore-content');
     const gamesContentPane = document.getElementById('panel-games-content');
     const mapBanner = document.getElementById('mobile-map-banner');
@@ -132,6 +133,11 @@ function initMobileMap() {
             buildPanelHeader(region);
             buildPanelTabs(region);
             buildPanelContent(region);
+
+            // Reset scroll to top before showing
+            if (scrollableContent) {
+                scrollableContent.scrollTop = 0;
+            }
 
             infoPanel.classList.add('active');
         });
