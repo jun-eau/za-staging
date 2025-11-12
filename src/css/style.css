@@ -1383,21 +1383,21 @@ body.home-page::before {
     padding: 10px;
     text-align: center;
     font-weight: bold;
-    color: var(--accent-gold);
+    color: var(--text-primary) !important; /* Make group titles white */
     font-size: var(--font-size-lg);
     font-family: 'Playfair Display', serif;
 }
 
 .vis-time-axis .vis-text {
-    color: var(--text-secondary);
+    color: var(--text-primary) !important; /* Make time axis text white */
 }
 
 .vis-time-axis .vis-grid.vis-major {
-    border-color: rgba(233, 213, 161, 0.4);
+    border-color: rgba(153, 153, 185, 0.3); /* Dim gray for vertical lines */
 }
 
 .vis-time-axis .vis-grid.vis-minor {
-    border-color: rgba(233, 213, 161, 0.2);
+    border-color: rgba(153, 153, 185, 0.15); /* Lighter dim gray for minor lines */
 }
 
 .vis-labelset .vis-label {
@@ -1406,4 +1406,34 @@ body.home-page::before {
 
 .vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top, .vis-panel.vis-bottom {
     background-color: var(--primary-bg);
+}
+
+.vis-tooltip {
+    position: absolute;
+    background: transparent !important; /* The background is now set inline */
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
+    font-size: var(--font-size-sm) !important;
+    white-space: normal !important;
+    max-width: 300px;
+    /* Add a small triangle at the top */
+    margin-top: 10px; /* Space for the triangle */
+}
+
+.vis-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%; /* Position the triangle at the top of the tooltip */
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent var(--tooltip-color, black) transparent; /* The color will be set by JS */
+}
+
+.vis-tooltip-content {
+    padding: 8px 12px;
+    border-radius: 6px;
 }
