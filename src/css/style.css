@@ -482,10 +482,9 @@ body.home-page::before {
 .timeline-section {
     margin-top: 1rem;
 }
-#vis-timeline {
-    border: 1px solid rgba(233, 213, 161, 0.2);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+.lore-timeline-scroll-wrapper {
+    overflow-x: auto;
+    width: 100%;
 }
 .timeline-section h2,
 .full-width-section h2 {
@@ -495,66 +494,77 @@ body.home-page::before {
     color: var(--accent-gold);
     margin-bottom: 1.5rem;
 }
-
-/* Vis.js Timeline Customizations */
-.vis-timeline {
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
+#lore-timeline-main-container {
+    display: flex;
+    position: relative;
+    width: 100%;
+    min-width: 1565px;
 }
-.vis-item.game-timeline-item {
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    padding: 8px;
+#time-axis-container {
+    flex: 0 0 80px;
+    padding-right: 10px;
+    border-right: 1px solid var(--text-secondary);
+    position: relative;
+    box-sizing: border-box;
+}
+.year-label, .month-label {
+    position: absolute;
+    right: 15px;
     font-size: var(--font-size-sm);
-    border-width: 2px;
-    border-style: solid;
-}
-.vis-item .game-title {
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-.vis-item .period-label {
-    font-style: italic;
-    opacity: 0.9;
-    margin-bottom: 4px;
-}
-.vis-item .period-display {
-    font-size: var(--font-size-xs);
-    opacity: 0.8;
-}
-.vis-panel.vis-left {
-    box-shadow: 5px 0 10px -5px rgba(0,0,0,0.3);
-}
-.vis-labelset .vis-label {
-    color: var(--accent-gold);
-    font-size: var(--font-size-md);
-    padding-left: 15px;
-    padding-right: 15px;
-}
-.vis-time-axis .vis-grid {
-    border-color: rgba(255, 255, 255, 0.1);
-}
-.vis-time-axis .vis-text {
     color: var(--text-secondary);
+    white-space: nowrap;
 }
-.vis-timeline, .vis-panel, .vis-labelset, .vis-itemset, .vis-time-axis {
-    background-color: #2a2a2a;
-    border-color: rgba(255, 255, 255, 0.1);
+.month-label {
+    font-size: var(--font-size-xs);
 }
-.vis-tooltip {
-    background-color: #1a1a1a;
-    border: 1px solid var(--accent-gold);
-    border-radius: 6px;
-    padding: 10px;
-    color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
-    font-size: var(--font-size-sm);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+#game-columns-container {
+    flex-grow: 1;
+    display: flex;
+    position: relative;
 }
-.vis-tooltip strong {
+#month-lines-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+.month-line {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(153, 153, 185, 0.15);
+}
+.month-line-year {
+    height: 2px;
+    background-color: rgba(153, 153, 185, 0.3);
+}
+.timeline-arc-column {
+    flex: 1 1 0px;
+    padding: 0 15px;
+    border-right: 1px dashed rgba(153, 153, 185, 0.3);
+    box-sizing: border-box;
+}
+.timeline-arc-column:last-child {
+    border-right: none;
+}
+.timeline-arc-column h3 {
+    text-align: center;
+    font-size: var(--font-size-lg);
     color: var(--accent-gold);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--accent-gold);
 }
-
+.game-entries-area {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
 
 /* --- Map Infobox --- */
 /* Utility class to disable transitions during JS calculations */
