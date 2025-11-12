@@ -97,8 +97,8 @@ export function initTimelinePage() {
                 start: paddedMinDate.toISOString().split('T')[0],
                 end: paddedMaxDate.toISOString().split('T')[0],
                 orientation: 'top',
-                stack: true,
-                stackSubgroups: true,
+                stack: false,
+                stackSubgroups: false,
                 moveable: true,
                 zoomable: true,
                 timeAxis: {
