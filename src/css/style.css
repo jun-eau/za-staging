@@ -1328,3 +1328,33 @@ body.home-page::before {
         display: none;
     }
 }
+
+/* Timeline styles */
+.vis-labelset .vis-label.vis-major {
+    color: var(--accent-gold);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+}
+
+.vis-labelset .vis-label.vis-minor {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+/* Item styling */
+#timeline-container .vis-item {
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-tight);
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+#timeline-container .vis-item small {
+    font-size: 0.9em;
+    opacity: 0.85;
+}
+#timeline-container .vis-item strong {
+    font-weight: 700;
+}
