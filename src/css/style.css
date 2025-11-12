@@ -483,8 +483,7 @@ body.home-page::before {
     margin-top: 1rem;
 }
 
-.timeline-section h2,
-.full-width-section h2 {
+.timeline-section h2 {
     text-align: center;
     font-family: 'Playfair Display', serif;
     font-size: var(--font-size-xxxl);
@@ -495,7 +494,7 @@ body.home-page::before {
 #vis-timeline .vis-timeline {
     border: 2px solid var(--accent-gold);
     border-radius: 8px;
-    background-color: #2a2a2a; /* A slightly lighter bg for contrast */
+    background-color: #2a2a2a;
 }
 
 /* --- Groups (Left Panel) --- */
@@ -528,20 +527,6 @@ body.home-page::before {
     padding: 0;
 }
 
-/* Custom template styling */
-.vis-item-title {
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-.vis-item-label {
-    font-style: italic;
-    opacity: 0.9;
-    margin-bottom: 4px;
-}
-.vis-item-display {
-    font-size: var(--font-size-xs);
-    opacity: 0.8;
-}
 
 /* --- Time Axis --- */
 #vis-timeline .vis-time-axis .vis-grid {
@@ -554,18 +539,39 @@ body.home-page::before {
     font-weight: bold;
 }
 
-/* --- Tooltip --- */
+/* --- Custom Tooltip Styling --- */
 .vis-tooltip {
     background: var(--primary-bg) !important;
     border: 1px solid var(--accent-gold) !important;
     color: var(--text-primary) !important;
-    padding: 10px !important;
+    padding: 0 !important; /* Remove padding for full control */
     border-radius: 6px !important;
-    font-size: var(--font-size-sm) !important;
     box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
-    white-space: normal !important; /* Allow wrapping */
-    max-width: 300px;
+    white-space: normal !important;
+    max-width: 320px;
 }
+
+.timeline-tooltip {
+    padding: 12px;
+}
+.tooltip-title {
+    font-family: 'Playfair Display', serif;
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+}
+.tooltip-label {
+    font-style: italic;
+    opacity: 0.9;
+    margin-bottom: 6px;
+}
+.tooltip-display {
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+    color: var(--text-secondary);
+}
+
 
 /* 6.2. Interactive Map */
 .full-width-section {

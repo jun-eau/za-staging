@@ -33,50 +33,57 @@ export function initTimelinePage() {
         const visItems = [];
         const visGroups = new Map();
         let itemId = 1;
+        let groupOrder = 0;
+
+        // Determine a consistent order for the arcs
+        const arcOrder = ["Liberl Arc", "Crossbell Arc", "Erebonia Arc", "Calvard Arc", "Epilogue"];
+        arcOrder.forEach(arcName => {
+            visGroups.set(arcName, {
+                id: arcName,
+                content: arcName,
+                order: groupOrder++,
+            });
+        });
 
         games.forEach(game => {
             if (!game.timelinePeriods || game.timelinePeriods.length === 0) {
                 return; // Skip games without timeline data
             }
 
-            // Create a group for the game's arc if it doesn't exist
-            if (!visGroups.has(game.arc)) {
-                visGroups.set(game.arc, {
-                    id: visGroups.size + 1,
-                    content: game.arc,
-                    className: `vis-group-${game.arc.toLowerCase().replace(/\s+/g, '-')}`
+            const arcName = game.arc;
+             if (!visGroups.has(arcName)) {
+                visGroups.set(arcName, {
+                    id: arcName,
+                    content: arcName,
+                    order: groupOrder++,
                 });
             }
-            const groupId = visGroups.get(game.arc).id;
 
             game.timelinePeriods.forEach(period => {
                 const start = parseDate(period.start);
-                // For single-day events, Vis.js needs a 'point' type. For ranges, it needs an 'end'.
-                // If start and end are the same, we'll treat it as a point.
-                const end = parseDate(period.end);
+                let end = parseDate(period.end);
 
-                let itemType = 'range';
+                // For single-day events, ensure they have a minimum visible duration on the timeline
                 if (!end || start.getTime() === end.getTime()) {
-                    itemType = 'box';
+                    end = new Date(start.getTime() + (1000 * 60 * 60 * 24 * 5)); // Give it a 5-day visual width
                 }
 
                 visItems.push({
                     id: itemId++,
-                    content: game.englishTitle,
+                    content: ' ', // Content is handled by the tooltip
                     start: start,
                     end: end,
-                    group: groupId,
-                    type: itemType,
-                    // Custom data for the template
-                    title: `${game.englishTitle}${period.label ? `: ${period.label}` : ''}<br>${period.display}`,
+                    group: arcName,
+                    type: 'range',
+                    title: `
+                        <div class="timeline-tooltip">
+                            <div class="tooltip-title">${game.englishTitle}</div>
+                            ${period.label ? `<div class="tooltip-label">${period.label}</div>` : ''}
+                            <div class="tooltip-display">${period.display}</div>
+                        </div>
+                    `,
                     className: game.id,
-                    style: `background-color: ${game.timelineColor}; border-color: ${darkenColor(game.timelineColor, 25)};`,
-                    // Storing original data for the template
-                    gameData: {
-                        title: game.englishTitle,
-                        display: period.display,
-                        label: period.label || null
-                    }
+                    style: `background-color: ${game.timelineColor}; border-color: ${darkenColor(game.timelineColor, 20)};`
                 });
             });
         });
@@ -89,8 +96,6 @@ export function initTimelinePage() {
 
     function parseDate(dateStr) {
         if (!dateStr) return null;
-        // The dates are like "YYYY-MM-DD". We can create a Date object directly.
-        // Appending 'T00:00:00' ensures it's parsed as local time at midnight.
         return new Date(`${dateStr}T00:00:00`);
     }
 
@@ -100,48 +105,50 @@ export function initTimelinePage() {
             R = (num >> 16) - amt,
             B = (num >> 8 & 0x00FF) - amt,
             G = (num & 0x0000FF) - amt;
-        return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
+        R = Math.max(0, R);
+        B = Math.max(0, B);
+        G = Math.max(0, G);
+        return "#" + (0x1000000 + R * 0x10000 + B * 0x100 + G).toString(16).slice(1);
     }
-
 
     // --- Timeline Rendering ---
     function renderTimeline(items, groups) {
         const options = {
             // Sane defaults for min/max zoom
             zoomMin: 1000 * 60 * 60 * 24 * 30, // One month
-            zoomMax: 1000 * 60 * 60 * 24 * 365 * 10, // Ten years
+            zoomMax: 1000 * 60 * 60 * 24 * 365 * 15, // Fifteen years
 
-            // Visual stacking and orientation
+            // Stacking and orientation
             stack: true,
-            stackSubgroups: false,
+            groupOrder: 'order',
             orientation: 'top',
 
             // Make it responsive
             width: '100%',
-            height: '600px', // A decent default height
+            height: '70vh',
 
             // Usability
             editable: false,
             zoomable: true,
             moveable: true,
 
-            // Start and end dates (optional, Vis.js calculates this but setting it can be good)
-            // Let Vis.js auto-determine start/end from the data set.
+            // Set initial visible window
+            start: new Date('1202-01-01T00:00:00'),
+            end: new Date('1209-01-01T00:00:00'),
 
-            // Custom item template
-            template: function(item, element, data) {
-                if (!item.gameData) return '';
-                let content = `<div class="vis-item-title">${item.gameData.title}</div>`;
-                if (item.gameData.label) {
-                    content += `<div class="vis-item-label">${item.gameData.label}</div>`;
-                }
-                content += `<div class="vis-item-display">${item.gameData.display}</div>`;
-                return content;
+            // No template, as content is in the tooltip
+            template: (item) => item.content,
+
+            // Configure tooltips
+            showTooltips: true,
+            tooltip: {
+                followMouse: true,
+                overflowMethod: 'flip'
             },
-
-            // Set initial visible window (optional, but nice for focus)
-            start: new Date('1200-01-01T00:00:00'),
-            end: new Date('1210-01-01T00:00:00'),
+            // Allow HTML in tooltips
+            xss: {
+                disabled: true
+            }
         };
 
         const timeline = new vis.Timeline(container, items, groups, options);
