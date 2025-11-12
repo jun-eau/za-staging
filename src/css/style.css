@@ -11,7 +11,7 @@ Zemurian Atlas CSS
     5.2. Game Entry (Desktop)
     5.3. Slider Component
 6.  Page Specific: Lore
-    6.1. Vis.js Timeline
+    6.1. Timeline
     6.2. Interactive Map
 7.  Responsive Styles (Mobile)
     7.1. General Mobile Layout
@@ -478,12 +478,17 @@ body.home-page::before {
     max-width: 1600px;
 }
 
-/* 6.1. Vis.js Timeline */
+/* 6.1. Timeline */
 .timeline-section {
     margin-top: 1rem;
 }
-
-.timeline-section h2 {
+#vis-timeline {
+    border: 1px solid rgba(233, 213, 161, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.timeline-section h2,
+.full-width-section h2 {
     text-align: center;
     font-family: 'Playfair Display', serif;
     font-size: var(--font-size-xxxl);
@@ -491,87 +496,303 @@ body.home-page::before {
     margin-bottom: 1.5rem;
 }
 
-#vis-timeline .vis-timeline {
-    border: 2px solid var(--accent-gold);
+/* Vis.js Timeline Customizations */
+.vis-timeline {
     border-radius: 8px;
-    background-color: #2a2a2a;
+    font-family: 'Inter', sans-serif;
 }
-
-/* --- Groups (Left Panel) --- */
-#vis-timeline .vis-left .vis-labelset .vis-label {
-    color: var(--accent-gold);
-    font-family: 'Playfair Display', serif;
-    font-size: var(--font-size-lg);
-    text-align: right;
-    padding-right: 15px;
-}
-
-/* --- Items (Timeline Entries) --- */
-#vis-timeline .vis-item {
+.vis-item.game-timeline-item {
     border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    color: var(--text-primary);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     padding: 8px;
     font-size: var(--font-size-sm);
-    line-height: var(--line-height-tight);
+    border-width: 2px;
+    border-style: solid;
 }
-
-/* Text color adjustments for specific items based on their background */
-#vis-timeline .vis-item.trails-in-the-sky-sc,
-#vis-timeline .vis-item.trails-through-daybreak,
-#vis-timeline .vis-item.trails-into-reverie {
-    color: #000000;
-}
-
-#vis-timeline .vis-item .vis-item-content {
-    padding: 0;
-}
-
-
-/* --- Time Axis --- */
-#vis-timeline .vis-time-axis .vis-grid {
-    border-color: rgba(233, 213, 161, 0.15);
-}
-#vis-timeline .vis-time-axis .vis-text {
-    color: var(--text-secondary);
-}
-#vis-timeline .vis-time-axis .vis-major {
-    font-weight: bold;
-}
-
-/* --- Custom Tooltip Styling --- */
-.vis-tooltip {
-    background: var(--primary-bg) !important;
-    border: 1px solid var(--accent-gold) !important;
-    color: var(--text-primary) !important;
-    padding: 0 !important; /* Remove padding for full control */
-    border-radius: 6px !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
-    white-space: normal !important;
-    max-width: 320px;
-}
-
-.timeline-tooltip {
-    padding: 12px;
-}
-.tooltip-title {
-    font-family: 'Playfair Display', serif;
-    font-size: var(--font-size-lg);
+.vis-item .game-title {
     font-weight: 700;
-    color: var(--accent-gold);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
-.tooltip-label {
+.vis-item .period-label {
     font-style: italic;
     opacity: 0.9;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
-.tooltip-display {
-    font-size: var(--font-size-sm);
-    opacity: 0.9;
+.vis-item .period-display {
+    font-size: var(--font-size-xs);
+    opacity: 0.8;
+}
+.vis-panel.vis-left {
+    box-shadow: 5px 0 10px -5px rgba(0,0,0,0.3);
+}
+.vis-labelset .vis-label {
+    color: var(--accent-gold);
+    font-size: var(--font-size-md);
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.vis-time-axis .vis-grid {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+.vis-time-axis .vis-text {
     color: var(--text-secondary);
 }
+.vis-timeline, .vis-panel, .vis-labelset, .vis-itemset, .vis-time-axis {
+    background-color: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+.vis-tooltip {
+    background-color: #1a1a1a;
+    border: 1px solid var(--accent-gold);
+    border-radius: 6px;
+    padding: 10px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: var(--font-size-sm);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+.vis-tooltip strong {
+    color: var(--accent-gold);
+}
 
+
+/* --- Map Infobox --- */
+/* Utility class to disable transitions during JS calculations */
+.no-transition {
+    transition: none !important;
+}
+
+.map-infobox {
+    position: absolute;
+    min-width: 320px;
+    max-width: 90vw;
+    background-color: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    color: #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    z-index: 1000;
+    overflow: hidden;
+
+    /* Animation Properties */
+    opacity: 0;
+    transform: scale(0.95);
+    transform-origin: top left;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    /* By default, infoboxes are not clickable until active */
+    pointer-events: none;
+}
+
+.map-infobox.active {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0s; /* Explicitly reset delay for the active state */
+    pointer-events: auto; /* Make the active infobox clickable */
+}
+
+.map-infobox-header {
+    display: grid;
+    /* The grid-template-columns are now set dynamically via JS */
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #252525;
+    border-bottom: 1px solid #444;
+}
+
+.map-infobox-emblem {
+    width: 40px;
+    height: 40px;
+}
+
+.map-infobox-title-section h3 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #e8eced;
+}
+
+.map-infobox-title-section p {
+    margin: 0;
+    font-size: 0.8em;
+    color: #a0a0a0;
+}
+
+.map-infobox-stats {
+    font-size: 0.8em;
+    text-align: right;
+    color: #b0b0b0;
+}
+
+.map-infobox-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.map-infobox-links a {
+    display: inline-block;
+    line-height: 0; /* Remove extra space below the image */
+}
+
+.map-infobox-links img {
+    height: 34px;
+    width: auto;
+    opacity: 0.7;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.map-infobox-links img:hover {
+    opacity: 1;
+}
+
+.infobox-body {
+    position: relative;
+    transition: height 0.25s ease-in-out;
+}
+
+.infobox-games-view, .infobox-lore-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Default State: Show Games View */
+.infobox-games-view {
+    opacity: 1;
+}
+.infobox-lore-view {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* State Modifier: Show Lore View */
+.map-infobox.show-lore-view .infobox-games-view {
+    opacity: 0;
+    visibility: hidden;
+}
+.map-infobox.show-lore-view .infobox-lore-view {
+    opacity: 1;
+    visibility: visible;
+}
+
+.map-infobox-games-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(80px, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.map-infobox-game-art {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+
+.map-infobox-lore-section {
+    margin-bottom: 12px;
+}
+.map-infobox-lore-section h4 {
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+    /* color is now set dynamically via inline style */
+    border-bottom: 1px solid #444;
+    padding-bottom: 3px;
+}
+.map-infobox-lore-section p, .map-infobox-lore-section ul {
+    margin: 0;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #ccc;
+}
+.map-infobox-lore-section ul {
+    padding-left: 20px;
+    list-style-type: square;
+}
+
+.map-infobox-footer {
+    padding: 8px 12px;
+    background-color: #252525;
+    border-top: 1px solid #444;
+    text-align: center;
+}
+
+.map-infobox-toggle-btn {
+    background: none;
+    border: none;
+    color: #8db5e5; /* A nice blue for links */
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+.map-infobox-toggle-btn:hover {
+    text-decoration: underline;
+}
+.game-entry-box {
+    position: absolute;
+    box-sizing: border-box;
+    border-radius: 2px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.game-entry-box.special-info-below {
+    overflow: visible;
+}
+.game-info-below-text-container {
+    position: absolute;
+    left: 5%;
+    width: 90%;
+    color: var(--text-primary);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    text-align: center;
+    box-sizing: border-box;
+}
+.game-info-below-text-container .game-entry-title {
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    line-height: var(--line-height-tight);
+    white-space: nowrap;
+    margin-bottom: 3px;
+}
+.game-info-below-text-container .game-entry-duration {
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-tight);
+    opacity: 0.9;
+    white-space: nowrap;
+}
+.individual-period-text .game-entry-duration strong {
+    font-weight: 600;
+}
+.game-info-below-text-container.is-main-period-text .game-entry-title {
+    margin-bottom: 1px;
+}
+.game-entry-title {
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+    margin-bottom: 4px;
+}
+.game-entry-duration {
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-tight);
+    opacity: 0.85;
+}
 
 /* 6.2. Interactive Map */
 .full-width-section {
