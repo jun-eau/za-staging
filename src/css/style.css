@@ -1407,26 +1407,3 @@ body.home-page::before {
 .vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top, .vis-panel.vis-bottom {
     background-color: var(--primary-bg);
 }
-
-.vis-tooltip {
-    background: var(--primary-bg) !important;
-    border: 1px solid var(--accent-gold) !important;
-    padding: 0 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
-    color: var(--text-primary) !important;
-    font-size: var(--font-size-sm) !important;
-    white-space: normal !important;
-    max-width: 300px;
-}
-
-.vis-tooltip-header {
-    padding: 8px 12px;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-    font-weight: bold;
-}
-
-.vis-tooltip-body {
-    padding: 8px 12px;
-}

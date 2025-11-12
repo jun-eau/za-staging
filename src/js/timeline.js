@@ -39,20 +39,14 @@ export function initTimelinePage() {
                             maxDate = endDate;
                         }
 
-                        // Store detailed info for the tooltip, but keep content simple for consistent height
                         items.push({
                             id: `${game.id}-${index}`,
-                            content: game.englishTitle, // Use only the title for consistent box height
+                            content: game.englishTitle + (period.label ? `<br><em>${period.label}</em>` : ''),
                             start: period.start,
                             end: period.end,
                             group: game.arc,
-                            // Custom data for tooltip
-                            gameTitle: game.englishTitle,
-                            periodDisplay: period.display,
-                            periodLabel: period.label || '',
-                            timelineColor: game.timelineColor,
-                            // Styling for the item itself
-                            style: `background-color: ${game.timelineColor}; color: ${getContrastYIQ(game.timelineColor)}; border-color: ${darkenColor(game.timelineColor, 20)};`
+                            style: `background-color: ${game.timelineColor}; color: ${getContrastYIQ(game.timelineColor)}; border-color: ${darkenColor(game.timelineColor, 20)};`,
+                            title: `${game.englishTitle} (${period.display})`
                         });
                     });
                 }
@@ -66,8 +60,8 @@ export function initTimelinePage() {
                 maxDate.setFullYear(maxDate.getFullYear() + 1);
             }
 
-            return { 
-                items: new vis.DataSet(items), 
+            return {
+                items: new vis.DataSet(items),
                 groups: new vis.DataSet(groups),
                 minDate: minDate ? minDate.toISOString().split('T')[0] : '1200-01-01',
                 maxDate: maxDate ? maxDate.toISOString().split('T')[0] : '1210-01-01'
@@ -93,20 +87,20 @@ export function initTimelinePage() {
         let r = parseInt(hex.substring(0, 2), 16);
         let g = parseInt(hex.substring(2, 4), 16);
         let b = parseInt(hex.substring(4, 6), 16);
-    
+
         r = parseInt(r * (100 - percent) / 100);
         g = parseInt(g * (100 - percent) / 100);
         b = parseInt(b * (100 - percent) / 100);
-    
-        r = (r<255)?r:255;  
-        g = (g<255)?g:255;  
-        b = (b<255)?b:255;  
-    
+
+        r = (r<255)?r:255;
+        g = (g<255)?g:255;
+        b = (b<255)?b:255;
+
         const newHex = [r, g, b].map(x => {
             const hex = x.toString(16);
             return (hex.length == 1) ? "0" + hex : hex;
         }).join('');
-    
+
         return `#${newHex}`;
     }
 
@@ -133,25 +127,17 @@ export function initTimelinePage() {
             max: maxDate,
             start: '1202-01-01',
             end: '1207-01-01',
-            orientation: 'top',
             zoomMin: 1000 * 60 * 60 * 24 * 30 * 6, // 6 months
             zoomMax: 1000 * 60 * 60 * 24 * 365 * 15, // 15 years
             editable: false,
             groupOrder: 'id',
-            tooltip: {
-                followMouse: true,
-                overflowMethod: 'flip',
-                template: function(item) {
-                    if (!item) { return ''; }
-                    const title = `<strong>${item.gameTitle}</strong>`;
-                    const label = item.periodLabel ? `<em>${item.periodLabel}</em>` : '';
-                    const display = item.periodDisplay;
-                    
-                    const header = `<div class="vis-tooltip-header" style="background-color: ${darkenColor(item.timelineColor, 20)};">${title}</div>`;
-                    const body = `<div class="vis-tooltip-body">${label ? `${label}<br>` : ''}${display}</div>`;
-                    
-                    return `<div class="vis-tooltip-content">${header}${body}</div>`;
-                }
+            template: function (item) {
+                return `
+                    <div class="vis-item-content">
+                        <span class="vis-item-title">${item.content.split('<br>')[0]}</span>
+                        ${item.content.includes('<br>') ? `<br><em class="vis-item-label">${item.content.split('<br>')[1]}</em>` : ''}
+                    </div>
+                `;
             },
             onInitialDrawComplete: function() {
                 // Fix accessibility issues
