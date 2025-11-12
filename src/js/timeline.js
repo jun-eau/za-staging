@@ -76,7 +76,7 @@ export function initTimelinePage() {
                         group: group,
                         start: period.start,
                         end: end.toISOString().split('T')[0], // Format as YYYY-MM-DD
-                        title: `${game.englishTitle}: ${period.label ? period.label + ' - ' : ''}${period.display}`,
+                        title: `${game.englishTitle}<br>${period.label ? period.label + ' - ' : ''}${period.display}`,
                         content: contentHtml,
                         style: `background-color: ${game.timelineColor}; border-color: ${game.timelineColor};`
                     });
