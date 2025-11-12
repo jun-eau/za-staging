@@ -1328,3 +1328,82 @@ body.home-page::before {
         display: none;
     }
 }
+
+/*
+=================================================================
+8. Vis.js Timeline Styles
+=================================================================
+*/
+
+#vis-timeline-container {
+    width: 100%;
+    height: 600px; /* Adjust as needed */
+    margin-top: 2rem;
+    background-color: var(--primary-bg);
+    border: 1px solid var(--accent-gold);
+    box-shadow: 0 0 15px rgba(233, 213, 161, 0.3);
+}
+
+.vis-timeline {
+    border: none;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-primary);
+}
+
+.vis-item {
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    padding: 5px;
+    font-size: var(--font-size-sm);
+}
+
+.vis-item.vis-range {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vis-item .vis-item-content {
+    padding: 0;
+}
+
+.vis-item-title {
+    font-weight: bold;
+}
+
+.vis-item-label {
+    font-size: var(--font-size-xs);
+    opacity: 0.9;
+}
+
+.vis-group {
+    background-color: #2a2a2a;
+    border-right: 1px solid var(--accent-gold);
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--accent-gold);
+    font-size: var(--font-size-lg);
+    font-family: 'Playfair Display', serif;
+}
+
+.vis-time-axis .vis-text {
+    color: var(--text-secondary);
+}
+
+.vis-time-axis .vis-grid.vis-major {
+    border-color: rgba(233, 213, 161, 0.4);
+}
+
+.vis-time-axis .vis-grid.vis-minor {
+    border-color: rgba(233, 213, 161, 0.2);
+}
+
+.vis-labelset .vis-label {
+    padding-right: 20px;
+}
+
+.vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top, .vis-panel.vis-bottom {
+    background-color: var(--primary-bg);
+}
