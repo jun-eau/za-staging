@@ -1358,3 +1358,23 @@ body.home-page::before {
 #timeline-container .vis-item strong {
     font-weight: 700;
 }
+
+/* Brighter Text for Timeline Labels */
+.vis-labelset .vis-label,
+.vis-timeline .vis-group {
+    color: var(--text-primary) !important;
+}
+.vis-labelset .vis-label.vis-major {
+    color: var(--accent-gold) !important;
+}
+.vis-labelset .vis-label.vis-minor {
+    color: var(--text-secondary) !important;
+}
+
+/* Differentiated Grid Lines */
+.vis-grid.vis-minor {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.vis-grid.vis-major {
+    border-color: rgba(233, 213, 161, 0.4);
+}

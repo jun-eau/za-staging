@@ -10,7 +10,7 @@ const { chromium } = require('playwright');
 
   // Take a screenshot of the timeline container
   const timelineContainer = await page.$('#timeline-container');
-  await timelineContainer.screenshot({ path: '/home/jules/verification/timeline_no_stacking.png' });
+  await timelineContainer.screenshot({ path: '/home/jules/verification/timeline_polished.png' });
 
   await browser.close();
 })();

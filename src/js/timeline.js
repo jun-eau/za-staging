@@ -68,8 +68,8 @@ export function initTimelinePage() {
                      // Determine text color
                     const textColor = (game.id === 'trails-in-the-sky-sc' || game.id === 'trails-through-daybreak') ? '#000000' : '#FFFFFF';
 
-                    // Create custom HTML content for the item - now using shortTitle
-                    const contentHtml = `<div style="color: ${textColor};">${game.shortTitle}</div>`;
+                    // Create custom HTML content for the item - now using shortTitle and bolding it
+                    const contentHtml = `<div style="color: ${textColor};"><strong>${game.shortTitle}</strong></div>`;
 
                     items.add({
                         id: idCounter++,
@@ -101,18 +101,12 @@ export function initTimelinePage() {
                 stackSubgroups: false,
                 moveable: true,
                 zoomable: true,
-                timeAxis: {
-                    scale: 'month',
-                    step: 3,
-                    processor: (date, scale, step) => {
-                        if (date.getMonth() === 0) { // January
-                            return `S.${date.getFullYear()}`;
-                        }
-                        if (scale === 'month' && (date.getMonth() % 3 === 2)) {
-                             const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                             return monthNames[date.getMonth()];
-                        }
-                        return '';
+                tooltip: {
+                    followMouse: true
+                },
+                format: {
+                    majorLabels: {
+                        year: 'S.YYYY' // Custom format for the year
                     }
                 },
                 zoomMax: 1000 * 60 * 60 * 24 * 365 * 8, // 8 years
