@@ -6,7 +6,7 @@
 
 import { highlightActiveNav } from './lib/shared.js';
 import { initReleasesPage } from './releases.js';
-import { initTimelinePage } from './timeline.js';
+import { initVisTimelinePage } from './vis-timeline.js';
 import { initMapPage } from './map.js';
 import { initHomePage } from './home.js';
 
@@ -26,7 +26,7 @@ function route() {
     } else if (currentPage === 'games.html') {
         initReleasesPage();
     } else if (currentPage === 'timeline.html') {
-        initTimelinePage();
+        initVisTimelinePage();
     } else if (currentPage === 'map.html') {
         initMapPage();
     }
