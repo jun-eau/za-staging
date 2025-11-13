@@ -101,6 +101,7 @@ export function initTimelinePage() {
                 stackSubgroups: false,
                 moveable: true,
                 zoomable: true,
+                align: 'center',
                 tooltip: {
                     followMouse: true,
                     delay: 0
