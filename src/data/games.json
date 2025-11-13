@@ -531,7 +531,8 @@
     "nintendoUrl": "https://www.nintendo.com/us/store/products/the-legend-of-heroes-trails-into-reverie-switch/",
     "timelineColor": "#DFF8FC",
     "timelineSettings": {
-      "displayMode": "below"
+      "displayMode": "below",
+      "columnSpan": ["Crossbell Arc", "Erebonia Arc"]
     },
     "timelinePeriods": [
       {
