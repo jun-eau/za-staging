@@ -76,7 +76,7 @@ export function initTimelinePage() {
                         group: group,
                         start: period.start,
                         end: end.toISOString().split('T')[0], // Format as YYYY-MM-DD
-                        title: `${game.englishTitle}<br>${period.label ? period.label + ' - ' : ''}${period.display}`,
+                        title: `${game.englishTitle}${period.label ? ' - ' + period.label : ''}<br>${period.display}`,
                         content: contentHtml,
                         style: `background-color: ${game.timelineColor}; border-color: ${game.timelineColor};`
                     });
@@ -102,7 +102,8 @@ export function initTimelinePage() {
                 moveable: true,
                 zoomable: true,
                 tooltip: {
-                    followMouse: true
+                    followMouse: true,
+                    delay: 0
                 },
                 format: {
                     majorLabels: {
