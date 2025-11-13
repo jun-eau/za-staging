@@ -217,6 +217,43 @@ export function initTimelinePage() {
         return { topPosition, entryHeight };
     }
 
+    function renderSpanningGameEntry(game, spanArcs, minTotalMonths, columnMap) {
+        const targetColumns = spanArcs.map(arc => columnMap[arc]).filter(Boolean);
+        if (targetColumns.length === 0) {
+            console.warn(`Could not find any columns for columnSpan on ${game.englishTitle}`);
+            return;
+        }
+
+        const firstColParent = targetColumns[0].parentElement;
+        const lastColParent = targetColumns[targetColumns.length - 1].parentElement;
+
+        const startX = firstColParent.offsetLeft;
+        const endX = lastColParent.offsetLeft + lastColParent.offsetWidth;
+        const totalWidth = endX - startX;
+
+        game.timelinePeriodsParsed.forEach(period => {
+            const { topPosition, entryHeight } = calculatePeriodGeometry(period, minTotalMonths);
+            if (entryHeight <= 0) return;
+
+            const gameEntryDiv = createGameEntryBox(game, period, topPosition, entryHeight);
+            gameEntryDiv.classList.add('spanning');
+
+            // Override styles for spanning
+            const boxWidth = totalWidth * 0.9; // 90% of the combined width
+            const boxLeft = startX + (totalWidth * 0.05); // Center it in the combined width
+            gameEntryDiv.style.width = `${boxWidth}px`;
+            gameEntryDiv.style.left = `${boxLeft}px`;
+            gameColumnsContainer.appendChild(gameEntryDiv);
+
+            if (game.timelineSettings?.displayMode === 'below') {
+                const periodText = createBelowText(game, period, topPosition, entryHeight);
+                periodText.style.width = `${totalWidth}px`;
+                periodText.style.left = `${startX}px`;
+                gameColumnsContainer.appendChild(periodText);
+            }
+        });
+    }
+
     function renderGameEntries() {
         if (!allGames || allGames.length === 0 || !minDate) return;
         [liberlColumn, crossbellColumn, ereboniaColumn, calvardColumn].forEach(col => { if (col) col.innerHTML = ''; });
@@ -233,6 +270,12 @@ export function initTimelinePage() {
         allGames.forEach(game => {
             if (!game.timelinePeriodsParsed || game.timelinePeriodsParsed.length === 0) return;
             
+            const settings = game.timelineSettings || {};
+            if (settings.columnSpan && Array.isArray(settings.columnSpan)) {
+                renderSpanningGameEntry(game, settings.columnSpan, minTotalMonths, columnMap);
+                return;
+            }
+
             const targetColumn = columnMap[game.arc];
             if (!targetColumn) {
                 console.warn(`No column for arc: ${game.arc}`);
