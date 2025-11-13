@@ -68,17 +68,16 @@ export function initTimelinePage() {
                      // Determine text color
                     const textColor = (game.id === 'trails-in-the-sky-sc' || game.id === 'trails-through-daybreak') ? '#000000' : '#FFFFFF';
 
-                    // Create custom HTML content for the item - now using shortTitle and bolding it
-                    const contentHtml = `<div style="color: ${textColor};"><strong>${game.shortTitle}</strong></div>`;
-
                     items.add({
                         id: idCounter++,
                         group: group,
                         start: period.start,
                         end: end.toISOString().split('T')[0], // Format as YYYY-MM-DD
                         title: `${game.englishTitle}${period.label ? ' - ' + period.label : ''}<br>${period.display}`,
-                        content: contentHtml,
-                        style: `background-color: ${game.timelineColor}; border-color: ${game.timelineColor};`
+                        style: `background-color: ${game.timelineColor}; border-color: ${game.timelineColor};`,
+                        // Add custom data properties for the template
+                        shortTitle: game.shortTitle,
+                        textColor: textColor
                     });
                 });
             });
@@ -101,7 +100,12 @@ export function initTimelinePage() {
                 stackSubgroups: false,
                 moveable: true,
                 zoomable: true,
-                align: 'center',
+                template: function(item) {
+                    if (item.shortTitle) {
+                        return `<div style="color: ${item.textColor};"><strong>${item.shortTitle}</strong></div>`;
+                    }
+                    return '';
+                },
                 tooltip: {
                     followMouse: true,
                     delay: 0
