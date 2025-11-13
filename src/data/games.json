@@ -3,7 +3,6 @@
     "id": "trails-in-the-sky",
     "arc": "Liberl Arc",
     "englishTitle": "Trails in the Sky",
-    "shortTitle": "Sky",
     "japaneseTitleKanji": "英雄伝説 空の軌跡FC",
     "japaneseTitleRomaji": "Sora no Kiseki FC",
     "assetName": "trails-in-the-sky",
@@ -81,7 +80,6 @@
     "id": "trails-in-the-sky-sc",
     "arc": "Liberl Arc",
     "englishTitle": "Trails in the Sky SC",
-    "shortTitle": "Sky SC",
     "japaneseTitleKanji": "英雄伝説 空の軌跡SC",
     "japaneseTitleRomaji": "Sora no Kiseki SC",
     "assetName": "trails-in-the-sky-sc",
@@ -92,6 +90,9 @@
     "playstationUrl": null,
     "nintendoUrl": null,
     "timelineColor": "#F2C663",
+    "timelineSettings": {
+      "textColor": "#000000"
+    },
     "timelinePeriods": [
       {
         "start": "1202-12-01",
@@ -128,7 +129,6 @@
     "id": "trails-in-the-sky-the-3rd",
     "arc": "Liberl Arc",
     "englishTitle": "Trails in the Sky the 3rd",
-    "shortTitle": "Sky the 3rd",
     "japaneseTitleKanji": "英雄伝説 空の軌跡 the 3rd",
     "japaneseTitleRomaji": "Sora no Kiseki the 3rd",
     "assetName": "trails-in-the-sky-the-3rd",
@@ -139,6 +139,9 @@
     "playstationUrl": null,
     "nintendoUrl": null,
     "timelineColor": "#7d50a1",
+    "timelineSettings": {
+      "displayMode": "below"
+    },
     "timelinePeriods": [
       {
         "start": "1203-10-27",
@@ -183,7 +186,6 @@
     "id": "trails-from-zero",
     "arc": "Crossbell Arc",
     "englishTitle": "Trails from Zero",
-    "shortTitle": "Zero",
     "japaneseTitleKanji": "英雄伝説 零の軌跡",
     "japaneseTitleRomaji": "Zero no Kiseki",
     "assetName": "trails-from-zero",
@@ -234,7 +236,6 @@
     "id": "trails-to-azure",
     "arc": "Crossbell Arc",
     "englishTitle": "Trails to Azure",
-    "shortTitle": "Azure",
     "japaneseTitleKanji": "英雄伝説 碧の軌跡",
     "japaneseTitleRomaji": "Ao no Kiseki",
     "assetName": "trails-to-azure",
@@ -281,7 +282,6 @@
     "id": "trails-of-cold-steel",
     "arc": "Erebonia Arc",
     "englishTitle": "Trails of Cold Steel",
-    "shortTitle": "Cold Steel",
     "japaneseTitleKanji": "英雄伝説 閃の軌跡",
     "japaneseTitleRomaji": "Sen no Kiseki",
     "assetName": "trails-of-cold-steel",
@@ -336,7 +336,6 @@
     "id": "trails-of-cold-steel-ii",
     "arc": "Erebonia Arc",
     "englishTitle": "Trails of Cold Steel II",
-    "shortTitle": "Cold Steel II",
     "japaneseTitleKanji": "英雄伝説 閃の軌跡II",
     "japaneseTitleRomaji": "Sen no Kiseki II",
     "assetName": "trails-of-cold-steel-ii",
@@ -347,6 +346,9 @@
     "playstationUrl": "https://store.playstation.com/en-us/product/UP1023-CUSA12566_00-EDSENNOKISEKI2ND",
     "nintendoUrl": null,
     "timelineColor": "#d61a28",
+    "timelineSettings": {
+      "displayMode": "below"
+    },
     "timelinePeriods": [
       {
         "start": "1204-11-29",
@@ -399,7 +401,6 @@
     "id": "trails-of-cold-steel-iii",
     "arc": "Erebonia Arc",
     "englishTitle": "Trails of Cold Steel III",
-    "shortTitle": "Cold Steel III",
     "japaneseTitleKanji": "英雄伝説 閃の軌跡III",
     "japaneseTitleRomaji": "Sen no Kiseki III",
     "assetName": "trails-of-cold-steel-iii",
@@ -458,7 +459,6 @@
     "id": "trails-of-cold-steel-iv",
     "arc": "Erebonia Arc",
     "englishTitle": "Trails of Cold Steel IV",
-    "shortTitle": "Cold Steel IV",
     "japaneseTitleKanji": "英雄伝説 閃の軌跡IV",
     "japaneseTitleRomaji": "Sen no Kiseki IV -THE END OF SAGA-",
     "assetName": "trails-of-cold-steel-iv",
@@ -469,6 +469,9 @@
     "playstationUrl": "https://store.playstation.com/en-us/product/UP1063-CUSA19637_00-EDSENNOKISEKI4TH",
     "nintendoUrl": "https://www.nintendo.com/us/store/products/the-legend-of-heroes-trails-of-cold-steel-iv-switch/",
     "timelineColor": "#641207",
+    "timelineSettings": {
+      "displayMode": "below"
+    },
     "timelinePeriods": [
       {
         "start": "1206-08-01",
@@ -517,7 +520,6 @@
     "id": "trails-into-reverie",
     "arc": "Epilogue",
     "englishTitle": "Trails into Reverie",
-    "shortTitle": "Reverie",
     "japaneseTitleKanji": "英雄伝説 創の軌跡",
     "japaneseTitleRomaji": "Hajimari no Kiseki",
     "assetName": "trails-into-reverie",
@@ -528,6 +530,10 @@
     "playstationUrl": "https://store.playstation.com/en-us/concept/10003228",
     "nintendoUrl": "https://www.nintendo.com/us/store/products/the-legend-of-heroes-trails-into-reverie-switch/",
     "timelineColor": "#DFF8FC",
+    "timelineSettings": {
+      "displayMode": "below",
+      "textColor": "#000000"
+    },
     "timelinePeriods": [
       {
         "start": "1207-02-14",
@@ -568,7 +574,6 @@
     "id": "trails-through-daybreak",
     "arc": "Calvard Arc",
     "englishTitle": "Trails through Daybreak",
-    "shortTitle": "Daybreak",
     "japaneseTitleKanji": "英雄伝説 黎の軌跡",
     "japaneseTitleRomaji": "Kuro no Kiseki",
     "assetName": "trails-through-daybreak",
@@ -579,6 +584,9 @@
     "playstationUrl": "https://store.playstation.com/en-us/concept/10001886",
     "nintendoUrl": "https://www.nintendo.com/us/store/products/the-legend-of-heroes-trails-through-daybreak-switch/",
     "timelineColor": "#e4d39b",
+    "timelineSettings": {
+      "textColor": "#000000"
+    },
     "timelinePeriods": [
       {
         "start": "1208-08-26",

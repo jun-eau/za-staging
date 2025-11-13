@@ -29,9 +29,6 @@
       "name": "Zemurian Atlas"
     }
     </script>
-    
-    <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
 
     <link rel="stylesheet" href="src/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,7 +62,40 @@
                     The timeline presented below is based on information sourced from in-game scripts and the <a href="https://falcom.wiki/wiki/Timeline_of_Zemurian_history" target="_blank" rel="noopener noreferrer">Falcom Wiki</a>.<br>Best viewed on desktop; small screens may require horizontal scrolling.
                 </p>
 
-                <div id="timeline-container"></div>
+                <div class="lore-timeline-scroll-wrapper">
+                    <div id="lore-timeline-main-container">
+                        <div id="time-axis-container">
+                            <!-- Time axis labels (years, months) will be populated by JavaScript -->
+                        </div>
+                        <div id="game-columns-container">
+                            <div class="timeline-arc-column" id="liberl-arc-column">
+                                <h3>Liberl Arc</h3>
+                                <div class="game-entries-area">
+                                    <!-- Liberl Arc game entries will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="timeline-arc-column" id="crossbell-arc-column">
+                                <h3>Crossbell Arc</h3>
+                                <div class="game-entries-area">
+                                    <!-- Crossbell Arc game entries will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="timeline-arc-column" id="erebonia-arc-column">
+                                <h3>Erebonia Arc</h3>
+                                <div class="game-entries-area">
+                                    <!-- Erebonia Arc game entries will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="timeline-arc-column" id="calvard-arc-column">
+                                <h3>Calvard Arc</h3>
+                                <div class="game-entries-area">
+                                    <!-- Calvard Arc game entries will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <!-- Horizontal month lines will be overlaid/drawn by JavaScript -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
