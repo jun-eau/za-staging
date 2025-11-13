@@ -224,6 +224,7 @@ export function initTimelinePage() {
             return;
         }
 
+        const verticalOffset = targetColumns[0].offsetTop;
         const firstColParent = targetColumns[0].parentElement;
         const lastColParent = targetColumns[targetColumns.length - 1].parentElement;
 
@@ -235,9 +236,11 @@ export function initTimelinePage() {
             const { topPosition, entryHeight } = calculatePeriodGeometry(period, minTotalMonths);
             if (entryHeight <= 0) return;
 
-            const gameEntryDiv = createGameEntryBox(game, period, topPosition, entryHeight);
-            gameEntryDiv.classList.add('spanning');
+            const adjustedTop = topPosition + verticalOffset;
 
+            const gameEntryDiv = createGameEntryBox(game, period, adjustedTop, entryHeight);
+            gameEntryDiv.classList.add('spanning');
+            
             // Override styles for spanning
             const boxWidth = totalWidth * 0.9; // 90% of the combined width
             const boxLeft = startX + (totalWidth * 0.05); // Center it in the combined width
@@ -246,7 +249,7 @@ export function initTimelinePage() {
             gameColumnsContainer.appendChild(gameEntryDiv);
 
             if (game.timelineSettings?.displayMode === 'below') {
-                const periodText = createBelowText(game, period, topPosition, entryHeight);
+                const periodText = createBelowText(game, period, adjustedTop, entryHeight);
                 periodText.style.width = `${totalWidth}px`;
                 periodText.style.left = `${startX}px`;
                 gameColumnsContainer.appendChild(periodText);
