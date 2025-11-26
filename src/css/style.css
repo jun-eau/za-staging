@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
+
 /*
 =================================================================
 Zemurian Atlas CSS
@@ -27,7 +29,7 @@ Zemurian Atlas CSS
 =================================================================
 */
 :root {
-    --primary-bg: #222222;
+    --primary-bg: #131314;
     --content-overlay-bg: rgba(0, 0, 0, 0.7);
     --accent-gold: #e9d5a1;
     --text-primary: #ffffff;
@@ -76,7 +78,7 @@ header {
     z-index: 1000;
     padding-bottom: 0;
 }
-header h1 { margin: 0; font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 5vw, 3rem); font-weight: 700; color: var(--accent-gold); }
+header h1 { margin: 0; font-family: 'Inter', sans-serif; font-size: clamp(1.75rem, 5vw, 3rem); font-weight: 700; color: var(--accent-gold); }
 footer { margin-top: 2rem; color: var(--text-secondary); font-size: var(--font-size-sm); }
 footer a {
     color: var(--text-secondary);
@@ -232,8 +234,8 @@ body.home-page::before {
     text-align: center;
 }
 .hero-tagline {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
     font-size: clamp(2.5rem, 6vw, 4rem);
     font-weight: 700;
     color: var(--text-primary);
