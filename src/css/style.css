@@ -69,14 +69,26 @@ body {
 */
 header, footer { text-align: center; padding: 0.3rem 1rem; }
 header {
-    border-bottom: 2px solid var(--accent-gold);
-    position: sticky;
-    top: 0;
-    background-color: var(--primary-bg);
-    z-index: 1000;
-    padding-bottom: 0;
+    position: fixed;
+    top: 1.5rem;
+    left: 0;
+    right: 0;
+    max-width: 95%;
+    margin: 0 auto;
+    background: rgba(20, 20, 30, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(233, 213, 161, 0.3);
+    border-radius: 50px;
+    z-index: 2000; /* Must be higher than Leaflet map controls (default 1000) */
+    padding: 0.5rem 2rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-header h1 { margin: 0; font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 5vw, 3rem); font-weight: 700; color: var(--accent-gold); }
+header h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 700; color: var(--accent-gold); }
 footer { margin-top: 2rem; color: var(--text-secondary); font-size: var(--font-size-sm); }
 footer a {
     color: var(--text-secondary);
@@ -96,6 +108,7 @@ main {
     margin: 0 auto;
     min-width: 600px; /* Ensure enough space for slider arrows + content */
     flex-grow: 1;
+    padding-top: 120px;
 }
 
 /*
@@ -121,18 +134,37 @@ main {
     margin: 0 0.75rem;
     padding: 0.5rem 0.75rem;
     border-radius: 6px;
-    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
     white-space: nowrap;
     flex-shrink: 0;
+    position: relative;
 }
+
+.main-navigation a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin-top: 5px;
+    right: 50%;
+    background: var(--accent-gold);
+    transition: width 0.3s ease, right 0.3s ease;
+}
+
+.main-navigation a:hover::after {
+    width: 100%;
+    right: 0;
+}
+
 .main-navigation a:hover {
     color: var(--accent-gold);
-    background-color: rgba(233, 213, 161, 0.1);
+    text-shadow: 0 0 8px rgba(233, 213, 161, 0.7);
 }
+
 .main-navigation a.active {
     color: var(--accent-gold);
     font-weight: 700;
-    background-color: rgba(233, 213, 161, 0.15);
 }
 
 .arc-navigation {
