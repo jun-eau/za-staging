@@ -27,11 +27,11 @@ Zemurian Atlas CSS
 =================================================================
 */
 :root {
-    --primary-bg: #222222;
-    --content-overlay-bg: rgba(0, 0, 0, 0.7);
-    --accent-gold: #e9d5a1;
+    --primary-bg: #121212;
+    --content-overlay-bg: rgba(18, 18, 18, 0.7);
+    --accent-gold: #FAD02C;
     --text-primary: #ffffff;
-    --text-secondary: #9999b9;
+    --text-secondary: #AAAAAA;
     --shadow-color: rgba(0, 0, 0, 0.5);
 
     --font-size-xs: 0.75rem; /* 12px */
@@ -69,14 +69,16 @@ body {
 */
 header, footer { text-align: center; padding: 0.3rem 1rem; }
 header {
-    border-bottom: 2px solid var(--accent-gold);
+    border-bottom: 3px solid var(--accent-gold);
     position: sticky;
     top: 0;
-    background-color: var(--primary-bg);
+    background-color: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(10px);
     z-index: 1000;
     padding-bottom: 0;
+    transition: background-color 0.3s ease;
 }
-header h1 { margin: 0; font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 5vw, 3rem); font-weight: 700; color: var(--accent-gold); }
+header h1 { margin: 0; font-family: 'Inter', sans-serif; font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 800; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1.5px; }
 footer { margin-top: 2rem; color: var(--text-secondary); font-size: var(--font-size-sm); }
 footer a {
     color: var(--text-secondary);
@@ -116,23 +118,22 @@ main {
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: var(--font-size-md);
-    color: var(--text-primary);
+    color: var(--text-secondary);
     text-decoration: none;
     margin: 0 0.75rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    padding: 0.5rem 0.25rem;
+    border-bottom: 3px solid transparent;
+    transition: color 0.3s ease, border-color 0.3s ease;
     white-space: nowrap;
     flex-shrink: 0;
 }
 .main-navigation a:hover {
-    color: var(--accent-gold);
-    background-color: rgba(233, 213, 161, 0.1);
+    color: var(--text-primary);
 }
 .main-navigation a.active {
     color: var(--accent-gold);
     font-weight: 700;
-    background-color: rgba(233, 213, 161, 0.15);
+    border-bottom-color: var(--accent-gold);
 }
 
 .arc-navigation {
@@ -140,27 +141,27 @@ main {
     margin-top: 0;
     margin-bottom: 0;
     padding: 0.6rem 0 0.6rem 0;
-    color: #cccccc;
-    border-top: 1px solid rgba(233, 213, 161, 0.15);
+    color: var(--text-secondary);
+    border-top: 1px solid rgba(250, 208, 44, 0.15);
 }
 .arc-navigation a {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: var(--font-size-sm);
-    color: #cccccc;
+    color: var(--text-secondary);
     text-decoration: none;
     margin: 0 0.5rem;
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
 .arc-navigation a:hover {
-    color: #ffffff;
-    background-color: rgba(233, 213, 161, 0.1);
+    color: var(--text-primary);
 }
 .arc-navigation a.active {
     color: var(--accent-gold);
     font-weight: 700;
+    border-bottom-color: var(--accent-gold);
 }
 
 .lore-tabs {
@@ -232,9 +233,9 @@ body.home-page::before {
     text-align: center;
 }
 .hero-tagline {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 700;
     color: var(--text-primary);
     line-height: var(--line-height-tight);
@@ -258,10 +259,13 @@ body.home-page::before {
     border: 2px solid var(--accent-gold);
     color: var(--accent-gold);
     background-color: transparent;
+    text-shadow: 0 0 5px var(--accent-gold);
+    box-shadow: 0 0 5px var(--accent-gold);
 }
 .btn-hero:hover {
     background-color: var(--accent-gold);
     color: var(--primary-bg);
+    box-shadow: 0 0 15px var(--accent-gold);
 }
 .hero-intro {
     font-family: 'Inter', sans-serif;
@@ -285,13 +289,15 @@ body.home-page::before {
     text-align: center;
     margin-bottom: 2rem;
     padding: 0.5rem 0;
-    font-family: 'Playfair Display', serif;
-    font-size: var(--font-size-xxxl);
+    font-family: 'Inter', sans-serif;
+    font-size: var(--font-size-xxl);
     font-weight: 700;
     color: var(--accent-gold);
     border-top: 1px solid var(--accent-gold);
     border-bottom: 1px solid var(--accent-gold);
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 #game-timeline-container {
     display: flex;
@@ -364,9 +370,9 @@ body.home-page::before {
 }
 .kanji-title, .romaji-title { display: block; }
 .romaji-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
     opacity: 1;
 }
 .kanji-title {
@@ -489,10 +495,12 @@ body.home-page::before {
 .timeline-section h2,
 .full-width-section h2 {
     text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-size: var(--font-size-xxxl);
+    font-family: 'Inter', sans-serif;
+    font-size: var(--font-size-xxl);
     color: var(--accent-gold);
     margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 #lore-timeline-main-container {
     display: flex;
@@ -971,7 +979,7 @@ body.home-page::before {
     }
     .mobile-unified-header-content .romaji-title {
         font-size: var(--font-size-lg);
-        font-family: 'Playfair Display', serif;
+        font-family: 'Inter', sans-serif;
         font-weight: 700;
         color: var(--accent-gold);
         opacity: 1;
@@ -1172,10 +1180,11 @@ body.home-page::before {
     }
     .panel-title {
         margin: 0;
-        font-family: 'Playfair Display', serif;
+        font-family: 'Inter', sans-serif;
         font-size: var(--font-size-lg);
         color: var(--accent-gold);
         line-height: var(--line-height-tight);
+        font-weight: 700;
     }
     .panel-subtitle {
         margin: 0;
